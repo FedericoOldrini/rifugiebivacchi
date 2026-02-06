@@ -20,7 +20,6 @@ class WeatherWidget extends StatefulWidget {
 class _WeatherWidgetState extends State<WeatherWidget> {
   final WeatherService _weatherService = WeatherService();
   Weather? _weather;
-  bool _isLoading = true;
   String? _error;
 
   @override
@@ -31,7 +30,6 @@ class _WeatherWidgetState extends State<WeatherWidget> {
 
   Future<void> _loadWeather() async {
     setState(() {
-      _isLoading = true;
       _error = null;
     });
 
@@ -44,17 +42,15 @@ class _WeatherWidgetState extends State<WeatherWidget> {
       if (mounted) {
         setState(() {
           _weather = weather;
-          _isLoading = false;
           if (weather == null) {
-            _error = 'Impossibile caricare le previsioni meteo';
+            _error = 'offline';
           }
         });
       }
     } catch (e) {
       if (mounted) {
         setState(() {
-          _error = 'Errore nel caricamento del meteo';
-          _isLoading = false;
+          _error = 'offline';
         });
       }
     }
@@ -62,84 +58,55 @@ class _WeatherWidgetState extends State<WeatherWidget> {
 
   @override
   Widget build(BuildContext context) {
+    // Non mostrare il widget se c'è un errore (offline) o ancora in caricamento
+    if (_error != null || _weather == null) {
+      return const SizedBox.shrink();
+    }
+
     return Card(
       elevation: 2,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(12),
       ),
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(12),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               children: [
-                const Icon(Icons.cloud, size: 24),
-                const SizedBox(width: 8),
+                Icon(
+                  Icons.cloud_outlined,
+                  size: 18,
+                  color: Theme.of(context).colorScheme.primary,
+                ),
+                const SizedBox(width: 6),
                 const Text(
                   'Meteo',
                   style: TextStyle(
-                    fontSize: 20,
+                    fontSize: 16,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
                 const Spacer(),
-                if (_isLoading)
-                  const SizedBox(
-                    width: 20,
-                    height: 20,
-                    child: CircularProgressIndicator(strokeWidth: 2),
-                  )
-                else if (_error == null && _weather != null)
-                  IconButton(
-                    icon: const Icon(Icons.refresh, size: 20),
-                    onPressed: _loadWeather,
-                    tooltip: 'Aggiorna',
-                  ),
+                IconButton(
+                  icon: const Icon(Icons.refresh, size: 18),
+                  onPressed: _loadWeather,
+                  tooltip: 'Aggiorna',
+                  padding: EdgeInsets.zero,
+                  constraints: const BoxConstraints(),
+                ),
               ],
             ),
-            const SizedBox(height: 16),
-            if (_isLoading)
-              const Center(
-                child: Padding(
-                  padding: EdgeInsets.all(24),
-                  child: CircularProgressIndicator(),
-                ),
-              )
-            else if (_error != null)
-              Center(
-                child: Column(
-                  children: [
-                    const Icon(Icons.error_outline, size: 48, color: Colors.grey),
-                    const SizedBox(height: 8),
-                    Text(
-                      _error!,
-                      style: const TextStyle(color: Colors.grey),
-                      textAlign: TextAlign.center,
-                    ),
-                    const SizedBox(height: 8),
-                    TextButton.icon(
-                      onPressed: _loadWeather,
-                      icon: const Icon(Icons.refresh),
-                      label: const Text('Riprova'),
-                    ),
-                  ],
-                ),
-              )
-            else if (_weather != null)
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _buildCurrentWeather(),
-                  if (_weather!.dailyForecasts != null &&
-                      _weather!.dailyForecasts!.isNotEmpty) ...[
-                    const SizedBox(height: 24),
-                    const Divider(),
-                    const SizedBox(height: 16),
-                    _buildForecast(),
-                  ],
-                ],
-              ),
+            const SizedBox(height: 12),
+            _buildCurrentWeather(),
+            if (_weather!.dailyForecasts != null &&
+                _weather!.dailyForecasts!.isNotEmpty) ...[
+              const SizedBox(height: 12),
+              const Divider(height: 1),
+              const SizedBox(height: 12),
+              _buildForecast(),
+            ],
           ],
         ),
       ),
@@ -148,89 +115,90 @@ class _WeatherWidgetState extends State<WeatherWidget> {
 
   Widget _buildCurrentWeather() {
     final weather = _weather!;
-    
-    return Column(
+
+    return Row(
       children: [
-        // Temperatura e icona principale
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              weather.weatherIcon,
-              style: const TextStyle(fontSize: 60),
-            ),
-            const SizedBox(width: 16),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  '${weather.temperature.round()}°C',
-                  style: const TextStyle(
-                    fontSize: 48,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                Text(
-                  weather.weatherDescription,
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Colors.grey[700],
-                  ),
-                ),
-              ],
-            ),
-          ],
+        // Icona e temperatura
+        Text(
+          weather.weatherIcon,
+          style: const TextStyle(fontSize: 40),
         ),
-        const SizedBox(height: 20),
-        
-        // Dati aggiuntivi
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            _buildWeatherDetail(
-              icon: Icons.air,
-              label: 'Vento',
-              value: '${weather.windSpeed.round()} km/h',
-            ),
-            _buildWeatherDetail(
-              icon: Icons.water_drop,
-              label: 'Umidità',
-              value: '${weather.humidity}%',
-            ),
-            if (weather.precipitation > 0)
-              _buildWeatherDetail(
-                icon: Icons.grain,
-                label: 'Pioggia',
-                value: '${weather.precipitation.toStringAsFixed(1)} mm',
+        const SizedBox(width: 12),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    '${weather.temperature.round()}°',
+                    style: const TextStyle(
+                      fontSize: 32,
+                      fontWeight: FontWeight.bold,
+                      height: 1.0,
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const SizedBox(height: 2),
+                        Text(
+                          weather.weatherDescription,
+                          style: TextStyle(
+                            fontSize: 13,
+                            color: Colors.grey[700],
+                            height: 1.2,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               ),
-          ],
+              const SizedBox(height: 8),
+              // Dati compatti in riga
+              Wrap(
+                spacing: 12,
+                children: [
+                  _buildCompactDetail(
+                    icon: Icons.air,
+                    value: '${weather.windSpeed.round()} km/h',
+                  ),
+                  _buildCompactDetail(
+                    icon: Icons.water_drop,
+                    value: '${weather.humidity}%',
+                  ),
+                  if (weather.precipitation > 0)
+                    _buildCompactDetail(
+                      icon: Icons.grain,
+                      value: '${weather.precipitation.toStringAsFixed(1)} mm',
+                    ),
+                ],
+              ),
+            ],
+          ),
         ),
       ],
     );
   }
 
-  Widget _buildWeatherDetail({
+  Widget _buildCompactDetail({
     required IconData icon,
-    required String label,
     required String value,
   }) {
-    return Column(
+    return Row(
+      mainAxisSize: MainAxisSize.min,
       children: [
-        Icon(icon, size: 24, color: Colors.grey[600]),
-        const SizedBox(height: 4),
-        Text(
-          label,
-          style: TextStyle(
-            fontSize: 12,
-            color: Colors.grey[600],
-          ),
-        ),
-        const SizedBox(height: 2),
+        Icon(icon, size: 14, color: Colors.grey[600]),
+        const SizedBox(width: 3),
         Text(
           value,
-          style: const TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.w600,
+          style: TextStyle(
+            fontSize: 12,
+            color: Colors.grey[700],
           ),
         ),
       ],
@@ -239,66 +207,71 @@ class _WeatherWidgetState extends State<WeatherWidget> {
 
   Widget _buildForecast() {
     final forecasts = _weather!.dailyForecasts!;
-    
+    // Mostra solo i prossimi 5 giorni per un design più compatto
+    final displayForecasts = forecasts.take(5).toList();
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          'Previsioni a 7 giorni',
+        Text(
+          'Prossimi giorni',
           style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
+            fontSize: 13,
+            fontWeight: FontWeight.w600,
+            color: Colors.grey[700],
           ),
         ),
-        const SizedBox(height: 12),
+        const SizedBox(height: 8),
         SizedBox(
-          height: 120,
+          height: 85,
           child: ListView.builder(
             scrollDirection: Axis.horizontal,
-            itemCount: forecasts.length,
+            itemCount: displayForecasts.length,
             itemBuilder: (context, index) {
-              final forecast = forecasts[index];
+              final forecast = displayForecasts[index];
               final isToday = index == 0;
-              
+
               return Container(
-                width: 80,
-                margin: const EdgeInsets.only(right: 12),
-                padding: const EdgeInsets.all(12),
+                width: 60,
+                margin: const EdgeInsets.only(right: 8),
+                padding:
+                    const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
                 decoration: BoxDecoration(
-                  color: isToday 
+                  color: isToday
                       ? Theme.of(context).colorScheme.primaryContainer
                       : Colors.grey[100],
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(8),
                 ),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      isToday 
+                      isToday
                           ? 'Oggi'
                           : DateFormat('E', 'it').format(forecast.date),
                       style: TextStyle(
-                        fontSize: 12,
-                        fontWeight: isToday ? FontWeight.bold : FontWeight.normal,
+                        fontSize: 11,
+                        fontWeight:
+                            isToday ? FontWeight.bold : FontWeight.normal,
                       ),
                     ),
                     Text(
                       forecast.weatherIcon,
-                      style: const TextStyle(fontSize: 28),
+                      style: const TextStyle(fontSize: 22),
                     ),
                     Column(
                       children: [
                         Text(
                           '${forecast.temperatureMax.round()}°',
                           style: const TextStyle(
-                            fontSize: 14,
+                            fontSize: 13,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
                         Text(
                           '${forecast.temperatureMin.round()}°',
                           style: TextStyle(
-                            fontSize: 12,
+                            fontSize: 11,
                             color: Colors.grey[600],
                           ),
                         ),
@@ -310,16 +283,16 @@ class _WeatherWidgetState extends State<WeatherWidget> {
             },
           ),
         ),
-        const SizedBox(height: 8),
+        const SizedBox(height: 6),
         Row(
           children: [
-            Icon(Icons.info_outline, size: 14, color: Colors.grey[600]),
+            Icon(Icons.info_outline, size: 12, color: Colors.grey[500]),
             const SizedBox(width: 4),
             Expanded(
               child: Text(
-                'Dati forniti da Open-Meteo',
+                'Dati Open-Meteo',
                 style: TextStyle(
-                  fontSize: 11,
+                  fontSize: 10,
                   color: Colors.grey[600],
                 ),
               ),
