@@ -223,7 +223,7 @@ class _WeatherWidgetState extends State<WeatherWidget> {
         ),
         const SizedBox(height: 8),
         SizedBox(
-          height: 85,
+          height: 90,
           child: ListView.builder(
             scrollDirection: Axis.horizontal,
             itemCount: displayForecasts.length,
@@ -235,7 +235,7 @@ class _WeatherWidgetState extends State<WeatherWidget> {
                 width: 60,
                 margin: const EdgeInsets.only(right: 8),
                 padding:
-                    const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
+                    const EdgeInsets.symmetric(vertical: 6, horizontal: 4),
                 decoration: BoxDecoration(
                   color: isToday
                       ? Theme.of(context).colorScheme.primaryContainer
@@ -243,7 +243,8 @@ class _WeatherWidgetState extends State<WeatherWidget> {
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     Text(
                       isToday
@@ -255,23 +256,26 @@ class _WeatherWidgetState extends State<WeatherWidget> {
                             isToday ? FontWeight.bold : FontWeight.normal,
                       ),
                     ),
+                    const SizedBox(height: 2),
                     Text(
                       forecast.weatherIcon,
-                      style: const TextStyle(fontSize: 22),
+                      style: const TextStyle(fontSize: 20),
                     ),
+                    const SizedBox(height: 2),
                     Column(
+                      mainAxisSize: MainAxisSize.min,
                       children: [
                         Text(
                           '${forecast.temperatureMax.round()}°',
                           style: const TextStyle(
-                            fontSize: 13,
+                            fontSize: 12,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
                         Text(
                           '${forecast.temperatureMin.round()}°',
                           style: TextStyle(
-                            fontSize: 11,
+                            fontSize: 10,
                             color: Colors.grey[600],
                           ),
                         ),
