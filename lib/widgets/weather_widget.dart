@@ -223,7 +223,7 @@ class _WeatherWidgetState extends State<WeatherWidget> {
         ),
         const SizedBox(height: 8),
         SizedBox(
-          height: 90,
+          height: 93,
           child: ListView.builder(
             scrollDirection: Axis.horizontal,
             itemCount: displayForecasts.length,
