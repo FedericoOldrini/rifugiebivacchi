@@ -1,0 +1,28 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Regole per i rifugi - lettura pubblica, scrittura solo admin
+    match /rifugi/{rifugioId} {
+      allow read: if true; // Chiunque può leggere i rifugi
+      allow write: if false; // Solo gli admin possono scrivere (tramite script)
+    }
+    
+    // Regole per gli utenti
+    match /users/{userId} {
+      // Gli utenti possono leggere e scrivere solo i propri dati
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+      
+      // Regole per i check-in
+      match /checkins/{checkinId} {
+        allow read, write: if request.auth != null && request.auth.uid == userId;
+      }
+      
+      // Regole per i preferiti
+      match /preferiti/{rifugioId} {
+        allow read, write: if request.auth != null && request.auth.uid == userId;
+      }
+    }
+  }
+}

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>407650103857-160lar1n257fhet49ujah147bqfddtl7.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.407650103857-160lar1n257fhet49ujah147bqfddtl7</string>
+	<key>ANDROID_CLIENT_ID</key>
+	<string>407650103857-dvuo09ungo5plmeltq5q7p1pb61rcp8m.apps.googleusercontent.com</string>
+	<key>API_KEY</key>
+	<string>AIzaSyC2WDej30ee3QiD2Zv04ehzZbrKXJ_Axgo</string>
+	<key>GCM_SENDER_ID</key>
+	<string>407650103857</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>it.federicooldrini.rifugiebivacchi</string>
+	<key>PROJECT_ID</key>
+	<string>rifugi-e-bivacchi-4ed0b</string>
+	<key>STORAGE_BUCKET</key>
+	<string>rifugi-e-bivacchi-4ed0b.firebasestorage.app</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:407650103857:ios:dc1e27e5f6996bc568db10</string>
+</dict>
+</plist>
