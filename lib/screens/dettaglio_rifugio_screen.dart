@@ -997,6 +997,23 @@ class _DettaglioRifugioScreenState extends State<DettaglioRifugioScreen> {
                           label: const Text('Apri in Google Maps'),
                         ),
                       ),
+                      const SizedBox(height: 12),
+                      
+                      // Pulsante donazioni
+                      SizedBox(
+                        width: double.infinity,
+                        child: OutlinedButton.icon(
+                          onPressed: () {
+                            Navigator.pushNamed(context, '/donations');
+                          },
+                          icon: const Icon(Icons.favorite),
+                          label: const Text('Supporta lo sviluppo'),
+                          style: OutlinedButton.styleFrom(
+                            foregroundColor: Colors.pink[700],
+                            side: BorderSide(color: Colors.pink[700]!),
+                          ),
+                        ),
+                      ),
                     ],
                   ),
                 ),

@@ -22,6 +22,131 @@ class _ListaRifugiScreenState extends State<ListaRifugiScreen> {
     super.dispose();
   }
 
+  // Calcola il numero totale di items considerando le card donazioni
+  int _calculateTotalItems(int rifugiCount) {
+    if (rifugiCount <= 3) return rifugiCount;
+    
+    // Dopo i primi 3, inserisci una card ogni 6 rifugi
+    final afterFirst = rifugiCount - 3;
+    final donationCardsAfterFirst = (afterFirst / 6).floor();
+    
+    return rifugiCount + 1 + donationCardsAfterFirst; // +1 per la prima card dopo i 3 rifugi
+  }
+
+  // Determina se in questa posizione va mostrata una card donazioni
+  bool _shouldShowDonationCard(int listIndex) {
+    // Prima card donazioni dopo il 3° elemento (indice 3)
+    if (listIndex == 3) return true;
+    
+    // Successive card donazioni ogni 6 rifugi
+    // Posizioni: 3, 10, 17, 24, ecc.
+    if (listIndex > 3 && (listIndex - 3) % 7 == 0) {
+      return true;
+    }
+    
+    return false;
+  }
+
+  // Ottieni l'indice del rifugio dalla posizione nella lista
+  int _getRifugioIndexFromListIndex(int listIndex) {
+    if (listIndex < 3) return listIndex;
+    
+    // Calcola quante card donazioni ci sono prima di questo indice
+    int donationCardsBefore = 0;
+    if (listIndex >= 3) {
+      donationCardsBefore = 1; // Prima card dopo i 3 rifugi
+      if (listIndex > 3) {
+        donationCardsBefore += ((listIndex - 4) / 7).floor();
+      }
+    }
+    
+    return listIndex - donationCardsBefore;
+  }
+
+  Widget _buildDonationCard(BuildContext context) {
+    return Card(
+      margin: const EdgeInsets.only(bottom: 16),
+      elevation: 3,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              Colors.pink[50]!,
+              Colors.purple[50]!,
+            ],
+          ),
+          borderRadius: BorderRadius.circular(16),
+        ),
+        child: InkWell(
+          onTap: () {
+            Navigator.pushNamed(context, '/donations');
+          },
+          borderRadius: BorderRadius.circular(16),
+          child: Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(12),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.pink.withValues(alpha: 0.2),
+                        blurRadius: 8,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                  child: Icon(
+                    Icons.favorite,
+                    color: Colors.pink[700],
+                    size: 32,
+                  ),
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Ti piace questa app?',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.grey[800],
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        'Supporta lo sviluppo con una donazione',
+                        style: TextStyle(
+                          fontSize: 13,
+                          color: Colors.grey[600],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Icon(
+                  Icons.arrow_forward_ios,
+                  size: 16,
+                  color: Colors.pink[700],
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Consumer<RifugiProvider>(
@@ -182,11 +307,25 @@ class _ListaRifugiScreenState extends State<ListaRifugiScreen> {
                 );
               }
 
+              // Calcola il numero totale di items (rifugi + card donazioni)
+              final totalItems = _calculateTotalItems(rifugi.length);
+              
               return ListView.builder(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
-                itemCount: rifugi.length,
+                itemCount: totalItems,
                 itemBuilder: (context, index) {
-                  final rifugio = rifugi[index];
+                  // Determina se questa posizione dovrebbe essere una card donazioni
+                  if (_shouldShowDonationCard(index)) {
+                    return _buildDonationCard(context);
+                  }
+                  
+                  // Altrimenti mostra una card rifugio
+                  final rifugioIndex = _getRifugioIndexFromListIndex(index);
+                  if (rifugioIndex >= rifugi.length) {
+                    return const SizedBox.shrink();
+                  }
+                  
+                  final rifugio = rifugi[rifugioIndex];
                   return RifugioCard(
                     rifugio: rifugio,
                     onTap: () {
