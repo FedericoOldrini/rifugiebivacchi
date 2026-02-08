@@ -66,9 +66,9 @@ class _ListaRifugiScreenState extends State<ListaRifugiScreen> {
   Widget _buildDonationCard(BuildContext context) {
     return Card(
       margin: const EdgeInsets.only(bottom: 16),
-      elevation: 3,
+      elevation: 2,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(12),
       ),
       child: Container(
         decoration: BoxDecoration(
@@ -80,54 +80,55 @@ class _ListaRifugiScreenState extends State<ListaRifugiScreen> {
               Colors.purple[50]!,
             ],
           ),
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(12),
         ),
         child: InkWell(
           onTap: () {
             Navigator.pushNamed(context, '/donations');
           },
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(12),
           child: Padding(
-            padding: const EdgeInsets.all(20.0),
+            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
             child: Row(
               children: [
                 Container(
-                  padding: const EdgeInsets.all(12),
+                  padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
                     color: Colors.white,
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(8),
                     boxShadow: [
                       BoxShadow(
                         color: Colors.pink.withValues(alpha: 0.2),
-                        blurRadius: 8,
-                        offset: const Offset(0, 2),
+                        blurRadius: 4,
+                        offset: const Offset(0, 1),
                       ),
                     ],
                   ),
                   child: Icon(
                     Icons.favorite,
                     color: Colors.pink[700],
-                    size: 32,
+                    size: 20,
                   ),
                 ),
-                const SizedBox(width: 16),
+                const SizedBox(width: 12),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
                     children: [
                       Text(
                         'Ti piace questa app?',
                         style: TextStyle(
-                          fontSize: 16,
+                          fontSize: 14,
                           fontWeight: FontWeight.bold,
                           color: Colors.grey[800],
                         ),
                       ),
-                      const SizedBox(height: 4),
+                      const SizedBox(height: 2),
                       Text(
-                        'Supporta lo sviluppo con una donazione',
+                        'Supporta lo sviluppo',
                         style: TextStyle(
-                          fontSize: 13,
+                          fontSize: 11,
                           color: Colors.grey[600],
                         ),
                       ),
@@ -136,7 +137,7 @@ class _ListaRifugiScreenState extends State<ListaRifugiScreen> {
                 ),
                 Icon(
                   Icons.arrow_forward_ios,
-                  size: 16,
+                  size: 14,
                   color: Colors.pink[700],
                 ),
               ],
