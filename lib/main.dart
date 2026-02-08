@@ -13,6 +13,7 @@ import 'providers/preferiti_provider.dart';
 import 'providers/filtro_provider.dart';
 import 'screens/home_screen.dart';
 import 'screens/onboarding_screen.dart';
+import 'screens/donations_screen.dart';
 import 'services/onboarding_service.dart';
 
 Future<void> main() async {
@@ -69,6 +70,9 @@ class MyApp extends StatelessWidget {
         darkTheme: AppTheme.darkTheme,
         themeMode: ThemeMode.system, // Segue le impostazioni di sistema
         home: const AppInitializer(),
+        routes: {
+          '/donations': (context) => const DonationsScreen(),
+        },
       ),
     );
   }
