@@ -1,0 +1,8 @@
+{
+    "chat.tools.terminal.autoApprove": {
+        "/^git commit --amend --no-edit$/": {
+            "approve": true,
+            "matchCommandLine": true
+        }
+    }
+}
