@@ -14,6 +14,7 @@ import '../providers/rifugi_provider.dart';
 import '../theme/app_theme.dart';
 import '../widgets/share_checkin_card.dart';
 import 'dettaglio_rifugio_screen.dart';
+import 'package:rifugi_bivacchi/l10n/app_localizations.dart';
 
 class PassaportoScreen extends StatelessWidget {
   const PassaportoScreen({super.key});
@@ -25,9 +26,9 @@ class PassaportoScreen extends StatelessWidget {
 
     if (authProvider.user == null) {
       return Scaffold(
-        appBar: AppBar(title: const Text('Passaporto dei Rifugi')),
-        body: const Center(
-          child: Text('Devi effettuare il login per accedere al passaporto'),
+        appBar: AppBar(title: Text(AppLocalizations.of(context)!.passaportoRifugi)),
+        body: Center(
+          child: Text(AppLocalizations.of(context)!.loginRequired),
         ),
       );
     }
@@ -38,7 +39,7 @@ class PassaportoScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: const Color(0xFFF5F1E8), // Colore carta passaporto
       appBar: AppBar(
-        title: const Text('Il Mio Passaporto'),
+        title: Text(AppLocalizations.of(context)!.passaportoTitle),
         backgroundColor: AppTheme.deepTeal,
         foregroundColor: Colors.white,
         actions: [
@@ -55,7 +56,7 @@ class PassaportoScreen extends StatelessWidget {
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Text(
-                  '${groupedCheckIns.length} ${groupedCheckIns.length == 1 ? 'rifugio' : 'rifugi'}',
+                  AppLocalizations.of(context)!.nRifugi(groupedCheckIns.length),
                   style: const TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 14,
@@ -79,18 +80,18 @@ class PassaportoScreen extends StatelessWidget {
                       color: AppTheme.deepTeal.withAlpha((0.3 * 255).toInt()),
                     ),
                     const SizedBox(height: 24),
-                    const Text(
-                      'Nessun timbro ancora',
-                      style: TextStyle(
+                    Text(
+                      AppLocalizations.of(context)!.passaportoEmpty,
+                      style: const TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                     const SizedBox(height: 16),
-                    const Text(
-                      'Visita i rifugi e fai check-in per collezionare i tuoi timbri!',
+                    Text(
+                      AppLocalizations.of(context)!.passaportoEmptyDesc,
                       textAlign: TextAlign.center,
-                      style: TextStyle(fontSize: 16),
+                      style: const TextStyle(fontSize: 16),
                     ),
                   ],
                 ),
@@ -104,7 +105,7 @@ class PassaportoScreen extends StatelessWidget {
                   child: OutlinedButton.icon(
                     onPressed: () => _sharePassaporto(context, checkIns),
                     icon: const Icon(Icons.share),
-                    label: const Text('Condividi il mio passaporto'),
+                    label: Text(AppLocalizations.of(context)!.sharePassaporto),
                     style: OutlinedButton.styleFrom(
                       foregroundColor: AppTheme.deepTeal,
                       side: BorderSide(color: AppTheme.deepTeal),
@@ -153,7 +154,7 @@ class PassaportoScreen extends StatelessWidget {
     if (rifugio == null) {
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(const SnackBar(content: Text('Rifugio non trovato')));
+      ).showSnackBar(SnackBar(content: Text(AppLocalizations.of(context)!.rifugioNotFound)));
       return;
     }
 

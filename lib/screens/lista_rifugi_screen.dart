@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:rifugi_bivacchi/l10n/app_localizations.dart';
 import '../providers/rifugi_provider.dart';
 import '../providers/preferiti_provider.dart';
 import '../providers/filtro_provider.dart';
@@ -117,7 +118,7 @@ class _ListaRifugiScreenState extends State<ListaRifugiScreen> {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Text(
-                        'Ti piace questa app?',
+                        AppLocalizations.of(context)!.likeThisApp,
                         style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.bold,
@@ -126,7 +127,7 @@ class _ListaRifugiScreenState extends State<ListaRifugiScreen> {
                       ),
                       const SizedBox(height: 2),
                       Text(
-                        'Supporta lo sviluppo',
+                        AppLocalizations.of(context)!.supportDevelopment,
                         style: TextStyle(
                           fontSize: 11,
                           color: Colors.grey[600],
@@ -173,7 +174,7 @@ class _ListaRifugiScreenState extends State<ListaRifugiScreen> {
                     ),
                     const SizedBox(width: 12),
                     Text(
-                      'Sincronizzazione con Firebase...',
+                      AppLocalizations.of(context)!.syncingFirebase,
                       style: TextStyle(
                         fontSize: 12,
                         color: Colors.blue.shade700,
@@ -190,7 +191,7 @@ class _ListaRifugiScreenState extends State<ListaRifugiScreen> {
                   TextField(
                     controller: _searchController,
                     decoration: InputDecoration(
-                      hintText: 'Cerca rifugi o bivacchi...',
+                      hintText: AppLocalizations.of(context)!.searchHint,
                       prefixIcon: const Icon(Icons.search),
                       suffixIcon: _searchController.text.isNotEmpty
                           ? IconButton(
@@ -216,13 +217,13 @@ class _ListaRifugiScreenState extends State<ListaRifugiScreen> {
             builder: (context, provider, preferitiProvider, filtroProvider, child) {
               // Mostra loading
               if (provider.isLoading) {
-                return const Center(
+                return Center(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      CircularProgressIndicator(),
-                      SizedBox(height: 16),
-                      Text('Caricamento rifugi...'),
+                      const CircularProgressIndicator(),
+                      const SizedBox(height: 16),
+                      Text(AppLocalizations.of(context)!.loadingRifugi),
                     ],
                   ),
                 );
@@ -241,7 +242,7 @@ class _ListaRifugiScreenState extends State<ListaRifugiScreen> {
                       ),
                       const SizedBox(height: 16),
                       Text(
-                        'Errore',
+                        AppLocalizations.of(context)!.error,
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
@@ -286,8 +287,8 @@ class _ListaRifugiScreenState extends State<ListaRifugiScreen> {
                       const SizedBox(height: 16),
                       Text(
                         filtroProvider.soloPreferiti 
-                            ? 'Nessun rifugio preferito'
-                            : 'Nessun rifugio trovato',
+                            ? AppLocalizations.of(context)!.noFavoriteRifugi
+                            : AppLocalizations.of(context)!.noRifugiFound,
                         style: TextStyle(fontSize: 18, color: Colors.grey[600]),
                       ),
                       if (provider.searchQuery.isNotEmpty ||
@@ -295,8 +296,8 @@ class _ListaRifugiScreenState extends State<ListaRifugiScreen> {
                         const SizedBox(height: 8),
                         Text(
                           filtroProvider.soloPreferiti
-                              ? 'Aggiungi dei rifugi ai preferiti'
-                              : 'Prova a modificare la ricerca',
+                              ? AppLocalizations.of(context)!.addFavoritesHint
+                              : AppLocalizations.of(context)!.modifySearchHint,
                           style: TextStyle(
                             fontSize: 14,
                             color: Colors.grey[500],

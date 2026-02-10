@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
 import '../services/in_app_purchase_service.dart';
+import 'package:rifugi_bivacchi/l10n/app_localizations.dart';
 
 class DonationsScreen extends StatefulWidget {
   const DonationsScreen({super.key});
@@ -30,18 +31,18 @@ class _DonationsScreenState extends State<DonationsScreen> {
       onPurchaseCompleted: (PurchaseDetails details) {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
+            SnackBar(
               content: Row(
                 children: [
-                  Icon(Icons.check_circle, color: Colors.white),
-                  SizedBox(width: 8),
+                  const Icon(Icons.check_circle, color: Colors.white),
+                  const SizedBox(width: 8),
                   Expanded(
-                    child: Text('Grazie per il tuo supporto! ❤️'),
+                    child: Text(AppLocalizations.of(context)!.donationThanks),
                   ),
                 ],
               ),
               backgroundColor: Colors.green,
-              duration: Duration(seconds: 3),
+              duration: const Duration(seconds: 3),
             ),
           );
         }
@@ -55,7 +56,7 @@ class _DonationsScreenState extends State<DonationsScreen> {
                   const Icon(Icons.error, color: Colors.white),
                   const SizedBox(width: 8),
                   Expanded(
-                    child: Text('Errore: $error'),
+                    child: Text(AppLocalizations.of(context)!.purchaseError(error)),
                   ),
                 ],
               ),
@@ -70,7 +71,7 @@ class _DonationsScreenState extends State<DonationsScreen> {
     setState(() {
       _isLoading = false;
       if (!_purchaseService.isAvailable) {
-        _errorMessage = 'Gli acquisti in-app non sono disponibili';
+        _errorMessage = AppLocalizations.of(context)!.inAppPurchasesNotAvailable;
       } else if (_purchaseService.queryProductError != null) {
         _errorMessage = _purchaseService.queryProductError;
       }
@@ -81,8 +82,8 @@ class _DonationsScreenState extends State<DonationsScreen> {
     final success = await _purchaseService.buyProduct(product);
     if (!success && mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Impossibile avviare l\'acquisto'),
+        SnackBar(
+          content: Text(AppLocalizations.of(context)!.cannotStartPurchase),
           backgroundColor: Colors.red,
         ),
       );
@@ -102,16 +103,16 @@ class _DonationsScreenState extends State<DonationsScreen> {
     }
   }
 
-  String _getTitleForProductId(String productId) {
+  String _getTitleForProductId(String productId, BuildContext context) {
     switch (productId) {
       case InAppPurchaseService.donationSmallId:
-        return 'Offrimi un caffè';
+        return AppLocalizations.of(context)!.buyCoffee;
       case InAppPurchaseService.donationMediumId:
-        return 'Offrimi un pranzo';
+        return AppLocalizations.of(context)!.buyLunch;
       case InAppPurchaseService.donationLargeId:
-        return 'Donazione generosa';
+        return AppLocalizations.of(context)!.generousDonation;
       default:
-        return 'Donazione';
+        return AppLocalizations.of(context)!.donation;
     }
   }
 
@@ -132,7 +133,7 @@ class _DonationsScreenState extends State<DonationsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Donazioni'),
+        title: Text(AppLocalizations.of(context)!.donations),
       ),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
@@ -154,9 +155,9 @@ class _DonationsScreenState extends State<DonationsScreen> {
                             color: Theme.of(context).colorScheme.primary,
                           ),
                           const SizedBox(height: 16),
-                          const Text(
-                            'Supporta lo Sviluppo',
-                            style: TextStyle(
+                          Text(
+                            AppLocalizations.of(context)!.supportDevelopmentTitle,
+                            style: const TextStyle(
                               fontSize: 24,
                               fontWeight: FontWeight.bold,
                             ),
@@ -164,8 +165,7 @@ class _DonationsScreenState extends State<DonationsScreen> {
                           ),
                           const SizedBox(height: 8),
                           Text(
-                            'Se ti piace questa app e vuoi supportare lo sviluppo, '
-                            'considera di fare una donazione!',
+                            AppLocalizations.of(context)!.supportDevelopmentDescription,
                             style: TextStyle(
                               fontSize: 14,
                               color: Colors.grey[700],
@@ -181,17 +181,43 @@ class _DonationsScreenState extends State<DonationsScreen> {
                   // Errore se presente
                   if (_errorMessage != null) ...[
                     Card(
-                      color: Colors.red[50],
+                      color: Colors.orange[50],
                       child: Padding(
                         padding: const EdgeInsets.all(16.0),
-                        child: Row(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Icon(Icons.error_outline, color: Colors.red[700]),
-                            const SizedBox(width: 12),
-                            Expanded(
-                              child: Text(
-                                _errorMessage!,
-                                style: TextStyle(color: Colors.red[700]),
+                            Row(
+                              children: [
+                                Icon(Icons.info_outline, color: Colors.orange[700]),
+                                const SizedBox(width: 12),
+                                Expanded(
+                                  child: Text(
+                                    AppLocalizations.of(context)!.donationsInApp,
+                                    style: TextStyle(
+                                      color: Colors.orange[700],
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 16,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              _errorMessage!,
+                              style: TextStyle(
+                                color: Colors.orange[900],
+                                fontSize: 13,
+                              ),
+                            ),
+                            const SizedBox(height: 12),
+                            Text(
+                              AppLocalizations.of(context)!.donationsNotAvailableNote,
+                              style: TextStyle(
+                                color: Colors.orange[700],
+                                fontSize: 12,
+                                fontStyle: FontStyle.italic,
                               ),
                             ),
                           ],
@@ -202,9 +228,9 @@ class _DonationsScreenState extends State<DonationsScreen> {
                   ],
 
                   // Perché donare
-                  const Text(
-                    'Perché donare?',
-                    style: TextStyle(
+                  Text(
+                    AppLocalizations.of(context)!.whyDonate,
+                    style: const TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
                     ),
@@ -212,30 +238,30 @@ class _DonationsScreenState extends State<DonationsScreen> {
                   const SizedBox(height: 12),
                   _FeatureItem(
                     icon: Icons.update,
-                    title: 'Aggiornamenti regolari',
-                    description: 'Nuove funzionalità e miglioramenti continui',
+                    title: AppLocalizations.of(context)!.regularUpdates,
+                    description: AppLocalizations.of(context)!.regularUpdatesDesc,
                   ),
                   _FeatureItem(
                     icon: Icons.add_location,
-                    title: 'Più rifugi',
-                    description: 'Espansione del database con nuovi rifugi',
+                    title: AppLocalizations.of(context)!.moreRifugi,
+                    description: AppLocalizations.of(context)!.moreRifugiDesc,
                   ),
                   _FeatureItem(
                     icon: Icons.bug_report,
-                    title: 'Supporto e bug fix',
-                    description: 'Risoluzione rapida di problemi e bug',
+                    title: AppLocalizations.of(context)!.supportAndBugfix,
+                    description: AppLocalizations.of(context)!.supportAndBugfixDesc,
                   ),
                   _FeatureItem(
                     icon: Icons.insights,
-                    title: 'Nuove funzionalità',
-                    description: 'Sviluppo di features richieste dalla community',
+                    title: AppLocalizations.of(context)!.newFeatures,
+                    description: AppLocalizations.of(context)!.newFeaturesDesc,
                   ),
                   const SizedBox(height: 32),
 
                   // Opzioni di donazione
-                  const Text(
-                    'Opzioni di donazione',
-                    style: TextStyle(
+                  Text(
+                    AppLocalizations.of(context)!.donationOptions,
+                    style: const TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
                     ),
@@ -249,7 +275,7 @@ class _DonationsScreenState extends State<DonationsScreen> {
                         padding: const EdgeInsets.only(bottom: 8.0),
                         child: _DonationCard(
                           icon: _getIconForProductId(product.id),
-                          title: _getTitleForProductId(product.id),
+                          title: _getTitleForProductId(product.id, context),
                           subtitle: product.price,
                           color: _getColorForProductId(product.id),
                           isPending: _purchaseService.purchasePending,
@@ -262,8 +288,8 @@ class _DonationsScreenState extends State<DonationsScreen> {
                     ...[
                       _DonationCard(
                         icon: Icons.coffee,
-                        title: 'Offrimi un caffè',
-                        subtitle: 'Non disponibile',
+                        title: AppLocalizations.of(context)!.buyCoffee,
+                        subtitle: AppLocalizations.of(context)!.notAvailable,
                         color: Colors.brown,
                         isPending: false,
                         onTap: () {},
@@ -271,8 +297,8 @@ class _DonationsScreenState extends State<DonationsScreen> {
                       const SizedBox(height: 8),
                       _DonationCard(
                         icon: Icons.lunch_dining,
-                        title: 'Offrimi un pranzo',
-                        subtitle: 'Non disponibile',
+                        title: AppLocalizations.of(context)!.buyLunch,
+                        subtitle: AppLocalizations.of(context)!.notAvailable,
                         color: Colors.orange,
                         isPending: false,
                         onTap: () {},
@@ -280,8 +306,8 @@ class _DonationsScreenState extends State<DonationsScreen> {
                       const SizedBox(height: 8),
                       _DonationCard(
                         icon: Icons.card_giftcard,
-                        title: 'Donazione generosa',
-                        subtitle: 'Non disponibile',
+                        title: AppLocalizations.of(context)!.generousDonation,
+                        subtitle: AppLocalizations.of(context)!.notAvailable,
                         color: Colors.purple,
                         isPending: false,
                         onTap: () {},
@@ -303,7 +329,7 @@ class _DonationsScreenState extends State<DonationsScreen> {
                           ),
                           const SizedBox(height: 8),
                           Text(
-                            'Le donazioni sono pagamenti una tantum e non comportano abbonamenti.',
+                            AppLocalizations.of(context)!.donationsInfo,
                             style: TextStyle(
                               fontSize: 12,
                               color: Colors.grey[700],
@@ -316,7 +342,7 @@ class _DonationsScreenState extends State<DonationsScreen> {
                   ),
                   const SizedBox(height: 16),
                   Text(
-                    'Grazie per il tuo supporto! 🏔️',
+                    AppLocalizations.of(context)!.thanksSupport,
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,

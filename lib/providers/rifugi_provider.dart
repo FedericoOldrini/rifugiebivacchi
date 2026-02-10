@@ -54,7 +54,7 @@ class RifugiProvider extends ChangeNotifier {
       notifyListeners();
     } catch (e) {
       _isSyncing = false;
-      print('⚠️  Sincronizzazione fallita (app continua offline): $e');
+      // Sincronizzazione fallita, l'app continua offline
       notifyListeners();
     }
   }

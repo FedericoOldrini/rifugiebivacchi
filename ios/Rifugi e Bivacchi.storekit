@@ -1,0 +1,87 @@
+{
+  "appPolicies" : {
+    "eula" : "",
+    "policies" : [
+      {
+        "locale" : "en_US",
+        "policyText" : "",
+        "policyURL" : ""
+      }
+    ]
+  },
+  "identifier" : "81336B19",
+  "nonRenewingSubscriptions" : [
+
+  ],
+  "products" : [
+    {
+      "displayPrice" : "2.99",
+      "familyShareable" : false,
+      "internalID" : "6758939668",
+      "localizations" : [
+        {
+          "description" : "Supporta lo sviluppo dell'app offrendomi un caffè",
+          "displayName" : "Offrimi un caffè",
+          "locale" : "it"
+        }
+      ],
+      "productID" : "donation_coffee",
+      "referenceName" : "Donation Coffee",
+      "type" : "Consumable"
+    },
+    {
+      "displayPrice" : "22.99",
+      "familyShareable" : false,
+      "internalID" : "6758939828",
+      "localizations" : [
+        {
+          "description" : "Una donazione generosa per supportare lo sviluppo",
+          "displayName" : "Donazione generosa",
+          "locale" : "it"
+        }
+      ],
+      "productID" : "donation_generous",
+      "referenceName" : "Donation Generous",
+      "type" : "Consumable"
+    },
+    {
+      "displayPrice" : "8.99",
+      "familyShareable" : false,
+      "internalID" : "6758939635",
+      "localizations" : [
+        {
+          "description" : "Supporta lo sviluppo dell'app offrendomi un pranzo",
+          "displayName" : "Offrimi un pranzo",
+          "locale" : "it"
+        }
+      ],
+      "productID" : "donation_lunch",
+      "referenceName" : "Donation Lunch",
+      "type" : "Consumable"
+    }
+  ],
+  "settings" : {
+    "_applicationInternalID" : "6758655300",
+    "_askToBuyEnabled" : false,
+    "_billingGracePeriodEnabled" : false,
+    "_billingIssuesEnabled" : false,
+    "_developerTeamID" : "7GU8UCZX25",
+    "_disableDialogs" : false,
+    "_failTransactionsEnabled" : false,
+    "_lastSynchronizedDate" : 792325314.777246,
+    "_locale" : "it",
+    "_renewalBillingIssuesEnabled" : false,
+    "_storefront" : "ITA",
+    "_storeKitErrors" : [
+
+    ],
+    "_timeRate" : 0
+  },
+  "subscriptionGroups" : [
+
+  ],
+  "version" : {
+    "major" : 4,
+    "minor" : 0
+  }
+}

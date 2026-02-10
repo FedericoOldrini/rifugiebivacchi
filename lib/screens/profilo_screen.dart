@@ -6,6 +6,7 @@ import '../providers/preferiti_provider.dart';
 import '../providers/rifugi_provider.dart';
 import 'passaporto_screen.dart';
 import 'dettaglio_rifugio_screen.dart';
+import 'package:rifugi_bivacchi/l10n/app_localizations.dart';
 
 class ProfiloScreen extends StatelessWidget {
   const ProfiloScreen({super.key});
@@ -13,7 +14,7 @@ class ProfiloScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Profilo')),
+      appBar: AppBar(title: Text(AppLocalizations.of(context)!.profile)),
       body: SingleChildScrollView(
         child: Consumer<AuthProvider>(
           builder: (context, authProvider, child) {
@@ -100,9 +101,9 @@ class ProfiloScreen extends StatelessWidget {
                     Icons.card_travel,
                     color: Theme.of(context).colorScheme.primary,
                   ),
-                  title: const Text('Passaporto dei Rifugi'),
+                  title: Text(AppLocalizations.of(context)!.passaportoRifugi),
                   subtitle: Text(
-                    '$rifugiVisitati ${rifugiVisitati == 1 ? 'rifugio visitato' : 'rifugi visitati'}',
+                    AppLocalizations.of(context)!.nRifugiVisitati(rifugiVisitati),
                   ),
                   trailing: const Icon(Icons.chevron_right),
                   onTap: () {
@@ -132,9 +133,9 @@ class ProfiloScreen extends StatelessWidget {
                   children: [
                     ListTile(
                       leading: Icon(Icons.star, color: Colors.amber[700]),
-                      title: const Text('Rifugi Preferiti'),
+                      title: Text(AppLocalizations.of(context)!.rifugiPreferiti),
                       subtitle: Text(
-                        '${preferiti.length} ${preferiti.length == 1 ? 'rifugio' : 'rifugi'}',
+                        AppLocalizations.of(context)!.nRifugi(preferiti.length),
                       ),
                       trailing: preferiti.isEmpty
                           ? null
@@ -186,7 +187,7 @@ class ProfiloScreen extends StatelessWidget {
                         Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: Text(
-                            'e altri ${rifugiPreferiti.length - 3}...',
+                            AppLocalizations.of(context)!.andOthers(rifugiPreferiti.length - 3),
                             style: TextStyle(
                               fontSize: 12,
                               color: Colors.grey[600],
@@ -198,7 +199,7 @@ class ProfiloScreen extends StatelessWidget {
                       Padding(
                         padding: const EdgeInsets.all(16.0),
                         child: Text(
-                          'Nessun rifugio preferito.\nAggiungi i tuoi preferiti dalla lista!',
+                          AppLocalizations.of(context)!.noPreferiti,
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             fontSize: 14,
@@ -220,8 +221,8 @@ class ProfiloScreen extends StatelessWidget {
                 Icons.route,
                 color: Theme.of(context).colorScheme.primary,
               ),
-              title: const Text('I Miei Itinerari'),
-              subtitle: const Text('Prossimamente disponibile'),
+              title: Text(AppLocalizations.of(context)!.myItineraries),
+              subtitle: Text(AppLocalizations.of(context)!.comingSoon),
               trailing: const Icon(Icons.lock_outline),
               enabled: false,
             ),
@@ -238,18 +239,18 @@ class ProfiloScreen extends StatelessWidget {
                       final shouldLogout = await showDialog<bool>(
                         context: context,
                         builder: (context) => AlertDialog(
-                          title: const Text('Conferma Logout'),
-                          content: const Text(
-                            'Vuoi disconnetterti dal tuo account?',
+                          title: Text(AppLocalizations.of(context)!.confirmLogout),
+                          content: Text(
+                            AppLocalizations.of(context)!.confirmLogoutMessage,
                           ),
                           actions: [
                             TextButton(
                               onPressed: () => Navigator.pop(context, false),
-                              child: const Text('Annulla'),
+                              child: Text(AppLocalizations.of(context)!.cancel),
                             ),
                             FilledButton(
                               onPressed: () => Navigator.pop(context, true),
-                              child: const Text('Logout'),
+                              child: Text(AppLocalizations.of(context)!.logout),
                             ),
                           ],
                         ),
@@ -266,7 +267,7 @@ class ProfiloScreen extends StatelessWidget {
                       width: 20,
                       child: CircularProgressIndicator(strokeWidth: 2),
                     )
-                  : const Text('Logout'),
+                  : Text(AppLocalizations.of(context)!.logout),
               style: OutlinedButton.styleFrom(
                 padding: const EdgeInsets.symmetric(vertical: 16),
               ),
@@ -282,15 +283,14 @@ class ProfiloScreen extends StatelessWidget {
                     final shouldDelete = await showDialog<bool>(
                       context: context,
                       builder: (context) => AlertDialog(
-                        title: const Text('Elimina Account'),
-                        content: const Text(
-                          'Sei sicuro di voler eliminare il tuo account? '
-                          'Questa azione è irreversibile e perderai tutti i tuoi dati.',
+                        title: Text(AppLocalizations.of(context)!.confirmDeleteAccount),
+                        content: Text(
+                          AppLocalizations.of(context)!.confirmDeleteAccountMessage,
                         ),
                         actions: [
                           TextButton(
                             onPressed: () => Navigator.pop(context, false),
-                            child: const Text('Annulla'),
+                            child: Text(AppLocalizations.of(context)!.cancel),
                           ),
                           FilledButton(
                             onPressed: () => Navigator.pop(context, true),
@@ -299,7 +299,7 @@ class ProfiloScreen extends StatelessWidget {
                                 context,
                               ).colorScheme.error,
                             ),
-                            child: const Text('Elimina'),
+                            child: Text(AppLocalizations.of(context)!.delete),
                           ),
                         ],
                       ),
@@ -309,15 +309,15 @@ class ProfiloScreen extends StatelessWidget {
                       final success = await authProvider.deleteAccount();
                       if (success && context.mounted) {
                         ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text('Account eliminato con successo'),
+                          SnackBar(
+                            content: Text(AppLocalizations.of(context)!.accountDeleted),
                           ),
                         );
                       }
                     }
                   },
             icon: const Icon(Icons.delete_forever),
-            label: const Text('Elimina Account'),
+            label: Text(AppLocalizations.of(context)!.deleteAccount),
             style: TextButton.styleFrom(
               foregroundColor: Theme.of(context).colorScheme.error,
             ),
@@ -344,15 +344,14 @@ class ProfiloScreen extends StatelessWidget {
                     color: Theme.of(context).colorScheme.primary,
                   ),
                   const SizedBox(height: 24),
-                  const Text(
-                    'Accedi al tuo account',
-                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                  Text(
+                    AppLocalizations.of(context)!.loginToAccount,
+                    style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 16),
                   Text(
-                    'Accedi per salvare i tuoi rifugi preferiti, '
-                    'tenere traccia delle tue visite e sincronizzare i dati tra dispositivi.',
+                    AppLocalizations.of(context)!.loginDescription,
                     style: TextStyle(
                       fontSize: 16,
                       color: Colors.grey[600],
@@ -383,9 +382,9 @@ class ProfiloScreen extends StatelessWidget {
                   errorBuilder: (context, error, stackTrace) =>
                       const Icon(Icons.g_mobiledata, size: 24),
                 ),
-                label: const Text(
-                  'Accedi con Google',
-                  style: TextStyle(fontSize: 16),
+                label: Text(
+                  AppLocalizations.of(context)!.continueWithGoogle,
+                  style: const TextStyle(fontSize: 16),
                 ),
                 style: OutlinedButton.styleFrom(
                   padding: const EdgeInsets.symmetric(vertical: 16),
@@ -409,9 +408,9 @@ class ProfiloScreen extends StatelessWidget {
                             await authProvider.signInWithApple();
                           },
                           icon: const Icon(Icons.apple, size: 24),
-                          label: const Text(
-                            'Accedi con Apple',
-                            style: TextStyle(fontSize: 16),
+                          label: Text(
+                            AppLocalizations.of(context)!.continueWithApple,
+                            style: const TextStyle(fontSize: 16),
                           ),
                           style: OutlinedButton.styleFrom(
                             padding: const EdgeInsets.symmetric(vertical: 16),
@@ -454,7 +453,7 @@ class ProfiloScreen extends StatelessWidget {
                   const SizedBox(width: 12),
                   Expanded(
                     child: Text(
-                      'Puoi continuare ad usare l\'app anche senza effettuare il login.',
+                      AppLocalizations.of(context)!.continueWithoutAccount,
                       style: TextStyle(fontSize: 14, color: Colors.blue[900]),
                     ),
                   ),

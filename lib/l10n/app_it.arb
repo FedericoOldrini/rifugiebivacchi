@@ -1,0 +1,342 @@
+{
+  "@@locale": "it",
+  "appTitle": "Rifugi e Bivacchi",
+  "tabList": "Lista",
+  "tabMap": "Mappa",
+  "tabProfile": "Profilo",
+  "searchHint": "Cerca rifugi o bivacchi...",
+  "loadingRifugi": "Caricamento rifugi...",
+  "syncingFirebase": "Sincronizzazione con Firebase...",
+  "error": "Errore",
+  "noFavoriteRifugi": "Nessun rifugio preferito",
+  "noRifugiFound": "Nessun rifugio trovato",
+  "addFavoritesHint": "Aggiungi dei rifugi ai preferiti",
+  "modifySearchHint": "Prova a modificare la ricerca",
+  "likeThisApp": "Ti piace questa app?",
+  "supportDevelopment": "Supporta lo sviluppo",
+  "settings": "Impostazioni",
+  "appInfo": "Informazioni App",
+  "version": "Versione",
+  "information": "Informazioni",
+  "appDescription": "Rifugi e Bivacchi - App per escursionisti",
+  "appAboutDescription": "App per visualizzare rifugi e bivacchi di montagna nelle Alpi italiane. Utilizza la mappa per trovare i rifugi vicino a te o cerca per nome.",
+  "privacyAndPermissions": "Privacy e Permessi",
+  "locationPermissions": "Permessi posizione",
+  "locationPermissionsDesc": "Gestisci i permessi di accesso alla posizione",
+  "locationPermissionsDialog": "L'app richiede l'accesso alla tua posizione per mostrarti i rifugi nelle vicinanze sulla mappa. Puoi modificare i permessi nelle impostazioni del sistema.",
+  "privacy": "Privacy",
+  "privacyDesc": "La tua posizione non viene memorizzata",
+  "privacyDialog": "Questa app non memorizza né condivide la tua posizione. I dati di localizzazione vengono utilizzati solo per mostrare la mappa centrata sulla tua posizione corrente.",
+  "help": "Aiuto",
+  "reviewOnboarding": "Rivedi introduzione",
+  "reviewOnboardingDesc": "Visualizza di nuovo l'onboarding iniziale",
+  "supportProject": "Supporta il Progetto",
+  "supportUs": "Supportaci",
+  "supportUsDesc": "Fai una donazione per supportare lo sviluppo",
+  "rateApp": "Valuta l'app",
+  "rateAppDesc": "Lascia una recensione sullo store",
+  "rateAppThanks": "Grazie per il tuo supporto!",
+  "rateAppNotAvailable": "Valutazione non disponibile su questo dispositivo",
+  "madeWithLove": "Made with ❤️ for mountain lovers",
+  "ok": "OK",
+  "close": "Chiudi",
+  "share": "Condividi",
+  "showAll": "Mostra tutti",
+  "onlyFavorites": "Solo preferiti",
+  "profile": "Profilo",
+  "rifugio": "Rifugio",
+  "bivacco": "Bivacco",
+  "malga": "Malga",
+  "altitude": "Altitudine",
+  "altitudeValue": "{meters} m s.l.m.",
+  "@altitudeValue": {
+    "placeholders": {
+      "meters": {
+        "type": "int"
+      }
+    }
+  },
+  "beds": "{count} posti letto",
+  "@beds": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "bedsShort": "{count} posti",
+  "@bedsShort": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "locality": "Località",
+  "municipality": "Comune",
+  "valley": "Valle",
+  "region": "Regione",
+  "buildYear": "Anno di costruzione",
+  "coordinates": "Coordinate",
+  "position": "Posizione",
+  "informazioni": "Informazioni",
+  "services": "Servizi",
+  "accessibility": "Accessibilità",
+  "management": "Gestione",
+  "contacts": "Contatti",
+  "manager": "Gestore",
+  "property": "Proprietà",
+  "type": "Tipo",
+  "restaurant": "Ristorante",
+  "restaurantWithSeats": "Ristorante ({seats} posti)",
+  "@restaurantWithSeats": {
+    "placeholders": {
+      "seats": {
+        "type": "int"
+      }
+    }
+  },
+  "wifi": "WiFi",
+  "electricity": "Elettricità",
+  "pos": "POS",
+  "defibrillator": "Defibrillatore",
+  "hotWater": "Acqua calda",
+  "showers": "Docce",
+  "insideWater": "Acqua interna",
+  "car": "Auto",
+  "mtb": "MTB",
+  "disabled": "Disabili",
+  "disabledWc": "WC disabili",
+  "families": "Famiglie",
+  "pets": "Animali",
+  "website": "Sito web",
+  "openInGoogleMaps": "Apri in Google Maps",
+  "checkIn": "Fai Check-in",
+  "checkInAgain": "Fai Check-in di nuovo",
+  "checkInProgress": "Check-in in corso...",
+  "checkInDone": "Check-in effettuato!",
+  "checkInRadius": "Devi essere nel raggio di 100 metri dal rifugio",
+  "checkInAlreadyToday": "Hai già fatto check-in oggi! Torna domani per registrare una nuova visita.",
+  "visitedOnce": "Hai visitato questo rifugio!",
+  "visitedMultiple": "Hai visitato questo rifugio {count} volte!",
+  "@visitedMultiple": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "firstVisit": "Prima visita: {date}",
+  "@firstVisit": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "lastVisit": "Ultima visita: {date}",
+  "@lastVisit": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "removedFromFavorites": "Rimosso dai preferiti",
+  "addedToFavorites": "Aggiunto ai preferiti",
+  "shareCheckIn": "Vuoi condividere il tuo check-in sui social?",
+  "visitNumber": "Visita n. {number}",
+  "@visitNumber": {
+    "placeholders": {
+      "number": {
+        "type": "int"
+      }
+    }
+  },
+  "firstTimeWelcome": "Benvenuto per la prima volta in questo rifugio!",
+  "congratsVisit": "Congratulazioni! Questa è la tua visita numero {count} a questo rifugio! 🎉",
+  "@congratsVisit": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "shareError": "Errore nella condivisione: {error}",
+  "@shareError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "imageGenerationError": "Errore nella generazione dell'immagine",
+  "passaportoTitle": "Il Mio Passaporto",
+  "passaportoRifugi": "Passaporto dei Rifugi",
+  "loginRequired": "Devi effettuare il login per accedere al passaporto",
+  "nRifugi": "{count, plural, =1{1 rifugio} other{{count} rifugi}}",
+  "@nRifugi": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "donations": "Donazioni",
+  "donationThanks": "Grazie per il tuo supporto! ❤️",
+  "errorLabel": "Errore: {error}",
+  "@errorLabel": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "onboardingWelcomeTitle": "Benvenuto in Rifugi e Bivacchi",
+  "onboardingWelcomeDesc": "Scopri migliaia di rifugi, bivacchi e malghe nelle Alpi italiane. Pianifica le tue escursioni in montagna con facilità.",
+  "onboardingSearchTitle": "Cerca e Trova",
+  "onboardingSearchDesc": "Cerca rifugi per nome, zona o altitudine. Filtra i risultati per trovare il rifugio perfetto per la tua avventura.",
+  "onboardingMapTitle": "Visualizza sulla Mappa",
+  "onboardingMapDesc": "Esplora i rifugi sulla mappa interattiva. Visualizza la loro posizione e ottieni indicazioni stradali.",
+  "onboardingAccountTitle": "Account Opzionale",
+  "onboardingAccountDesc": "Accedi con Google o Apple per salvare i tuoi rifugi preferiti e sincronizzarli tra dispositivi. Oppure continua senza account.",
+  "onboardingLocationTitle": "Permesso Localizzazione",
+  "onboardingLocationDesc": "Per mostrarti i rifugi più vicini e fornirti indicazioni, abbiamo bisogno di accedere alla tua posizione.",
+  "legendRifugi": "Rifugi",
+  "legendBivacchi": "Bivacchi",
+  "legendMalghe": "Malghe",
+  "nRifugiInArea": "{count} rifugi in questa zona",
+  "@nRifugiInArea": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "tapToExpand": "Tocca per espandere",
+  "offlineMap": "Mappa Offline",
+  "offlineMapDesc": "Mappa OpenStreetMap disponibile anche senza connessione",
+  "mapGoogle": "Google Maps",
+  "mapOffline": "Mappa Offline",
+  "myItineraries": "I Miei Itinerari",
+  "comingSoon": "Prossimamente disponibile",
+  "logout": "Esci",
+  "deleteAccount": "Elimina Account",
+  "language": "Lingua",
+  "confirmLogout": "Conferma Logout",
+  "confirmLogoutMessage": "Vuoi disconnetterti dal tuo account?",
+  "cancel": "Annulla",
+  "confirmDeleteAccount": "Elimina Account",
+  "confirmDeleteAccountMessage": "Sei sicuro di voler eliminare il tuo account? Questa azione è irreversibile e perderai tutti i tuoi dati.",
+  "delete": "Elimina",
+  "accountDeleted": "Account eliminato con successo",
+  "loginToAccount": "Accedi al tuo account",
+  "loginDescription": "Accedi per salvare i tuoi rifugi preferiti, tenere traccia delle tue visite e sincronizzare i dati tra dispositivi.",
+  "continueWithGoogle": "Accedi con Google",
+  "continueWithApple": "Accedi con Apple",
+  "continueWithoutAccount": "Puoi continuare ad usare l'app anche senza effettuare il login.",
+  "continueWithoutAccountOnboarding": "Continua senza account",
+  "continueWithGoogleOnboarding": "Continua con Google",
+  "continueWithAppleOnboarding": "Continua con Apple",
+  "rifugiPreferiti": "Rifugi Preferiti",
+  "nRifugiVisitati": "{count, plural, =1{1 rifugio visitato} other{{count} rifugi visitati}}",
+  "@nRifugiVisitati": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "noPreferiti": "Nessun rifugio preferito.\nAggiungi i tuoi preferiti dalla lista!",
+  "andOthers": "e altri {count}...",
+  "@andOthers": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "skip": "Salta",
+  "next": "Avanti",
+  "allowLocation": "Consenti Posizione",
+  "permissionDenied": "Permesso Negato",
+  "permissionDeniedMessage": "Il permesso di localizzazione è stato negato permanentemente. Puoi abilitarlo manualmente dalle impostazioni del dispositivo.",
+  "continueWithoutPermission": "Continua senza permesso",
+  "openSettings": "Apri Impostazioni",
+  "permissionDeniedSnack": "Permesso negato. Puoi concederlo in seguito dalle impostazioni.",
+  "supportDevelopmentTitle": "Supporta lo Sviluppo",
+  "supportDevelopmentDescription": "Se ti piace questa app e vuoi supportare lo sviluppo, considera di fare una donazione!",
+  "donationsInApp": "Donazioni In-App",
+  "donationsNotAvailableNote": "Nota: Durante lo sviluppo, le donazioni potrebbero non essere disponibili. L'app funziona comunque!",
+  "inAppPurchasesNotAvailable": "Gli acquisti in-app non sono disponibili",
+  "whyDonate": "Perché donare?",
+  "regularUpdates": "Aggiornamenti regolari",
+  "regularUpdatesDesc": "Nuove funzionalità e miglioramenti continui",
+  "moreRifugi": "Più rifugi",
+  "moreRifugiDesc": "Espansione del database con nuovi rifugi",
+  "supportAndBugfix": "Supporto e bug fix",
+  "supportAndBugfixDesc": "Risoluzione rapida di problemi e bug",
+  "newFeatures": "Nuove funzionalità",
+  "newFeaturesDesc": "Sviluppo di features richieste dalla community",
+  "donationOptions": "Opzioni di donazione",
+  "buyCoffee": "Offrimi un caffè",
+  "buyLunch": "Offrimi un pranzo",
+  "generousDonation": "Donazione generosa",
+  "donation": "Donazione",
+  "notAvailable": "Non disponibile",
+  "donationsInfo": "Le donazioni sono pagamenti una tantum e non comportano abbonamenti.",
+  "thanksSupport": "Grazie per il tuo supporto! 🏔️",
+  "purchaseError": "Errore: {error}",
+  "@purchaseError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "cannotStartPurchase": "Impossibile avviare l'acquisto",
+  "passaportoEmpty": "Nessun timbro ancora",
+  "passaportoEmptyDesc": "Visita i rifugi e fai check-in per collezionare i tuoi timbri!",
+  "sharePassaporto": "Condividi il mio passaporto",
+  "rifugioNotFound": "Rifugio non trovato",
+  "nearRifugioRequired": "Devi essere vicino al rifugio (entro 100 metri) per fare check-in",
+  "checkInShareText": "🏔️ Check-in al {name}!\nVisita n. {count}\n#RifugiEBivacchi #Montagna #Trekking",
+  "@checkInShareText": {
+    "placeholders": {
+      "name": {"type": "String"},
+      "count": {"type": "int"}
+    }
+  },
+  "meteo": "Meteo",
+  "refresh": "Aggiorna",
+  "nextDays": "Prossimi giorni",
+  "today": "Oggi",
+  "dataOpenMeteo": "Dati Open-Meteo",
+  "nRifugiInAreaCount": "{count} rifugi in questa zona",
+  "@nRifugiInAreaCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "bedsCount": "{count} posti letto",
+  "@bedsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "firebaseInitError": "L'app funzionerà comunque, ma senza autenticazione.",
+  "gallery": "Galleria",
+  "nPhotos": "{count, plural, =1{1 foto} other{{count} foto}}",
+  "@nPhotos": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "imageLoadError": "Impossibile caricare l'immagine"
+}

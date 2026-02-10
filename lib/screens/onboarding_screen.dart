@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:provider/provider.dart';
+import 'package:rifugi_bivacchi/l10n/app_localizations.dart';
 import '../screens/home_screen.dart';
 import '../providers/auth_provider.dart';
 
@@ -17,45 +18,43 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   int _currentPage = 0;
   bool _isRequestingPermission = false;
 
-  final List<OnboardingPage> _pages = [
-    OnboardingPage(
-      title: 'Benvenuto in Rifugi e Bivacchi',
-      description:
-          'Scopri migliaia di rifugi, bivacchi e malghe nelle Alpi italiane. Pianifica le tue escursioni in montagna con facilità.',
-      icon: Icons.hiking,
-      color: Color(0xFF2D5016),
-    ),
-    OnboardingPage(
-      title: 'Cerca e Trova',
-      description:
-          'Cerca rifugi per nome, zona o altitudine. Filtra i risultati per trovare il rifugio perfetto per la tua avventura.',
-      icon: Icons.search,
-      color: Color(0xFF4A7C3C),
-    ),
-    OnboardingPage(
-      title: 'Visualizza sulla Mappa',
-      description:
-          'Esplora i rifugi sulla mappa interattiva. Visualizza la loro posizione e ottieni indicazioni stradali.',
-      icon: Icons.map,
-      color: Color(0xFF87CEEB),
-    ),
-    OnboardingPage(
-      title: 'Account Opzionale',
-      description:
-          'Accedi con Google o Apple per salvare i tuoi rifugi preferiti e sincronizzarli tra dispositivi. Oppure continua senza account.',
-      icon: Icons.person,
-      color: Color(0xFF6B4423),
-      isLoginPage: true,
-    ),
-    OnboardingPage(
-      title: 'Permesso Localizzazione',
-      description:
-          'Per mostrarti i rifugi più vicini e fornirti indicazioni, abbiamo bisogno di accedere alla tua posizione.',
-      icon: Icons.location_on,
-      color: Color(0xFFFF8C42),
-      isPermissionPage: true,
-    ),
-  ];
+  List<OnboardingPage> _getPages(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    return [
+      OnboardingPage(
+        title: l10n.onboardingWelcomeTitle,
+        description: l10n.onboardingWelcomeDesc,
+        icon: Icons.hiking,
+        color: Color(0xFF2D5016),
+      ),
+      OnboardingPage(
+        title: l10n.onboardingSearchTitle,
+        description: l10n.onboardingSearchDesc,
+        icon: Icons.search,
+        color: Color(0xFF4A7C3C),
+      ),
+      OnboardingPage(
+        title: l10n.onboardingMapTitle,
+        description: l10n.onboardingMapDesc,
+        icon: Icons.map,
+        color: Color(0xFF87CEEB),
+      ),
+      OnboardingPage(
+        title: l10n.onboardingAccountTitle,
+        description: l10n.onboardingAccountDesc,
+        icon: Icons.person,
+        color: Color(0xFF6B4423),
+        isLoginPage: true,
+      ),
+      OnboardingPage(
+        title: l10n.onboardingLocationTitle,
+        description: l10n.onboardingLocationDesc,
+        icon: Icons.location_on,
+        color: Color(0xFFFF8C42),
+        isPermissionPage: true,
+      ),
+    ];
+  }
 
   @override
   void dispose() {
@@ -85,10 +84,11 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       } else {
         // Permission negato ma può essere richiesto di nuovo
         if (mounted) {
+          final l10n = AppLocalizations.of(context)!;
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
+            SnackBar(
               content: Text(
-                'Permesso negato. Puoi concederlo in seguito dalle impostazioni.',
+                l10n.permissionDeniedSnack,
               ),
               duration: Duration(seconds: 3),
             ),
@@ -107,13 +107,13 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   }
 
   void _showPermissionDeniedDialog() {
+    final l10n = AppLocalizations.of(context)!;
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Permesso Negato'),
-        content: const Text(
-          'Il permesso di localizzazione è stato negato permanentemente. '
-          'Puoi abilitarlo manualmente dalle impostazioni del dispositivo.',
+        title: Text(l10n.permissionDenied),
+        content: Text(
+          l10n.permissionDeniedMessage,
         ),
         actions: [
           TextButton(
@@ -121,7 +121,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               Navigator.pop(context);
               _completeOnboarding();
             },
-            child: const Text('Continua senza permesso'),
+            child: Text(l10n.continueWithoutPermission),
           ),
           FilledButton(
             onPressed: () async {
@@ -129,7 +129,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               // Apri le impostazioni del sistema
               await Geolocator.openAppSettings();
             },
-            child: const Text('Apri Impostazioni'),
+            child: Text(l10n.openSettings),
           ),
         ],
       ),
@@ -149,9 +149,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     }
   }
 
-  void _skipToPermissionPage() {
+  void _skipToPermissionPage(int pageCount) {
     _pageController.animateToPage(
-      _pages.length - 1,
+      pageCount - 1,
       duration: const Duration(milliseconds: 300),
       curve: Curves.easeInOut,
     );
@@ -228,9 +228,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   errorBuilder: (context, error, stackTrace) => 
                     const Icon(Icons.g_mobiledata, size: 24),
                 ),
-                label: const Text(
-                  'Continua con Google',
-                  style: TextStyle(fontSize: 16),
+                label: Text(
+                  AppLocalizations.of(context)!.continueWithGoogleOnboarding,
+                  style: const TextStyle(fontSize: 16),
                 ),
                 style: OutlinedButton.styleFrom(
                   padding: const EdgeInsets.symmetric(vertical: 16),
@@ -260,9 +260,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                             }
                           },
                           icon: const Icon(Icons.apple, size: 24),
-                          label: const Text(
-                            'Continua con Apple',
-                            style: TextStyle(fontSize: 16),
+                          label: Text(
+                            AppLocalizations.of(context)!.continueWithAppleOnboarding,
+                            style: const TextStyle(fontSize: 16),
                           ),
                           style: OutlinedButton.styleFrom(
                             padding: const EdgeInsets.symmetric(vertical: 16),
@@ -286,9 +286,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   curve: Curves.easeInOut,
                 );
               },
-              child: const Text(
-                'Continua senza account',
-                style: TextStyle(fontSize: 16),
+              child: Text(
+                AppLocalizations.of(context)!.continueWithoutAccountOnboarding,
+                style: const TextStyle(fontSize: 16),
               ),
             ),
           ],
@@ -312,6 +312,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final pages = _getPages(context);
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       body: SafeArea(
         child: Column(
@@ -322,14 +324,14 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: List.generate(
-                  _pages.length,
+                  pages.length,
                   (index) => Container(
                     margin: const EdgeInsets.symmetric(horizontal: 4),
                     width: _currentPage == index ? 24 : 8,
                     height: 8,
                     decoration: BoxDecoration(
                       color: _currentPage == index
-                          ? _pages[index].color
+                          ? pages[index].color
                           : Colors.grey[300],
                       borderRadius: BorderRadius.circular(4),
                     ),
@@ -347,9 +349,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     _currentPage = index;
                   });
                 },
-                itemCount: _pages.length,
+                itemCount: pages.length,
                 itemBuilder: (context, index) {
-                  final page = _pages[index];
+                  final page = pages[index];
                   
                   // Pagina login speciale
                   if (page.isLoginPage) {
@@ -413,10 +415,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   // Pulsante Salta (solo se non è l'ultima pagina)
-                  if (_currentPage < _pages.length - 1)
+                  if (_currentPage < pages.length - 1)
                     TextButton(
-                      onPressed: _skipToPermissionPage,
-                      child: const Text('Salta'),
+                      onPressed: () => _skipToPermissionPage(pages.length),
+                      child: Text(l10n.skip),
                     )
                   else
                     const SizedBox(width: 80),
@@ -426,7 +428,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     onPressed: _isRequestingPermission
                         ? null
                         : () {
-                            if (_currentPage < _pages.length - 1) {
+                            if (_currentPage < pages.length - 1) {
                               _pageController.nextPage(
                                 duration: const Duration(milliseconds: 300),
                                 curve: Curves.easeInOut,
@@ -449,14 +451,14 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               Text(
-                                _currentPage < _pages.length - 1
-                                    ? 'Avanti'
-                                    : 'Consenti Posizione',
+                                _currentPage < pages.length - 1
+                                    ? l10n.next
+                                    : l10n.allowLocation,
                                 style: const TextStyle(fontSize: 16),
                               ),
                               const SizedBox(width: 8),
                               Icon(
-                                _currentPage < _pages.length - 1
+                                _currentPage < pages.length - 1
                                     ? Icons.arrow_forward
                                     : Icons.check,
                                 size: 20,

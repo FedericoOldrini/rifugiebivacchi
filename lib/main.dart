@@ -1,10 +1,13 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:intl/date_symbol_data_local.dart';
+import 'package:rifugi_bivacchi/l10n/app_localizations.dart';
+import 'firebase_options.dart';
 import 'theme/app_theme.dart';
 import 'providers/rifugi_provider.dart';
 import 'providers/auth_provider.dart';
@@ -26,7 +29,9 @@ Future<void> main() async {
     // Inizializza Firebase
     // NOTA: Richiede configurazione Firebase (vedi FIREBASE_SETUP.md)
     try {
-      await Firebase.initializeApp();
+      await Firebase.initializeApp(
+        options: DefaultFirebaseOptions.currentPlatform,
+      );
       
       // Configura Crashlytics
       FlutterError.onError = (errorDetails) {
@@ -64,11 +69,19 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => FiltroProvider()),
       ],
       child: MaterialApp(
-        title: 'Rifugi e Bivacchi',
+        onGenerateTitle: (context) => AppLocalizations.of(context)!.appTitle,
         debugShowCheckedModeBanner: false,
+        // Localization
+        localizationsDelegates: const [
+          AppLocalizations.delegate,
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        supportedLocales: AppLocalizations.supportedLocales,
         theme: AppTheme.lightTheme,
         darkTheme: AppTheme.darkTheme,
-        themeMode: ThemeMode.system, // Segue le impostazioni di sistema
+        themeMode: ThemeMode.system,
         home: const AppInitializer(),
         routes: {
           '/donations': (context) => const DonationsScreen(),
@@ -119,9 +132,9 @@ class _AppInitializerState extends State<AppInitializer> {
             children: [
               Icon(Icons.hiking, size: 80, color: Colors.white),
               const SizedBox(height: 24),
-              const Text(
-                'Rifugi e Bivacchi',
-                style: TextStyle(
+              Text(
+                AppLocalizations.of(context)!.appTitle,
+                style: const TextStyle(
                   fontSize: 28,
                   fontWeight: FontWeight.bold,
                   color: Colors.white,

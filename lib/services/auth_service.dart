@@ -53,7 +53,6 @@ class AuthService {
       // Una volta effettuato il login, restituisci UserCredential
       return await _auth.signInWithCredential(credential);
     } catch (e) {
-      print('Errore durante il login con Google: $e');
       rethrow;
     }
   }
@@ -88,7 +87,6 @@ class AuthService {
 
       return userCredential;
     } catch (e) {
-      print('Errore durante il login con Apple: $e');
       rethrow;
     }
   }
@@ -101,7 +99,6 @@ class AuthService {
         _googleSignIn.signOut(),
       ]);
     } catch (e) {
-      print('Errore durante il logout: $e');
       rethrow;
     }
   }
@@ -111,7 +108,6 @@ class AuthService {
     try {
       await currentUser?.delete();
     } catch (e) {
-      print('Errore durante l\'eliminazione dell\'account: $e');
       rethrow;
     }
   }

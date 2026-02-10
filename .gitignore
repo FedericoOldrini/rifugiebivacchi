@@ -142,3 +142,9 @@ wheels/
 # Exceptions to above rules
 !/packages/flutter_tools/test/data/dart_dependencies_test/**/.packages
 !/dev/ci/**/Gemfile.lock
+
+# Screenshot generation (generati automaticamente, non commitare)
+screenshots/raw/
+screenshots/with_overlay/
+screenshots/final/
+test_driver/screenshots/

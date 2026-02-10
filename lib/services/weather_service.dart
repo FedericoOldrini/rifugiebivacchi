@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import '../models/weather.dart';
 
@@ -27,11 +28,11 @@ class WeatherService {
         final data = json.decode(response.body) as Map<String, dynamic>;
         return Weather.fromJson(data);
       } else {
-        print('Errore nel recupero dei dati meteo: ${response.statusCode}');
+        debugPrint('Errore meteo: ${response.statusCode}');
         return null;
       }
     } catch (e) {
-      print('Errore nella chiamata alle API meteo: $e');
+      debugPrint('Errore API meteo: $e');
       return null;
     }
   }
@@ -53,11 +54,11 @@ class WeatherService {
         final data = json.decode(response.body) as Map<String, dynamic>;
         return Weather.fromJson(data);
       } else {
-        print('Errore nel recupero dei dati meteo: ${response.statusCode}');
+        debugPrint('Errore meteo: ${response.statusCode}');
         return null;
       }
     } catch (e) {
-      print('Errore nella chiamata alle API meteo: $e');
+      debugPrint('Errore API meteo: $e');
       return null;
     }
   }

@@ -5,6 +5,7 @@ import '../models/rifugio.dart';
 import '../providers/rifugi_provider.dart';
 import '../providers/passaporto_provider.dart';
 import '../providers/preferiti_provider.dart';
+import 'package:rifugi_bivacchi/l10n/app_localizations.dart';
 
 class RifugioCard extends StatelessWidget {
   final Rifugio rifugio;
@@ -229,7 +230,7 @@ class RifugioCard extends StatelessWidget {
                                 Row(
                                   children: [
                                     Text(
-                                      _getLabelForType(rifugio.tipo),
+                                      _getLabelForType(rifugio.tipo, context),
                                       style: TextStyle(
                                         fontSize: 12,
                                         color: Colors.grey[600],
@@ -286,10 +287,10 @@ class RifugioCard extends StatelessWidget {
                           if (rifugio.ristorante == true)
                             _InfoChip(
                               icon: Icons.restaurant,
-                              label: 'Ristorante',
+                              label: AppLocalizations.of(context)!.restaurant,
                             ),
                           if (rifugio.wifi == true)
-                            _InfoChip(icon: Icons.wifi, label: 'WiFi'),
+                            _InfoChip(icon: Icons.wifi, label: AppLocalizations.of(context)!.wifi),
                         ],
                       ),
                     ],
@@ -315,15 +316,15 @@ class RifugioCard extends StatelessWidget {
     }
   }
 
-  String _getLabelForType(String tipo) {
+  String _getLabelForType(String tipo, BuildContext context) {
     switch (tipo.toLowerCase()) {
       case 'bivacco':
-        return 'Bivacco';
+        return AppLocalizations.of(context)!.bivacco;
       case 'malga':
-        return 'Malga';
+        return AppLocalizations.of(context)!.malga;
       case 'rifugio':
       default:
-        return 'Rifugio';
+        return AppLocalizations.of(context)!.rifugio;
     }
   }
 }

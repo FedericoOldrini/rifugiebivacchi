@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:in_app_review/in_app_review.dart';
+import 'package:rifugi_bivacchi/l10n/app_localizations.dart';
 import 'donations_screen.dart';
 import '../services/onboarding_service.dart';
 import 'onboarding_screen.dart';
@@ -8,17 +10,19 @@ class SettingsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Impostazioni'),
+        title: Text(l10n.settings),
       ),
       body: ListView(
         children: [
-          const Padding(
-            padding: EdgeInsets.all(16.0),
+          Padding(
+            padding: const EdgeInsets.all(16.0),
             child: Text(
-              'Informazioni App',
-              style: TextStyle(
+              l10n.appInfo,
+              style: const TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.bold,
                 color: Colors.grey,
@@ -27,17 +31,17 @@ class SettingsScreen extends StatelessWidget {
           ),
           ListTile(
             leading: const Icon(Icons.info_outline),
-            title: const Text('Versione'),
+            title: Text(l10n.version),
             subtitle: const Text('1.0.0'),
           ),
           ListTile(
             leading: const Icon(Icons.description_outlined),
-            title: const Text('Informazioni'),
-            subtitle: const Text('Rifugi e Bivacchi - App per escursionisti'),
+            title: Text(l10n.information),
+            subtitle: Text(l10n.appDescription),
             onTap: () {
               showAboutDialog(
                 context: context,
-                applicationName: 'Rifugi e Bivacchi',
+                applicationName: l10n.appTitle,
                 applicationVersion: '1.0.0',
                 applicationIcon: const Icon(
                   Icons.landscape,
@@ -45,20 +49,17 @@ class SettingsScreen extends StatelessWidget {
                   color: Color(0xFF2D5016),
                 ),
                 children: [
-                  const Text(
-                    'App per visualizzare rifugi e bivacchi di montagna nelle Alpi italiane. '
-                    'Utilizza la mappa per trovare i rifugi vicino a te o cerca per nome.',
-                  ),
+                  Text(l10n.appAboutDescription),
                 ],
               );
             },
           ),
           const Divider(),
-          const Padding(
-            padding: EdgeInsets.all(16.0),
+          Padding(
+            padding: const EdgeInsets.all(16.0),
             child: Text(
-              'Privacy e Permessi',
-              style: TextStyle(
+              l10n.privacyAndPermissions,
+              style: const TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.bold,
                 color: Colors.grey,
@@ -67,23 +68,19 @@ class SettingsScreen extends StatelessWidget {
           ),
           ListTile(
             leading: const Icon(Icons.location_on_outlined),
-            title: const Text('Permessi posizione'),
-            subtitle: const Text('Gestisci i permessi di accesso alla posizione'),
+            title: Text(l10n.locationPermissions),
+            subtitle: Text(l10n.locationPermissionsDesc),
             trailing: const Icon(Icons.chevron_right),
             onTap: () {
               showDialog(
                 context: context,
                 builder: (context) => AlertDialog(
-                  title: const Text('Permessi Posizione'),
-                  content: const Text(
-                    'L\'app richiede l\'accesso alla tua posizione per mostrarti '
-                    'i rifugi nelle vicinanze sulla mappa. Puoi modificare i '
-                    'permessi nelle impostazioni del sistema.',
-                  ),
+                  title: Text(l10n.locationPermissions),
+                  content: Text(l10n.locationPermissionsDialog),
                   actions: [
                     TextButton(
                       onPressed: () => Navigator.pop(context),
-                      child: const Text('OK'),
+                      child: Text(l10n.ok),
                     ),
                   ],
                 ),
@@ -92,22 +89,18 @@ class SettingsScreen extends StatelessWidget {
           ),
           ListTile(
             leading: const Icon(Icons.privacy_tip_outlined),
-            title: const Text('Privacy'),
-            subtitle: const Text('La tua posizione non viene memorizzata'),
+            title: Text(l10n.privacy),
+            subtitle: Text(l10n.privacyDesc),
             onTap: () {
               showDialog(
                 context: context,
                 builder: (context) => AlertDialog(
-                  title: const Text('Privacy'),
-                  content: const Text(
-                    'Questa app non memorizza né condivide la tua posizione. '
-                    'I dati di localizzazione vengono utilizzati solo per '
-                    'mostrare la mappa centrata sulla tua posizione corrente.',
-                  ),
+                  title: Text(l10n.privacy),
+                  content: Text(l10n.privacyDialog),
                   actions: [
                     TextButton(
                       onPressed: () => Navigator.pop(context),
-                      child: const Text('OK'),
+                      child: Text(l10n.ok),
                     ),
                   ],
                 ),
@@ -115,11 +108,11 @@ class SettingsScreen extends StatelessWidget {
             },
           ),
           const Divider(),
-          const Padding(
-            padding: EdgeInsets.all(16.0),
+          Padding(
+            padding: const EdgeInsets.all(16.0),
             child: Text(
-              'Aiuto',
-              style: TextStyle(
+              l10n.help,
+              style: const TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.bold,
                 color: Colors.grey,
@@ -128,8 +121,8 @@ class SettingsScreen extends StatelessWidget {
           ),
           ListTile(
             leading: const Icon(Icons.help_outline),
-            title: const Text('Rivedi introduzione'),
-            subtitle: const Text('Visualizza di nuovo l\'onboarding iniziale'),
+            title: Text(l10n.reviewOnboarding),
+            subtitle: Text(l10n.reviewOnboardingDesc),
             trailing: const Icon(Icons.chevron_right),
             onTap: () async {
               await OnboardingService.resetOnboarding();
@@ -144,11 +137,11 @@ class SettingsScreen extends StatelessWidget {
             },
           ),
           const Divider(),
-          const Padding(
-            padding: EdgeInsets.all(16.0),
+          Padding(
+            padding: const EdgeInsets.all(16.0),
             child: Text(
-              'Supporta il Progetto',
-              style: TextStyle(
+              l10n.supportProject,
+              style: const TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.bold,
                 color: Colors.grey,
@@ -157,8 +150,8 @@ class SettingsScreen extends StatelessWidget {
           ),
           ListTile(
             leading: const Icon(Icons.favorite_outlined, color: Colors.red),
-            title: const Text('Supportaci'),
-            subtitle: const Text('Fai una donazione per supportare lo sviluppo'),
+            title: Text(l10n.supportUs),
+            subtitle: Text(l10n.supportUsDesc),
             trailing: const Icon(Icons.chevron_right),
             onTap: () {
               Navigator.push(
@@ -171,21 +164,32 @@ class SettingsScreen extends StatelessWidget {
           ),
           ListTile(
             leading: const Icon(Icons.star_outline),
-            title: const Text('Valuta l\'app'),
-            subtitle: const Text('Lascia una recensione sullo store'),
+            title: Text(l10n.rateApp),
+            subtitle: Text(l10n.rateAppDesc),
             trailing: const Icon(Icons.chevron_right),
-            onTap: () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('Grazie per il tuo supporto!'),
-                ),
-              );
+            onTap: () async {
+              final inAppReview = InAppReview.instance;
+              if (await inAppReview.isAvailable()) {
+                await inAppReview.requestReview();
+              } else {
+                // Fallback: apri la pagina dello store
+                await inAppReview.openStoreListing(
+                  appStoreId: '', // Inserisci il tuo App Store ID
+                );
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(l10n.rateAppThanks),
+                    ),
+                  );
+                }
+              }
             },
           ),
           const SizedBox(height: 32),
           Center(
             child: Text(
-              'Made with ❤️ for mountain lovers',
+              l10n.madeWithLove,
               style: TextStyle(
                 fontSize: 12,
                 color: Colors.grey[600],

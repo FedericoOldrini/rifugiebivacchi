@@ -14,6 +14,8 @@ import '../providers/preferiti_provider.dart';
 import '../theme/app_theme.dart';
 import '../widgets/share_checkin_card.dart';
 import '../widgets/weather_widget.dart';
+import '../widgets/image_gallery.dart';
+import 'package:rifugi_bivacchi/l10n/app_localizations.dart';
 
 class DettaglioRifugioScreen extends StatefulWidget {
   final Rifugio rifugio;
@@ -94,7 +96,7 @@ class _DettaglioRifugioScreenState extends State<DettaglioRifugioScreen> {
                 Expanded(
                   child: Text(
                     passaportoProvider.error ??
-                        'Devi essere vicino al rifugio (entro 100 metri) per fare check-in',
+                        AppLocalizations.of(context)!.nearRifugioRequired,
                   ),
                 ),
               ],
@@ -141,58 +143,37 @@ class _DettaglioRifugioScreenState extends State<DettaglioRifugioScreen> {
 
   Future<void> _shareCheckIn() async {
     try {
-      print('🔵 DEBUG: Inizio condivisione check-in');
-
-      // Cattura screenshot della card di condivisione usando captureFromWidget
-      print('🔵 DEBUG: Tentativo di cattura screenshot...');
       final imageBytes = await _screenshotController.captureFromWidget(
         _buildShareCard(),
         delay: const Duration(milliseconds: 100),
       );
-      print('🔵 DEBUG: Screenshot catturato: ${imageBytes.length} bytes');
 
       if (imageBytes.isEmpty) {
-        print('🔴 DEBUG: Screenshot è vuoto!');
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Errore nella generazione dell\'immagine'),
+            SnackBar(
+              content: Text(AppLocalizations.of(context)!.imageGenerationError),
             ),
           );
         }
         return;
       }
 
-      // Salva l'immagine temporaneamente
-      print('🔵 DEBUG: Ottenimento directory temporanea...');
       final directory = await getTemporaryDirectory();
       final imagePath =
           '${directory.path}/checkin_${DateTime.now().millisecondsSinceEpoch}.png';
-      print('🔵 DEBUG: Path immagine: $imagePath');
 
       final imageFile = File(imagePath);
-      print('🔵 DEBUG: Scrittura file...');
       await imageFile.writeAsBytes(imageBytes);
-      print('🔵 DEBUG: File scritto con successo');
 
-      // Condividi l'immagine
-      print('🔵 DEBUG: Preparazione condivisione...');
       final passaportoProvider = Provider.of<PassaportoProvider>(
         context,
         listen: false,
       );
       final visitCount = passaportoProvider.getVisitCount(widget.rifugio.id);
-      print('🔵 DEBUG: Visit count: $visitCount');
 
-      final shareText =
-          '🏔️ Check-in al ${widget.rifugio.nome}!\n'
-          '${widget.rifugio.altitudine != null ? '📍 ${widget.rifugio.altitudine!.toInt()} m s.l.m.\n' : ''}'
-          '${visitCount > 1 ? '✅ Visita n. $visitCount\n' : ''}';
+      final shareText = AppLocalizations.of(context)!.checkInShareText(widget.rifugio.nome, visitCount);
 
-      print('🔵 DEBUG: Testo condivisione preparato');
-      print('🔵 DEBUG: Chiamata Share.shareXFiles...');
-
-      // Ottieni le dimensioni dello schermo per sharePositionOrigin (richiesto su iOS)
       final size = MediaQuery.of(context).size;
       final sharePositionOrigin = Rect.fromLTWH(
         size.width / 2 - 50,
@@ -206,17 +187,11 @@ class _DettaglioRifugioScreenState extends State<DettaglioRifugioScreen> {
         text: shareText,
         sharePositionOrigin: sharePositionOrigin,
       );
-
-      print('✅ DEBUG: Condivisione completata con successo');
-    } catch (e, stackTrace) {
-      print('🔴 DEBUG: Errore durante la condivisione');
-      print('🔴 DEBUG: Errore: $e');
-      print('🔴 DEBUG: Stack trace: $stackTrace');
-
+    } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Errore nella condivisione: $e'),
+            content: Text(AppLocalizations.of(context)!.shareError(e.toString())),
             duration: const Duration(seconds: 5),
           ),
         );
@@ -251,10 +226,10 @@ class _DettaglioRifugioScreenState extends State<DettaglioRifugioScreen> {
 
     // Tipo
     final tipo = widget.rifugio.tipo == 'rifugio'
-        ? 'Rifugio'
+        ? AppLocalizations.of(context)!.rifugio
         : widget.rifugio.tipo == 'bivacco'
-        ? 'Bivacco'
-        : 'Malga';
+        ? AppLocalizations.of(context)!.bivacco
+        : AppLocalizations.of(context)!.malga;
     parts.add(tipo);
 
     // Altitudine
@@ -402,8 +377,8 @@ class _DettaglioRifugioScreenState extends State<DettaglioRifugioScreen> {
                                   Expanded(
                                     child: Text(
                                       isPreferito
-                                          ? 'Rimosso dai preferiti'
-                                          : 'Aggiunto ai preferiti',
+                                          ? AppLocalizations.of(context)!.removedFromFavorites
+                                          : AppLocalizations.of(context)!.addedToFavorites,
                                     ),
                                   ),
                                 ],
@@ -555,6 +530,17 @@ class _DettaglioRifugioScreenState extends State<DettaglioRifugioScreen> {
                       ),
                       const SizedBox(height: 16),
 
+                      // Galleria immagini
+                      if (widget.rifugio.imageUrls != null &&
+                          widget.rifugio.imageUrls!.isNotEmpty)
+                        ...[                        
+                          ImageGallery(
+                            imageUrls: widget.rifugio.imageUrls!,
+                            rifugioName: widget.rifugio.nome,
+                          ),
+                          const SizedBox(height: 16),
+                        ],
+
                       // Pulsante Check-in (per utenti loggati)
                       Consumer2<AuthProvider, PassaportoProvider>(
                         builder: (context, authProvider, passaportoProvider, child) {
@@ -600,8 +586,8 @@ class _DettaglioRifugioScreenState extends State<DettaglioRifugioScreen> {
                                             Expanded(
                                               child: Text(
                                                 visitCount == 1
-                                                    ? 'Hai visitato questo rifugio!'
-                                                    : 'Hai visitato questo rifugio $visitCount volte!',
+                                                    ? AppLocalizations.of(context)!.visitedOnce
+                                                    : AppLocalizations.of(context)!.visitedMultiple(visitCount),
                                                 style: const TextStyle(
                                                   fontWeight: FontWeight.bold,
                                                   fontSize: 14,
@@ -613,7 +599,7 @@ class _DettaglioRifugioScreenState extends State<DettaglioRifugioScreen> {
                                         if (firstVisit != null) ...[
                                           const SizedBox(height: 8),
                                           Text(
-                                            'Prima visita: ${_formatDate(firstVisit)}',
+                                            AppLocalizations.of(context)!.firstVisit(_formatDate(firstVisit)),
                                             style: TextStyle(
                                               fontSize: 12,
                                               color: Colors.grey[700],
@@ -622,7 +608,7 @@ class _DettaglioRifugioScreenState extends State<DettaglioRifugioScreen> {
                                           if (visitCount > 1 &&
                                               lastVisit != null)
                                             Text(
-                                              'Ultima visita: ${_formatDate(lastVisit)}',
+                                              AppLocalizations.of(context)!.lastVisit(_formatDate(lastVisit)),
                                               style: TextStyle(
                                                 fontSize: 12,
                                                 color: Colors.grey[700],
@@ -655,10 +641,10 @@ class _DettaglioRifugioScreenState extends State<DettaglioRifugioScreen> {
                                           : const Icon(Icons.location_on),
                                       label: Text(
                                         _isCheckingIn
-                                            ? 'Check-in in corso...'
+                                            ? AppLocalizations.of(context)!.checkInProgress
                                             : _hasVisited
-                                            ? 'Fai Check-in di nuovo'
-                                            : 'Fai Check-in',
+                                            ? AppLocalizations.of(context)!.checkInAgain
+                                            : AppLocalizations.of(context)!.checkIn,
                                       ),
                                       style: ElevatedButton.styleFrom(
                                         padding: const EdgeInsets.symmetric(
@@ -690,9 +676,9 @@ class _DettaglioRifugioScreenState extends State<DettaglioRifugioScreen> {
                                           color: Colors.orange[700],
                                         ),
                                         const SizedBox(width: 12),
-                                        const Expanded(
+                                        Expanded(
                                           child: Text(
-                                            'Hai già fatto check-in oggi! Torna domani per registrare una nuova visita.',
+                                            AppLocalizations.of(context)!.checkInAlreadyToday,
                                             style: TextStyle(fontSize: 13),
                                           ),
                                         ),
@@ -702,7 +688,7 @@ class _DettaglioRifugioScreenState extends State<DettaglioRifugioScreen> {
                                 ],
                                 const SizedBox(height: 8),
                                 Text(
-                                  'Devi essere nel raggio di 100 metri dal rifugio',
+                                  AppLocalizations.of(context)!.checkInRadius,
                                   style: TextStyle(
                                     fontSize: 12,
                                     color: Colors.grey[600],
@@ -745,8 +731,8 @@ class _DettaglioRifugioScreenState extends State<DettaglioRifugioScreen> {
                                       ).colorScheme.primary,
                                     ),
                                     const SizedBox(width: 8),
-                                    const Text(
-                                      'Posizione',
+                                    Text(
+                                      AppLocalizations.of(context)!.position,
                                       style: TextStyle(
                                         fontSize: 16,
                                         fontWeight: FontWeight.bold,
@@ -770,49 +756,49 @@ class _DettaglioRifugioScreenState extends State<DettaglioRifugioScreen> {
                       ],
 
                       // Informazioni principali
-                      _SectionTitle(title: 'Informazioni'),
+                      _SectionTitle(title: AppLocalizations.of(context)!.informazioni),
                       const SizedBox(height: 12),
                       if (widget.rifugio.altitudine != null)
                         _InfoRow(
                           icon: Icons.terrain,
-                          label: 'Altitudine',
+                          label: AppLocalizations.of(context)!.altitude,
                           value:
                               '${widget.rifugio.altitudine!.toInt()} m s.l.m.',
                         ),
                       if (widget.rifugio.locality != null)
                         _InfoRow(
                           icon: Icons.location_city,
-                          label: 'Località',
+                          label: AppLocalizations.of(context)!.locality,
                           value: widget.rifugio.locality!,
                         ),
                       if (widget.rifugio.municipality != null)
                         _InfoRow(
                           icon: Icons.business,
-                          label: 'Comune',
+                          label: AppLocalizations.of(context)!.municipality,
                           value: widget.rifugio.municipality!,
                         ),
                       if (widget.rifugio.valley != null)
                         _InfoRow(
                           icon: Icons.landscape,
-                          label: 'Valle',
+                          label: AppLocalizations.of(context)!.valley,
                           value: widget.rifugio.valley!,
                         ),
                       if (widget.rifugio.region != null)
                         _InfoRow(
                           icon: Icons.map,
-                          label: 'Regione',
+                          label: AppLocalizations.of(context)!.region,
                           value:
                               '${widget.rifugio.region!}${widget.rifugio.province != null ? ' (${widget.rifugio.province})' : ''}',
                         ),
                       if (widget.rifugio.buildYear != null)
                         _InfoRow(
                           icon: Icons.calendar_today,
-                          label: 'Anno di costruzione',
+                          label: AppLocalizations.of(context)!.buildYear,
                           value: widget.rifugio.buildYear.toString(),
                         ),
                       _InfoRow(
                         icon: Icons.location_on,
-                        label: 'Coordinate',
+                        label: AppLocalizations.of(context)!.coordinates,
                         value:
                             '${widget.rifugio.latitudine.toStringAsFixed(4)}, ${widget.rifugio.longitudine.toStringAsFixed(4)}',
                       ),
@@ -820,7 +806,7 @@ class _DettaglioRifugioScreenState extends State<DettaglioRifugioScreen> {
 
                       // Servizi
                       if (_hasServices()) ...[
-                        _SectionTitle(title: 'Servizi'),
+                        _SectionTitle(title: AppLocalizations.of(context)!.services),
                         const SizedBox(height: 12),
                         Card(
                           child: Padding(
@@ -834,47 +820,47 @@ class _DettaglioRifugioScreenState extends State<DettaglioRifugioScreen> {
                                   _ServiceChip(
                                     icon: Icons.bed,
                                     label:
-                                        '${widget.rifugio.postiLetto} posti letto',
+                                        AppLocalizations.of(context)!.bedsCount(widget.rifugio.postiLetto!),
                                   ),
                                 if (widget.rifugio.ristorante == true)
                                   _ServiceChip(
                                     icon: Icons.restaurant,
                                     label:
                                         widget.rifugio.restaurantSeats != null
-                                        ? 'Ristorante (${widget.rifugio.restaurantSeats} posti)'
-                                        : 'Ristorante',
+                                        ? AppLocalizations.of(context)!.restaurantWithSeats(widget.rifugio.restaurantSeats!)
+                                        : AppLocalizations.of(context)!.restaurant,
                                   ),
                                 if (widget.rifugio.wifi == true)
-                                  _ServiceChip(icon: Icons.wifi, label: 'WiFi'),
+                                  _ServiceChip(icon: Icons.wifi, label: AppLocalizations.of(context)!.wifi),
                                 if (widget.rifugio.elettricita == true)
                                   _ServiceChip(
                                     icon: Icons.electrical_services,
-                                    label: 'Elettricità',
+                                    label: AppLocalizations.of(context)!.electricity,
                                   ),
                                 if (widget.rifugio.pagamentoPos == true)
                                   _ServiceChip(
                                     icon: Icons.credit_card,
-                                    label: 'POS',
+                                    label: AppLocalizations.of(context)!.pos,
                                   ),
                                 if (widget.rifugio.defibrillatore == true)
                                   _ServiceChip(
                                     icon: Icons.favorite,
-                                    label: 'Defibrillatore',
+                                    label: AppLocalizations.of(context)!.defibrillator,
                                   ),
                                 if (widget.rifugio.hotWater == true)
                                   _ServiceChip(
                                     icon: Icons.hot_tub,
-                                    label: 'Acqua calda',
+                                    label: AppLocalizations.of(context)!.hotWater,
                                   ),
                                 if (widget.rifugio.showers == true)
                                   _ServiceChip(
                                     icon: Icons.shower,
-                                    label: 'Docce',
+                                    label: AppLocalizations.of(context)!.showers,
                                   ),
                                 if (widget.rifugio.insideWater == true)
                                   _ServiceChip(
                                     icon: Icons.water_drop,
-                                    label: 'Acqua interna',
+                                    label: AppLocalizations.of(context)!.insideWater,
                                   ),
                               ],
                             ),
@@ -885,7 +871,7 @@ class _DettaglioRifugioScreenState extends State<DettaglioRifugioScreen> {
 
                       // Accessibilità
                       if (_hasAccessibility()) ...[
-                        _SectionTitle(title: 'Accessibilità'),
+                        _SectionTitle(title: AppLocalizations.of(context)!.accessibility),
                         const SizedBox(height: 12),
                         Card(
                           child: Padding(
@@ -897,33 +883,33 @@ class _DettaglioRifugioScreenState extends State<DettaglioRifugioScreen> {
                                 if (widget.rifugio.carAccess == true)
                                   _ServiceChip(
                                     icon: Icons.directions_car,
-                                    label: 'Auto',
+                                    label: AppLocalizations.of(context)!.car,
                                   ),
                                 if (widget.rifugio.mountainBikeAccess == true)
                                   _ServiceChip(
                                     icon: Icons.pedal_bike,
-                                    label: 'MTB',
+                                    label: AppLocalizations.of(context)!.mtb,
                                   ),
                                 if (widget.rifugio.disabledAccess == true)
                                   _ServiceChip(
                                     icon: Icons.accessible,
-                                    label: 'Disabili',
+                                    label: AppLocalizations.of(context)!.disabled,
                                   ),
                                 if (widget.rifugio.disabledWc == true)
                                   _ServiceChip(
                                     icon: Icons.wc,
-                                    label: 'WC disabili',
+                                    label: AppLocalizations.of(context)!.disabledWc,
                                   ),
                                 if (widget.rifugio.familiesChildrenAccess ==
                                     true)
                                   _ServiceChip(
                                     icon: Icons.family_restroom,
-                                    label: 'Famiglie',
+                                    label: AppLocalizations.of(context)!.families,
                                   ),
                                 if (widget.rifugio.petAccess == true)
                                   _ServiceChip(
                                     icon: Icons.pets,
-                                    label: 'Animali',
+                                    label: AppLocalizations.of(context)!.pets,
                                   ),
                               ],
                             ),
@@ -935,24 +921,24 @@ class _DettaglioRifugioScreenState extends State<DettaglioRifugioScreen> {
                       // Gestione
                       if (widget.rifugio.propertyName != null ||
                           widget.rifugio.owner != null) ...[
-                        _SectionTitle(title: 'Gestione'),
+                        _SectionTitle(title: AppLocalizations.of(context)!.management),
                         const SizedBox(height: 12),
                         if (widget.rifugio.propertyName != null)
                           _InfoRow(
                             icon: Icons.business,
-                            label: 'Gestore',
+                            label: AppLocalizations.of(context)!.manager,
                             value: widget.rifugio.propertyName!,
                           ),
                         if (widget.rifugio.owner != null)
                           _InfoRow(
                             icon: Icons.account_balance,
-                            label: 'Proprietà',
+                            label: AppLocalizations.of(context)!.property,
                             value: widget.rifugio.owner!,
                           ),
                         if (widget.rifugio.regionalType != null)
                           _InfoRow(
                             icon: Icons.category,
-                            label: 'Tipo',
+                            label: AppLocalizations.of(context)!.type,
                             value: widget.rifugio.regionalType!,
                           ),
                         const SizedBox(height: 24),
@@ -962,7 +948,7 @@ class _DettaglioRifugioScreenState extends State<DettaglioRifugioScreen> {
                       if (widget.rifugio.telefono != null ||
                           widget.rifugio.email != null ||
                           widget.rifugio.sitoWeb != null) ...[
-                        _SectionTitle(title: 'Contatti'),
+                        _SectionTitle(title: AppLocalizations.of(context)!.contacts),
                         const SizedBox(height: 12),
                         if (widget.rifugio.telefono != null)
                           _ContactButton(
@@ -979,7 +965,7 @@ class _DettaglioRifugioScreenState extends State<DettaglioRifugioScreen> {
                         if (widget.rifugio.sitoWeb != null)
                           _ContactButton(
                             icon: Icons.language,
-                            label: 'Sito web',
+                            label: AppLocalizations.of(context)!.website,
                             onTap: () => _launchUrl(widget.rifugio.sitoWeb!),
                           ),
                         const SizedBox(height: 24),
@@ -994,7 +980,7 @@ class _DettaglioRifugioScreenState extends State<DettaglioRifugioScreen> {
                             widget.rifugio.longitudine,
                           ),
                           icon: const Icon(Icons.directions),
-                          label: const Text('Apri in Google Maps'),
+                          label: Text(AppLocalizations.of(context)!.openInGoogleMaps),
                         ),
                       ),
                       const SizedBox(height: 12),
@@ -1007,7 +993,7 @@ class _DettaglioRifugioScreenState extends State<DettaglioRifugioScreen> {
                             Navigator.pushNamed(context, '/donations');
                           },
                           icon: const Icon(Icons.favorite),
-                          label: const Text('Supporta lo sviluppo'),
+                          label: Text(AppLocalizations.of(context)!.supportDevelopment),
                           style: OutlinedButton.styleFrom(
                             foregroundColor: Colors.pink[700],
                             side: BorderSide(color: Colors.pink[700]!),
@@ -1040,12 +1026,12 @@ class _DettaglioRifugioScreenState extends State<DettaglioRifugioScreen> {
   String _getLabelForType(String tipo) {
     switch (tipo.toLowerCase()) {
       case 'bivacco':
-        return 'Bivacco';
+        return AppLocalizations.of(context)!.bivacco;
       case 'malga':
-        return 'Malga';
+        return AppLocalizations.of(context)!.malga;
       case 'rifugio':
       default:
-        return 'Rifugio';
+        return AppLocalizations.of(context)!.rifugio;
     }
   }
 
@@ -1220,8 +1206,8 @@ class _ShareDialog extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 20),
-                    const Text(
-                      'Check-in effettuato!',
+                    Text(
+                      AppLocalizations.of(context)!.checkInDone,
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 24,
@@ -1263,7 +1249,7 @@ class _ShareDialog extends StatelessWidget {
                                     borderRadius: BorderRadius.circular(20),
                                   ),
                                   child: Text(
-                                    'Visita n. $visitCount',
+                                    AppLocalizations.of(context)!.visitNumber(visitCount),
                                     style: TextStyle(
                                       color: AppTheme.deepTeal,
                                       fontSize: 18,
@@ -1275,7 +1261,7 @@ class _ShareDialog extends StatelessWidget {
                             ),
                             const SizedBox(height: 12),
                             Text(
-                              'Congratulazioni! Questa è la tua visita numero $visitCount a questo rifugio! 🎉',
+                              AppLocalizations.of(context)!.congratsVisit(visitCount),
                               style: const TextStyle(
                                 color: Colors.white,
                                 fontSize: 15,
@@ -1289,8 +1275,8 @@ class _ShareDialog extends StatelessWidget {
                               size: 32,
                             ),
                             const SizedBox(height: 12),
-                            const Text(
-                              'Benvenuto per la prima volta in questo rifugio!',
+                            Text(
+                              AppLocalizations.of(context)!.firstTimeWelcome,
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 15,
@@ -1302,8 +1288,8 @@ class _ShareDialog extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 20),
-                    const Text(
-                      'Vuoi condividere il tuo check-in sui social?',
+                    Text(
+                      AppLocalizations.of(context)!.shareCheckIn,
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 15,
@@ -1330,8 +1316,8 @@ class _ShareDialog extends StatelessWidget {
                             borderRadius: BorderRadius.circular(12),
                           ),
                         ),
-                        child: const Text(
-                          'Chiudi',
+                        child: Text(
+                          AppLocalizations.of(context)!.close,
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w600,
@@ -1356,8 +1342,8 @@ class _ShareDialog extends StatelessWidget {
                           elevation: 8,
                         ),
                         icon: const Icon(Icons.share),
-                        label: const Text(
-                          'Condividi',
+                        label: Text(
+                          AppLocalizations.of(context)!.share,
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w600,

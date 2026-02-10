@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:rifugi_bivacchi/l10n/app_localizations.dart';
 import '../providers/rifugi_provider.dart';
 import '../models/rifugio.dart';
 import '../services/clustering_service.dart';
 import '../screens/dettaglio_rifugio_screen.dart';
+import '../screens/offline_map_screen.dart';
 import 'dart:ui' as ui;
 
 class MappaRifugiScreen extends StatefulWidget {
@@ -16,6 +18,7 @@ class MappaRifugiScreen extends StatefulWidget {
 }
 
 class _MappaRifugiScreenState extends State<MappaRifugiScreen> {
+  bool _useOfflineMap = false;
   GoogleMapController? _mapController;
   Position? _currentPosition;
   Set<Marker> _markers = {};
@@ -108,8 +111,8 @@ class _MappaRifugiScreenState extends State<MappaRifugiScreen> {
               );
             },
             infoWindow: InfoWindow(
-              title: '${cluster.count} rifugi in questa zona',
-              snippet: 'Tocca per espandere',
+              title: '${cluster.count} ${AppLocalizations.of(context)!.nRifugiInAreaCount(cluster.count)}',
+              snippet: AppLocalizations.of(context)!.tapToExpand,
             ),
           ),
         );
@@ -213,10 +216,10 @@ class _MappaRifugiScreenState extends State<MappaRifugiScreen> {
 
     // Tipo
     final tipo = rifugio.tipo == 'rifugio'
-        ? 'Rifugio'
+        ? AppLocalizations.of(context)!.rifugio
         : rifugio.tipo == 'bivacco'
-        ? 'Bivacco'
-        : 'Malga';
+        ? AppLocalizations.of(context)!.bivacco
+        : AppLocalizations.of(context)!.malga;
     parts.add(tipo);
 
     // Altitudine
@@ -234,6 +237,25 @@ class _MappaRifugiScreenState extends State<MappaRifugiScreen> {
 
   @override
   Widget build(BuildContext context) {
+    if (_useOfflineMap) {
+      return Stack(
+        children: [
+          const OfflineMapScreen(),
+          // Toggle button
+          Positioned(
+            bottom: 16,
+            left: 16,
+            child: FloatingActionButton.small(
+              heroTag: 'toggleMap',
+              onPressed: () => setState(() => _useOfflineMap = false),
+              tooltip: AppLocalizations.of(context)!.mapGoogle,
+              child: const Icon(Icons.map),
+            ),
+          ),
+        ],
+      );
+    }
+
     return Consumer<RifugiProvider>(
       builder: (context, provider, child) {
         // Usa la posizione del provider se disponibile
@@ -250,7 +272,7 @@ class _MappaRifugiScreenState extends State<MappaRifugiScreen> {
                       rifugio.longitudine,
                     ) /
                     1000;
-                return distance <= 50; // Mostra solo rifugi entro 50km
+                return distance <= 50;
               }).toList()
             : provider.rifugi;
 
@@ -270,14 +292,12 @@ class _MappaRifugiScreenState extends State<MappaRifugiScreen> {
               mapType: MapType.terrain,
               onMapCreated: (controller) {
                 _mapController = controller;
-                // Crea marker iniziali
                 _createMarkersWithClustering(rifugi);
               },
               onCameraMove: (position) {
                 _currentZoom = position.zoom;
               },
               onCameraIdle: () {
-                // Aggiorna i marker quando la camera si ferma
                 _createMarkersWithClustering(rifugi);
               },
             ),
@@ -297,17 +317,28 @@ class _MappaRifugiScreenState extends State<MappaRifugiScreen> {
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      _LegendItem(color: Colors.blue[600]!, label: 'Rifugi'),
+                      _LegendItem(color: Colors.blue[600]!, label: AppLocalizations.of(context)!.legendRifugi),
                       const SizedBox(width: 12),
                       _LegendItem(
                         color: Colors.orange[700]!,
-                        label: 'Bivacchi',
+                        label: AppLocalizations.of(context)!.legendBivacchi,
                       ),
                       const SizedBox(width: 12),
-                      _LegendItem(color: Colors.green[700]!, label: 'Malghe'),
+                      _LegendItem(color: Colors.green[700]!, label: AppLocalizations.of(context)!.legendMalghe),
                     ],
                   ),
                 ),
+              ),
+            ),
+            // Toggle to offline map
+            Positioned(
+              bottom: 16,
+              left: 16,
+              child: FloatingActionButton.small(
+                heroTag: 'toggleMap',
+                onPressed: () => setState(() => _useOfflineMap = true),
+                tooltip: AppLocalizations.of(context)!.mapOffline,
+                child: const Icon(Icons.download),
               ),
             ),
           ],

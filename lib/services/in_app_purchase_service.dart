@@ -73,30 +73,48 @@ class InAppPurchaseService {
   /// Carica i prodotti disponibili
   Future<void> loadProducts() async {
     if (!_isAvailable) {
+      _queryProductError = 'In-App Purchase non disponibile su questo dispositivo';
       return;
     }
 
-    final ProductDetailsResponse productDetailResponse =
-        await _inAppPurchase.queryProductDetails(_productIds.toSet());
+    try {
+      final ProductDetailsResponse productDetailResponse =
+          await _inAppPurchase.queryProductDetails(_productIds.toSet());
 
-    if (productDetailResponse.error != null) {
-      _queryProductError = productDetailResponse.error!.message;
-      debugPrint('Error loading products: $_queryProductError');
-      return;
-    }
+      if (productDetailResponse.error != null) {
+        final errorMsg = productDetailResponse.error!.message;
+        // Gestisci errori comuni di configurazione
+        if (errorMsg.contains('Failed to get response from platform')) {
+          _queryProductError = 'Prodotti non configurati.\n'
+              'Per usare le donazioni in-app:\n'
+              '1. Configura i prodotti su App Store Connect\n'
+              '2. Vedi IN_APP_PURCHASE_SETUP.md per i dettagli';
+        } else {
+          _queryProductError = 'Errore caricamento prodotti: $errorMsg';
+        }
+        debugPrint('Error loading products: $errorMsg');
+        return;
+      }
 
-    if (productDetailResponse.productDetails.isEmpty) {
-      _queryProductError = 'No products found';
-      debugPrint('No products found');
-      return;
-    }
+      if (productDetailResponse.productDetails.isEmpty) {
+        _queryProductError = 'Nessun prodotto trovato.\n'
+            'Assicurati che i prodotti siano configurati su App Store Connect.\n'
+            'IDs richiesti: ${_productIds.join(", ")}';
+        debugPrint('No products found. Expected IDs: $_productIds');
+        return;
+      }
 
     _products = productDetailResponse.productDetails;
-    _queryProductError = null;
-    
-    debugPrint('Products loaded: ${_products.length}');
-    for (var product in _products) {
-      debugPrint('Product: ${product.id} - ${product.title} - ${product.price}');
+      _queryProductError = null;
+      
+      debugPrint('Products loaded: ${_products.length}');
+      for (var product in _products) {
+        debugPrint('Product: ${product.id} - ${product.title} - ${product.price}');
+      }
+    } catch (e) {
+      _queryProductError = 'Errore di connessione: ${e.toString()}\n'
+          'Verifica la connessione Internet e riprova.';
+      debugPrint('Exception loading products: $e');
     }
   }
 

@@ -17,7 +17,7 @@ L'app si avvierà e potrai usare:
 
 ## Avvio Completo (con Google Maps)
 
-1. Segui le istruzioni in [GOOGLE_MAPS_SETUP.md](GOOGLE_MAPS_SETUP.md) per configurare la API Key
+1. Segui le istruzioni in [../setup/GOOGLE_MAPS_SETUP.md](GOOGLE_MAPS_SETUP.md) per configurare la API Key
 2. Esegui l'app:
 
 ```bash

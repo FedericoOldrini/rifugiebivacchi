@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 import 'package:flutter/services.dart';
@@ -16,7 +17,7 @@ class RifugiService {
   static final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   static const String _tableName = 'rifugi';
   static const String _dbName = 'rifugi.db';
-  static const int _dbVersion = 2; // Incrementato per aggiornare schema
+  static const int _dbVersion = 3; // Incrementato per schema completo
 
   /// Ottiene l'istanza del database SQLite
   static Future<Database> get database async {
@@ -59,6 +60,33 @@ class RifugiService {
         postiLetto INTEGER,
         operatore TEXT,
         immagini TEXT,
+        source TEXT,
+        locality TEXT,
+        siteDescription TEXT,
+        owner TEXT,
+        status TEXT,
+        regionalType TEXT,
+        buildYear INTEGER,
+        wifi INTEGER,
+        elettricita INTEGER,
+        ristorante INTEGER,
+        postiTotali INTEGER,
+        pagamentoPos INTEGER,
+        defibrillatore INTEGER,
+        hotWater INTEGER,
+        showers INTEGER,
+        insideWater INTEGER,
+        restaurantSeats INTEGER,
+        disabledAccess INTEGER,
+        disabledWc INTEGER,
+        familiesChildrenAccess INTEGER,
+        carAccess INTEGER,
+        mountainBikeAccess INTEGER,
+        petAccess INTEGER,
+        secondaryPhone TEXT,
+        websiteProperty TEXT,
+        emailProperty TEXT,
+        propertyName TEXT,
         createdAt INTEGER,
         updatedAt INTEGER,
         syncedAt INTEGER
@@ -72,8 +100,8 @@ class RifugiService {
   }
 
   static Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
-    if (oldVersion < 2) {
-      // Aggiorna da v1 a v2: aggiungi colonna tipo, rimuovi colonne non utilizzate
+    if (oldVersion < 3) {
+      // Aggiorna schema: ricostruisci con tutti i campi del modello
       await db.execute('DROP TABLE IF EXISTS $_tableName');
       await _onCreate(db, newVersion);
     }
@@ -89,11 +117,8 @@ class RifugiService {
     );
 
     if (count != null && count > 0) {
-      print('📦 Database già popolato con $count rifugi');
       return;
     }
-
-    print('📦 Popolamento database locale da JSON...');
 
     try {
       // Carica il JSON dagli assets
@@ -101,8 +126,6 @@ class RifugiService {
       final List<dynamic> jsonList = json.decode(jsonString);
 
       final batch = db.batch();
-      int inserted = 0;
-
       for (var json in jsonList) {
         try {
           final rifugio = Rifugio.fromJson(json as Map<String, dynamic>);
@@ -113,16 +136,14 @@ class RifugiService {
             _rifugioToMap(rifugio),
             conflictAlgorithm: ConflictAlgorithm.replace,
           );
-          inserted++;
         } catch (e) {
-          print('⚠️  Errore nell\'inserimento rifugio: $e');
+          debugPrint('Errore inserimento rifugio: $e');
         }
       }
 
       await batch.commit(noResult: true);
-      print('✅ Inseriti $inserted rifugi nel database locale');
     } catch (e) {
-      print('❌ Errore nel popolamento database: $e');
+      debugPrint('Errore nel popolamento database: $e');
       rethrow;
     }
   }
@@ -141,7 +162,6 @@ class RifugiService {
   /// Sincronizza i rifugi da Firestore
   static Future<void> syncFromFirestore() async {
     try {
-      print('🔄 Inizio sincronizzazione con Firestore...');
       
       final db = await database;
       final querySnapshot = await _firestore
@@ -150,13 +170,10 @@ class RifugiService {
           .get();
 
       if (querySnapshot.docs.isEmpty) {
-        print('ℹ️  Nessun rifugio trovato su Firestore');
         return;
       }
 
       final batch = db.batch();
-      int synced = 0;
-
       for (var doc in querySnapshot.docs) {
         try {
           final data = doc.data();
@@ -170,16 +187,14 @@ class RifugiService {
             },
             conflictAlgorithm: ConflictAlgorithm.replace,
           );
-          synced++;
         } catch (e) {
-          print('⚠️  Errore nella sincronizzazione di ${doc.id}: $e');
+          debugPrint('Errore sincronizzazione ${doc.id}: $e');
         }
       }
 
       await batch.commit(noResult: true);
-      print('✅ Sincronizzati $synced rifugi da Firestore');
     } catch (e) {
-      print('❌ Errore nella sincronizzazione: $e');
+      debugPrint('Errore sincronizzazione: $e');
       // Non propaghiamo l'errore - l'app funziona offline
     }
   }
@@ -240,6 +255,33 @@ class RifugiService {
       'postiLetto': rifugio.postiLetto,
       'operatore': rifugio.operatore,
       'immagini': json.encode(rifugio.imageUrls ?? []),
+      'source': rifugio.source,
+      'locality': rifugio.locality,
+      'siteDescription': rifugio.siteDescription,
+      'owner': rifugio.owner,
+      'status': rifugio.status,
+      'regionalType': rifugio.regionalType,
+      'buildYear': rifugio.buildYear,
+      'wifi': rifugio.wifi == true ? 1 : (rifugio.wifi == false ? 0 : null),
+      'elettricita': rifugio.elettricita == true ? 1 : (rifugio.elettricita == false ? 0 : null),
+      'ristorante': rifugio.ristorante == true ? 1 : (rifugio.ristorante == false ? 0 : null),
+      'postiTotali': rifugio.postiTotali,
+      'pagamentoPos': rifugio.pagamentoPos == true ? 1 : (rifugio.pagamentoPos == false ? 0 : null),
+      'defibrillatore': rifugio.defibrillatore == true ? 1 : (rifugio.defibrillatore == false ? 0 : null),
+      'hotWater': rifugio.hotWater == true ? 1 : (rifugio.hotWater == false ? 0 : null),
+      'showers': rifugio.showers == true ? 1 : (rifugio.showers == false ? 0 : null),
+      'insideWater': rifugio.insideWater == true ? 1 : (rifugio.insideWater == false ? 0 : null),
+      'restaurantSeats': rifugio.restaurantSeats,
+      'disabledAccess': rifugio.disabledAccess == true ? 1 : (rifugio.disabledAccess == false ? 0 : null),
+      'disabledWc': rifugio.disabledWc == true ? 1 : (rifugio.disabledWc == false ? 0 : null),
+      'familiesChildrenAccess': rifugio.familiesChildrenAccess == true ? 1 : (rifugio.familiesChildrenAccess == false ? 0 : null),
+      'carAccess': rifugio.carAccess == true ? 1 : (rifugio.carAccess == false ? 0 : null),
+      'mountainBikeAccess': rifugio.mountainBikeAccess == true ? 1 : (rifugio.mountainBikeAccess == false ? 0 : null),
+      'petAccess': rifugio.petAccess == true ? 1 : (rifugio.petAccess == false ? 0 : null),
+      'secondaryPhone': rifugio.secondaryPhone,
+      'websiteProperty': rifugio.websiteProperty,
+      'emailProperty': rifugio.emailProperty,
+      'propertyName': rifugio.propertyName,
       'createdAt': DateTime.now().millisecondsSinceEpoch,
       'updatedAt': DateTime.now().millisecondsSinceEpoch,
     };
@@ -256,8 +298,11 @@ class RifugiService {
           immagini = decoded.cast<String>();
         }
       }
-    } catch (e) {
-      print('⚠️  Errore nel parsing immagini: $e');
+    } catch (_) {}
+
+    bool? intToBool(dynamic value) {
+      if (value == null) return null;
+      return value == 1;
     }
 
     return Rifugio(
@@ -279,12 +324,38 @@ class RifugiService {
       operatore: map['operatore'] as String?,
       immagine: immagini.isNotEmpty ? immagini.first : null,
       imageUrls: immagini,
+      source: map['source'] as String?,
+      locality: map['locality'] as String?,
+      siteDescription: map['siteDescription'] as String?,
+      owner: map['owner'] as String?,
+      status: map['status'] as String?,
+      regionalType: map['regionalType'] as String?,
+      buildYear: map['buildYear'] as int?,
+      wifi: intToBool(map['wifi']),
+      elettricita: intToBool(map['elettricita']),
+      ristorante: intToBool(map['ristorante']),
+      postiTotali: map['postiTotali'] as int?,
+      pagamentoPos: intToBool(map['pagamentoPos']),
+      defibrillatore: intToBool(map['defibrillatore']),
+      hotWater: intToBool(map['hotWater']),
+      showers: intToBool(map['showers']),
+      insideWater: intToBool(map['insideWater']),
+      restaurantSeats: map['restaurantSeats'] as int?,
+      disabledAccess: intToBool(map['disabledAccess']),
+      disabledWc: intToBool(map['disabledWc']),
+      familiesChildrenAccess: intToBool(map['familiesChildrenAccess']),
+      carAccess: intToBool(map['carAccess']),
+      mountainBikeAccess: intToBool(map['mountainBikeAccess']),
+      petAccess: intToBool(map['petAccess']),
+      secondaryPhone: map['secondaryPhone'] as String?,
+      websiteProperty: map['websiteProperty'] as String?,
+      emailProperty: map['emailProperty'] as String?,
+      propertyName: map['propertyName'] as String?,
     );
   }
 
   /// Forza una sincronizzazione completa
   static Future<void> forceSyncFromFirestore() async {
-    print('🔄 Sincronizzazione forzata da Firestore...');
     await syncFromFirestore();
   }
 
@@ -292,7 +363,6 @@ class RifugiService {
   static Future<void> clearDatabase() async {
     final db = await database;
     await db.delete(_tableName);
-    print('🗑️  Database pulito');
   }
 
   /// Ottiene info sullo stato della sincronizzazione

@@ -116,6 +116,38 @@ Colori ispirati alla montagna:
 - Grigio roccia (`#6C757D`)
 - Arancio tramonto (`#FF8C42`)
 
+## 📸 Screenshot Tools per App Store
+
+Il progetto include un sistema completo per generare screenshot professionali per App Store automaticamente!
+
+### Quick Start
+
+```bash
+# Setup (una volta)
+pip3 install Pillow
+
+# Genera screenshot automaticamente
+make screenshots-auto
+
+# Oppure manualmente (più controllo)
+make screenshots-manual
+```
+
+Gli screenshot pronti saranno in `screenshots/final/` per tutti i device richiesti da App Store.
+
+### Documentazione
+
+- **Quick Start (5 min)**: [`docs/screenshots/QUICK_START.md`](docs/screenshots/QUICK_START.md)
+- **Guida Completa**: [`docs/screenshots/README.md`](docs/screenshots/README.md)
+- **Riepilogo Sistema**: [`docs/screenshots/TOOLS_SUMMARY.md`](docs/screenshots/TOOLS_SUMMARY.md)
+
+### Features
+- ✅ Screenshot automatici con Flutter Driver
+- ✅ Screenshot manuali interattivi
+- ✅ Overlay professionali con titoli
+- ✅ Ridimensionamento automatico per tutte le dimensioni App Store
+- ✅ Personalizzazione colori e testi
+
 ## 🤝 Contribuire
 
 I contributi sono benvenuti! Per favore:

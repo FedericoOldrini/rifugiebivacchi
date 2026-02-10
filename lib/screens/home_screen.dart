@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:rifugi_bivacchi/l10n/app_localizations.dart';
 import '../screens/lista_rifugi_screen.dart';
 import '../screens/mappa_rifugi_screen.dart';
 import '../screens/profilo_screen.dart';
@@ -60,14 +61,16 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return Scaffold(
       appBar: AppBar(
-        title: const Row(
+        title: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(Icons.landscape, size: 28),
-            SizedBox(width: 8),
-            Text('Rifugi e Bivacchi'),
+            const Icon(Icons.landscape, size: 28),
+            const SizedBox(width: 8),
+            Text(l10n.appTitle),
           ],
         ),
         actions: [
@@ -84,7 +87,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     filtroProvider.soloPreferiti ? Icons.star : Icons.star_border,
                     color: filtroProvider.soloPreferiti ? Colors.amber[700] : null,
                   ),
-                  tooltip: filtroProvider.soloPreferiti ? 'Mostra tutti' : 'Solo preferiti',
+                  tooltip: filtroProvider.soloPreferiti ? l10n.showAll : l10n.onlyFavorites,
                   onPressed: () {
                     filtroProvider.togglePreferiti();
                   },
@@ -93,7 +96,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           IconButton(
             icon: const Icon(Icons.settings_outlined),
-            tooltip: 'Impostazioni',
+            tooltip: l10n.settings,
             onPressed: () {
               Navigator.push(
                 context,
@@ -111,21 +114,21 @@ class _HomeScreenState extends State<HomeScreen> {
             _currentIndex = index;
           });
         },
-        destinations: const [
+        destinations: [
           NavigationDestination(
-            icon: Icon(Icons.list_outlined),
-            selectedIcon: Icon(Icons.list),
-            label: 'Lista',
+            icon: const Icon(Icons.list_outlined),
+            selectedIcon: const Icon(Icons.list),
+            label: l10n.tabList,
           ),
           NavigationDestination(
-            icon: Icon(Icons.map_outlined),
-            selectedIcon: Icon(Icons.map),
-            label: 'Mappa',
+            icon: const Icon(Icons.map_outlined),
+            selectedIcon: const Icon(Icons.map),
+            label: l10n.tabMap,
           ),
           NavigationDestination(
-            icon: Icon(Icons.person_outline),
-            selectedIcon: Icon(Icons.person),
-            label: 'Profilo',
+            icon: const Icon(Icons.person_outline),
+            selectedIcon: const Icon(Icons.person),
+            label: l10n.tabProfile,
           ),
         ],
       ),

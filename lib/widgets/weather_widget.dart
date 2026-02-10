@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../models/weather.dart';
 import '../services/weather_service.dart';
+import 'package:rifugi_bivacchi/l10n/app_localizations.dart';
 
 class WeatherWidget extends StatefulWidget {
   final double latitude;
@@ -81,9 +82,9 @@ class _WeatherWidgetState extends State<WeatherWidget> {
                   color: Theme.of(context).colorScheme.primary,
                 ),
                 const SizedBox(width: 6),
-                const Text(
-                  'Meteo',
-                  style: TextStyle(
+                Text(
+                  AppLocalizations.of(context)!.meteo,
+                  style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
                   ),
@@ -92,7 +93,7 @@ class _WeatherWidgetState extends State<WeatherWidget> {
                 IconButton(
                   icon: const Icon(Icons.refresh, size: 18),
                   onPressed: _loadWeather,
-                  tooltip: 'Aggiorna',
+                  tooltip: AppLocalizations.of(context)!.refresh,
                   padding: EdgeInsets.zero,
                   constraints: const BoxConstraints(),
                 ),
@@ -214,7 +215,7 @@ class _WeatherWidgetState extends State<WeatherWidget> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Prossimi giorni',
+          AppLocalizations.of(context)!.nextDays,
           style: TextStyle(
             fontSize: 13,
             fontWeight: FontWeight.w600,
@@ -248,8 +249,8 @@ class _WeatherWidgetState extends State<WeatherWidget> {
                   children: [
                     Text(
                       isToday
-                          ? 'Oggi'
-                          : DateFormat('E', 'it').format(forecast.date),
+                          ? AppLocalizations.of(context)!.today
+                          : DateFormat('E', Localizations.localeOf(context).languageCode).format(forecast.date),
                       style: TextStyle(
                         fontSize: 11,
                         fontWeight:
@@ -294,7 +295,7 @@ class _WeatherWidgetState extends State<WeatherWidget> {
             const SizedBox(width: 4),
             Expanded(
               child: Text(
-                'Dati Open-Meteo',
+                AppLocalizations.of(context)!.dataOpenMeteo,
                 style: TextStyle(
                   fontSize: 10,
                   color: Colors.grey[600],

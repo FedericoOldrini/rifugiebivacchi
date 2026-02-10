@@ -37,6 +37,10 @@ An app that shows mountain shelters (rifugi) and bivouacs near the user's locati
 
 ## Documentation Files
 - README.md - Complete project documentation
-- QUICK_START.md - Quick start guide
-- GOOGLE_MAPS_SETUP.md - Google Maps configuration
+- docs/setup/QUICK_START.md - Quick start guide
+- docs/legal/PRIVACY_POLICY.md - Privacy policy
+- docs/legal/TERMS_OF_SERVICE.md - Terms of service
+- docs/app-store/ - App Store publishing docs
+- docs/screenshots/ - Screenshot generation docs
+- docs/FAQ.md - Frequently asked questions
 - LICENSE - MIT License
