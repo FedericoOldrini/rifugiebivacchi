@@ -10,12 +10,12 @@ class InAppPurchaseService {
 
   final InAppPurchase _inAppPurchase = InAppPurchase.instance;
   late StreamSubscription<List<PurchaseDetails>> _subscription;
-  
+
   // IDs dei prodotti (devono corrispondere a quelli configurati su App Store Connect e Google Play Console)
-  static const String donationSmallId = 'donation_coffee';
-  static const String donationMediumId = 'donation_lunch';
-  static const String donationLargeId = 'donation_generous';
-  
+  static const String donationSmallId = 'rifugi_donation_coffee';
+  static const String donationMediumId = 'rifugi_donation_lunch';
+  static const String donationLargeId = 'rifugi_donation_generous';
+
   static const List<String> _productIds = [
     donationSmallId,
     donationMediumId,
@@ -39,7 +39,7 @@ class InAppPurchaseService {
   }) async {
     // Verifica se gli acquisti in-app sono disponibili
     _isAvailable = await _inAppPurchase.isAvailable();
-    
+
     if (!_isAvailable) {
       debugPrint('In-app purchases not available');
       return;
@@ -48,7 +48,7 @@ class InAppPurchaseService {
     // Ascolta gli aggiornamenti degli acquisti
     final Stream<List<PurchaseDetails>> purchaseUpdated =
         _inAppPurchase.purchaseStream;
-    
+
     _subscription = purchaseUpdated.listen(
       (List<PurchaseDetails> purchaseDetailsList) {
         _listenToPurchaseUpdated(
@@ -73,19 +73,21 @@ class InAppPurchaseService {
   /// Carica i prodotti disponibili
   Future<void> loadProducts() async {
     if (!_isAvailable) {
-      _queryProductError = 'In-App Purchase non disponibile su questo dispositivo';
+      _queryProductError =
+          'In-App Purchase non disponibile su questo dispositivo';
       return;
     }
 
     try {
-      final ProductDetailsResponse productDetailResponse =
-          await _inAppPurchase.queryProductDetails(_productIds.toSet());
+      final ProductDetailsResponse productDetailResponse = await _inAppPurchase
+          .queryProductDetails(_productIds.toSet());
 
       if (productDetailResponse.error != null) {
         final errorMsg = productDetailResponse.error!.message;
         // Gestisci errori comuni di configurazione
         if (errorMsg.contains('Failed to get response from platform')) {
-          _queryProductError = 'Prodotti non configurati.\n'
+          _queryProductError =
+              'Prodotti non configurati.\n'
               'Per usare le donazioni in-app:\n'
               '1. Configura i prodotti su App Store Connect\n'
               '2. Vedi IN_APP_PURCHASE_SETUP.md per i dettagli';
@@ -97,22 +99,26 @@ class InAppPurchaseService {
       }
 
       if (productDetailResponse.productDetails.isEmpty) {
-        _queryProductError = 'Nessun prodotto trovato.\n'
+        _queryProductError =
+            'Nessun prodotto trovato.\n'
             'Assicurati che i prodotti siano configurati su App Store Connect.\n'
             'IDs richiesti: ${_productIds.join(", ")}';
         debugPrint('No products found. Expected IDs: $_productIds');
         return;
       }
 
-    _products = productDetailResponse.productDetails;
+      _products = productDetailResponse.productDetails;
       _queryProductError = null;
-      
+
       debugPrint('Products loaded: ${_products.length}');
       for (var product in _products) {
-        debugPrint('Product: ${product.id} - ${product.title} - ${product.price}');
+        debugPrint(
+          'Product: ${product.id} - ${product.title} - ${product.price}',
+        );
       }
     } catch (e) {
-      _queryProductError = 'Errore di connessione: ${e.toString()}\n'
+      _queryProductError =
+          'Errore di connessione: ${e.toString()}\n'
           'Verifica la connessione Internet e riprova.';
       debugPrint('Exception loading products: $e');
     }
@@ -126,15 +132,16 @@ class InAppPurchaseService {
 
     _purchasePending = true;
 
-    final PurchaseParam purchaseParam =
-        PurchaseParam(productDetails: productDetails);
+    final PurchaseParam purchaseParam = PurchaseParam(
+      productDetails: productDetails,
+    );
 
     try {
       final bool success = await _inAppPurchase.buyConsumable(
         purchaseParam: purchaseParam,
         autoConsume: true,
       );
-      
+
       return success;
     } catch (e) {
       debugPrint('Error buying product: $e');
@@ -151,7 +158,7 @@ class InAppPurchaseService {
   ) {
     for (final PurchaseDetails purchaseDetails in purchaseDetailsList) {
       debugPrint('Purchase status: ${purchaseDetails.status}');
-      
+
       if (purchaseDetails.status == PurchaseStatus.pending) {
         _purchasePending = true;
       } else {

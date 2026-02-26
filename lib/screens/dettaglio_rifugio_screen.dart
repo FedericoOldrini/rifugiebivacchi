@@ -4,7 +4,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:screenshot/screenshot.dart';
-import 'package:cached_network_image/cached_network_image.dart';
+import '../widgets/rifugio_image.dart';
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
 import '../models/rifugio.dart';
@@ -172,7 +172,9 @@ class _DettaglioRifugioScreenState extends State<DettaglioRifugioScreen> {
       );
       final visitCount = passaportoProvider.getVisitCount(widget.rifugio.id);
 
-      final shareText = AppLocalizations.of(context)!.checkInShareText(widget.rifugio.nome, visitCount);
+      final shareText = AppLocalizations.of(
+        context,
+      )!.checkInShareText(widget.rifugio.nome, visitCount);
 
       final size = MediaQuery.of(context).size;
       final sharePositionOrigin = Rect.fromLTWH(
@@ -191,7 +193,9 @@ class _DettaglioRifugioScreenState extends State<DettaglioRifugioScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(AppLocalizations.of(context)!.shareError(e.toString())),
+            content: Text(
+              AppLocalizations.of(context)!.shareError(e.toString()),
+            ),
             duration: const Duration(seconds: 5),
           ),
         );
@@ -377,8 +381,12 @@ class _DettaglioRifugioScreenState extends State<DettaglioRifugioScreen> {
                                   Expanded(
                                     child: Text(
                                       isPreferito
-                                          ? AppLocalizations.of(context)!.removedFromFavorites
-                                          : AppLocalizations.of(context)!.addedToFavorites,
+                                          ? AppLocalizations.of(
+                                              context,
+                                            )!.removedFromFavorites
+                                          : AppLocalizations.of(
+                                              context,
+                                            )!.addedToFavorites,
                                     ),
                                   ),
                                 ],
@@ -407,7 +415,7 @@ class _DettaglioRifugioScreenState extends State<DettaglioRifugioScreen> {
                       ? Stack(
                           fit: StackFit.expand,
                           children: [
-                            CachedNetworkImage(
+                            RifugioImage(
                               imageUrl: widget.rifugio.immagine!,
                               fit: BoxFit.cover,
                               placeholder: (context, url) => Container(
@@ -532,174 +540,201 @@ class _DettaglioRifugioScreenState extends State<DettaglioRifugioScreen> {
 
                       // Galleria immagini
                       if (widget.rifugio.imageUrls != null &&
-                          widget.rifugio.imageUrls!.isNotEmpty)
-                        ...[                        
-                          ImageGallery(
-                            imageUrls: widget.rifugio.imageUrls!,
-                            rifugioName: widget.rifugio.nome,
-                          ),
-                          const SizedBox(height: 16),
-                        ],
+                          widget.rifugio.imageUrls!.isNotEmpty) ...[
+                        ImageGallery(
+                          imageUrls: widget.rifugio.imageUrls!,
+                          rifugioName: widget.rifugio.nome,
+                        ),
+                        const SizedBox(height: 16),
+                      ],
 
                       // Pulsante Check-in (per utenti loggati)
                       Consumer2<AuthProvider, PassaportoProvider>(
-                        builder: (context, authProvider, passaportoProvider, child) {
-                          final isAuthenticated = authProvider.isAuthenticated;
+                        builder:
+                            (context, authProvider, passaportoProvider, child) {
+                              final isAuthenticated =
+                                  authProvider.isAuthenticated;
 
-                          if (isAuthenticated) {
-                            final visitCount = passaportoProvider.getVisitCount(
-                              widget.rifugio.id,
-                            );
-                            final hasCheckedInToday = passaportoProvider
-                                .hasCheckedInToday(widget.rifugio.id);
-                            final firstVisit = passaportoProvider.getFirstVisit(
-                              widget.rifugio.id,
-                            );
-                            final lastVisit = passaportoProvider.getLastVisit(
-                              widget.rifugio.id,
-                            );
+                              if (isAuthenticated) {
+                                final visitCount = passaportoProvider
+                                    .getVisitCount(widget.rifugio.id);
+                                final hasCheckedInToday = passaportoProvider
+                                    .hasCheckedInToday(widget.rifugio.id);
+                                final firstVisit = passaportoProvider
+                                    .getFirstVisit(widget.rifugio.id);
+                                final lastVisit = passaportoProvider
+                                    .getLastVisit(widget.rifugio.id);
 
-                            return Column(
-                              children: [
-                                if (_hasVisited)
-                                  Container(
-                                    width: double.infinity,
-                                    padding: const EdgeInsets.all(16),
-                                    decoration: BoxDecoration(
-                                      color: Colors.green[50],
-                                      borderRadius: BorderRadius.circular(12),
-                                      border: Border.all(
-                                        color: Colors.green[200]!,
+                                return Column(
+                                  children: [
+                                    if (_hasVisited)
+                                      Container(
+                                        width: double.infinity,
+                                        padding: const EdgeInsets.all(16),
+                                        decoration: BoxDecoration(
+                                          color: Colors.green[50],
+                                          borderRadius: BorderRadius.circular(
+                                            12,
+                                          ),
+                                          border: Border.all(
+                                            color: Colors.green[200]!,
+                                          ),
+                                        ),
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Row(
+                                              children: [
+                                                Icon(
+                                                  Icons.check_circle,
+                                                  color: Colors.green[700],
+                                                ),
+                                                const SizedBox(width: 12),
+                                                Expanded(
+                                                  child: Text(
+                                                    visitCount == 1
+                                                        ? AppLocalizations.of(
+                                                            context,
+                                                          )!.visitedOnce
+                                                        : AppLocalizations.of(
+                                                            context,
+                                                          )!.visitedMultiple(
+                                                            visitCount,
+                                                          ),
+                                                    style: const TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      fontSize: 14,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                            if (firstVisit != null) ...[
+                                              const SizedBox(height: 8),
+                                              Text(
+                                                AppLocalizations.of(
+                                                  context,
+                                                )!.firstVisit(
+                                                  _formatDate(firstVisit),
+                                                ),
+                                                style: TextStyle(
+                                                  fontSize: 12,
+                                                  color: Colors.grey[700],
+                                                ),
+                                              ),
+                                              if (visitCount > 1 &&
+                                                  lastVisit != null)
+                                                Text(
+                                                  AppLocalizations.of(
+                                                    context,
+                                                  )!.lastVisit(
+                                                    _formatDate(lastVisit),
+                                                  ),
+                                                  style: TextStyle(
+                                                    fontSize: 12,
+                                                    color: Colors.grey[700],
+                                                  ),
+                                                ),
+                                            ],
+                                          ],
+                                        ),
                                       ),
-                                    ),
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Row(
+                                    const SizedBox(height: 16),
+                                    if (!hasCheckedInToday)
+                                      SizedBox(
+                                        width: double.infinity,
+                                        child: ElevatedButton.icon(
+                                          onPressed: _isCheckingIn
+                                              ? null
+                                              : _doCheckIn,
+                                          icon: _isCheckingIn
+                                              ? const SizedBox(
+                                                  width: 20,
+                                                  height: 20,
+                                                  child: CircularProgressIndicator(
+                                                    strokeWidth: 2,
+                                                    valueColor:
+                                                        AlwaysStoppedAnimation<
+                                                          Color
+                                                        >(Colors.white),
+                                                  ),
+                                                )
+                                              : const Icon(Icons.location_on),
+                                          label: Text(
+                                            _isCheckingIn
+                                                ? AppLocalizations.of(
+                                                    context,
+                                                  )!.checkInProgress
+                                                : _hasVisited
+                                                ? AppLocalizations.of(
+                                                    context,
+                                                  )!.checkInAgain
+                                                : AppLocalizations.of(
+                                                    context,
+                                                  )!.checkIn,
+                                          ),
+                                          style: ElevatedButton.styleFrom(
+                                            padding: const EdgeInsets.symmetric(
+                                              vertical: 16,
+                                            ),
+                                            backgroundColor: Theme.of(
+                                              context,
+                                            ).colorScheme.primary,
+                                            foregroundColor: Colors.white,
+                                          ),
+                                        ),
+                                      )
+                                    else ...[
+                                      const SizedBox(height: 16),
+                                      Container(
+                                        width: double.infinity,
+                                        padding: const EdgeInsets.all(16),
+                                        decoration: BoxDecoration(
+                                          color: Colors.orange[50],
+                                          borderRadius: BorderRadius.circular(
+                                            12,
+                                          ),
+                                          border: Border.all(
+                                            color: Colors.orange[200]!,
+                                          ),
+                                        ),
+                                        child: Row(
                                           children: [
                                             Icon(
-                                              Icons.check_circle,
-                                              color: Colors.green[700],
+                                              Icons.info_outline,
+                                              color: Colors.orange[700],
                                             ),
                                             const SizedBox(width: 12),
                                             Expanded(
                                               child: Text(
-                                                visitCount == 1
-                                                    ? AppLocalizations.of(context)!.visitedOnce
-                                                    : AppLocalizations.of(context)!.visitedMultiple(visitCount),
-                                                style: const TextStyle(
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize: 14,
-                                                ),
+                                                AppLocalizations.of(
+                                                  context,
+                                                )!.checkInAlreadyToday,
+                                                style: TextStyle(fontSize: 13),
                                               ),
                                             ),
                                           ],
                                         ),
-                                        if (firstVisit != null) ...[
-                                          const SizedBox(height: 8),
-                                          Text(
-                                            AppLocalizations.of(context)!.firstVisit(_formatDate(firstVisit)),
-                                            style: TextStyle(
-                                              fontSize: 12,
-                                              color: Colors.grey[700],
-                                            ),
-                                          ),
-                                          if (visitCount > 1 &&
-                                              lastVisit != null)
-                                            Text(
-                                              AppLocalizations.of(context)!.lastVisit(_formatDate(lastVisit)),
-                                              style: TextStyle(
-                                                fontSize: 12,
-                                                color: Colors.grey[700],
-                                              ),
-                                            ),
-                                        ],
-                                      ],
-                                    ),
-                                  ),
-                                const SizedBox(height: 16),
-                                if (!hasCheckedInToday)
-                                  SizedBox(
-                                    width: double.infinity,
-                                    child: ElevatedButton.icon(
-                                      onPressed: _isCheckingIn
-                                          ? null
-                                          : _doCheckIn,
-                                      icon: _isCheckingIn
-                                          ? const SizedBox(
-                                              width: 20,
-                                              height: 20,
-                                              child: CircularProgressIndicator(
-                                                strokeWidth: 2,
-                                                valueColor:
-                                                    AlwaysStoppedAnimation<
-                                                      Color
-                                                    >(Colors.white),
-                                              ),
-                                            )
-                                          : const Icon(Icons.location_on),
-                                      label: Text(
-                                        _isCheckingIn
-                                            ? AppLocalizations.of(context)!.checkInProgress
-                                            : _hasVisited
-                                            ? AppLocalizations.of(context)!.checkInAgain
-                                            : AppLocalizations.of(context)!.checkIn,
                                       ),
-                                      style: ElevatedButton.styleFrom(
-                                        padding: const EdgeInsets.symmetric(
-                                          vertical: 16,
-                                        ),
-                                        backgroundColor: Theme.of(
-                                          context,
-                                        ).colorScheme.primary,
-                                        foregroundColor: Colors.white,
+                                    ],
+                                    const SizedBox(height: 8),
+                                    Text(
+                                      AppLocalizations.of(
+                                        context,
+                                      )!.checkInRadius,
+                                      style: TextStyle(
+                                        fontSize: 12,
+                                        color: Colors.grey[600],
                                       ),
                                     ),
-                                  )
-                                else ...[
-                                  const SizedBox(height: 16),
-                                  Container(
-                                    width: double.infinity,
-                                    padding: const EdgeInsets.all(16),
-                                    decoration: BoxDecoration(
-                                      color: Colors.orange[50],
-                                      borderRadius: BorderRadius.circular(12),
-                                      border: Border.all(
-                                        color: Colors.orange[200]!,
-                                      ),
-                                    ),
-                                    child: Row(
-                                      children: [
-                                        Icon(
-                                          Icons.info_outline,
-                                          color: Colors.orange[700],
-                                        ),
-                                        const SizedBox(width: 12),
-                                        Expanded(
-                                          child: Text(
-                                            AppLocalizations.of(context)!.checkInAlreadyToday,
-                                            style: TextStyle(fontSize: 13),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                                const SizedBox(height: 8),
-                                Text(
-                                  AppLocalizations.of(context)!.checkInRadius,
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                    color: Colors.grey[600],
-                                  ),
-                                ),
-                                const SizedBox(height: 16),
-                              ],
-                            );
-                          }
-                          return const SizedBox.shrink();
-                        },
+                                    const SizedBox(height: 16),
+                                  ],
+                                );
+                              }
+                              return const SizedBox.shrink();
+                            },
                       ),
 
                       // Descrizione
@@ -756,7 +791,9 @@ class _DettaglioRifugioScreenState extends State<DettaglioRifugioScreen> {
                       ],
 
                       // Informazioni principali
-                      _SectionTitle(title: AppLocalizations.of(context)!.informazioni),
+                      _SectionTitle(
+                        title: AppLocalizations.of(context)!.informazioni,
+                      ),
                       const SizedBox(height: 12),
                       if (widget.rifugio.altitudine != null)
                         _InfoRow(
@@ -806,7 +843,9 @@ class _DettaglioRifugioScreenState extends State<DettaglioRifugioScreen> {
 
                       // Servizi
                       if (_hasServices()) ...[
-                        _SectionTitle(title: AppLocalizations.of(context)!.services),
+                        _SectionTitle(
+                          title: AppLocalizations.of(context)!.services,
+                        ),
                         const SizedBox(height: 12),
                         Card(
                           child: Padding(
@@ -819,23 +858,35 @@ class _DettaglioRifugioScreenState extends State<DettaglioRifugioScreen> {
                                     widget.rifugio.postiLetto! > 0)
                                   _ServiceChip(
                                     icon: Icons.bed,
-                                    label:
-                                        AppLocalizations.of(context)!.bedsCount(widget.rifugio.postiLetto!),
+                                    label: AppLocalizations.of(
+                                      context,
+                                    )!.bedsCount(widget.rifugio.postiLetto!),
                                   ),
                                 if (widget.rifugio.ristorante == true)
                                   _ServiceChip(
                                     icon: Icons.restaurant,
                                     label:
                                         widget.rifugio.restaurantSeats != null
-                                        ? AppLocalizations.of(context)!.restaurantWithSeats(widget.rifugio.restaurantSeats!)
-                                        : AppLocalizations.of(context)!.restaurant,
+                                        ? AppLocalizations.of(
+                                            context,
+                                          )!.restaurantWithSeats(
+                                            widget.rifugio.restaurantSeats!,
+                                          )
+                                        : AppLocalizations.of(
+                                            context,
+                                          )!.restaurant,
                                   ),
                                 if (widget.rifugio.wifi == true)
-                                  _ServiceChip(icon: Icons.wifi, label: AppLocalizations.of(context)!.wifi),
+                                  _ServiceChip(
+                                    icon: Icons.wifi,
+                                    label: AppLocalizations.of(context)!.wifi,
+                                  ),
                                 if (widget.rifugio.elettricita == true)
                                   _ServiceChip(
                                     icon: Icons.electrical_services,
-                                    label: AppLocalizations.of(context)!.electricity,
+                                    label: AppLocalizations.of(
+                                      context,
+                                    )!.electricity,
                                   ),
                                 if (widget.rifugio.pagamentoPos == true)
                                   _ServiceChip(
@@ -845,22 +896,30 @@ class _DettaglioRifugioScreenState extends State<DettaglioRifugioScreen> {
                                 if (widget.rifugio.defibrillatore == true)
                                   _ServiceChip(
                                     icon: Icons.favorite,
-                                    label: AppLocalizations.of(context)!.defibrillator,
+                                    label: AppLocalizations.of(
+                                      context,
+                                    )!.defibrillator,
                                   ),
                                 if (widget.rifugio.hotWater == true)
                                   _ServiceChip(
                                     icon: Icons.hot_tub,
-                                    label: AppLocalizations.of(context)!.hotWater,
+                                    label: AppLocalizations.of(
+                                      context,
+                                    )!.hotWater,
                                   ),
                                 if (widget.rifugio.showers == true)
                                   _ServiceChip(
                                     icon: Icons.shower,
-                                    label: AppLocalizations.of(context)!.showers,
+                                    label: AppLocalizations.of(
+                                      context,
+                                    )!.showers,
                                   ),
                                 if (widget.rifugio.insideWater == true)
                                   _ServiceChip(
                                     icon: Icons.water_drop,
-                                    label: AppLocalizations.of(context)!.insideWater,
+                                    label: AppLocalizations.of(
+                                      context,
+                                    )!.insideWater,
                                   ),
                               ],
                             ),
@@ -871,7 +930,9 @@ class _DettaglioRifugioScreenState extends State<DettaglioRifugioScreen> {
 
                       // Accessibilità
                       if (_hasAccessibility()) ...[
-                        _SectionTitle(title: AppLocalizations.of(context)!.accessibility),
+                        _SectionTitle(
+                          title: AppLocalizations.of(context)!.accessibility,
+                        ),
                         const SizedBox(height: 12),
                         Card(
                           child: Padding(
@@ -893,18 +954,24 @@ class _DettaglioRifugioScreenState extends State<DettaglioRifugioScreen> {
                                 if (widget.rifugio.disabledAccess == true)
                                   _ServiceChip(
                                     icon: Icons.accessible,
-                                    label: AppLocalizations.of(context)!.disabled,
+                                    label: AppLocalizations.of(
+                                      context,
+                                    )!.disabled,
                                   ),
                                 if (widget.rifugio.disabledWc == true)
                                   _ServiceChip(
                                     icon: Icons.wc,
-                                    label: AppLocalizations.of(context)!.disabledWc,
+                                    label: AppLocalizations.of(
+                                      context,
+                                    )!.disabledWc,
                                   ),
                                 if (widget.rifugio.familiesChildrenAccess ==
                                     true)
                                   _ServiceChip(
                                     icon: Icons.family_restroom,
-                                    label: AppLocalizations.of(context)!.families,
+                                    label: AppLocalizations.of(
+                                      context,
+                                    )!.families,
                                   ),
                                 if (widget.rifugio.petAccess == true)
                                   _ServiceChip(
@@ -921,7 +988,9 @@ class _DettaglioRifugioScreenState extends State<DettaglioRifugioScreen> {
                       // Gestione
                       if (widget.rifugio.propertyName != null ||
                           widget.rifugio.owner != null) ...[
-                        _SectionTitle(title: AppLocalizations.of(context)!.management),
+                        _SectionTitle(
+                          title: AppLocalizations.of(context)!.management,
+                        ),
                         const SizedBox(height: 12),
                         if (widget.rifugio.propertyName != null)
                           _InfoRow(
@@ -948,7 +1017,9 @@ class _DettaglioRifugioScreenState extends State<DettaglioRifugioScreen> {
                       if (widget.rifugio.telefono != null ||
                           widget.rifugio.email != null ||
                           widget.rifugio.sitoWeb != null) ...[
-                        _SectionTitle(title: AppLocalizations.of(context)!.contacts),
+                        _SectionTitle(
+                          title: AppLocalizations.of(context)!.contacts,
+                        ),
                         const SizedBox(height: 12),
                         if (widget.rifugio.telefono != null)
                           _ContactButton(
@@ -980,11 +1051,13 @@ class _DettaglioRifugioScreenState extends State<DettaglioRifugioScreen> {
                             widget.rifugio.longitudine,
                           ),
                           icon: const Icon(Icons.directions),
-                          label: Text(AppLocalizations.of(context)!.openInGoogleMaps),
+                          label: Text(
+                            AppLocalizations.of(context)!.openInGoogleMaps,
+                          ),
                         ),
                       ),
                       const SizedBox(height: 12),
-                      
+
                       // Pulsante donazioni
                       SizedBox(
                         width: double.infinity,
@@ -993,7 +1066,9 @@ class _DettaglioRifugioScreenState extends State<DettaglioRifugioScreen> {
                             Navigator.pushNamed(context, '/donations');
                           },
                           icon: const Icon(Icons.favorite),
-                          label: Text(AppLocalizations.of(context)!.supportDevelopment),
+                          label: Text(
+                            AppLocalizations.of(context)!.supportDevelopment,
+                          ),
                           style: OutlinedButton.styleFrom(
                             foregroundColor: Colors.pink[700],
                             side: BorderSide(color: Colors.pink[700]!),
@@ -1249,7 +1324,9 @@ class _ShareDialog extends StatelessWidget {
                                     borderRadius: BorderRadius.circular(20),
                                   ),
                                   child: Text(
-                                    AppLocalizations.of(context)!.visitNumber(visitCount),
+                                    AppLocalizations.of(
+                                      context,
+                                    )!.visitNumber(visitCount),
                                     style: TextStyle(
                                       color: AppTheme.deepTeal,
                                       fontSize: 18,
@@ -1261,7 +1338,9 @@ class _ShareDialog extends StatelessWidget {
                             ),
                             const SizedBox(height: 12),
                             Text(
-                              AppLocalizations.of(context)!.congratsVisit(visitCount),
+                              AppLocalizations.of(
+                                context,
+                              )!.congratsVisit(visitCount),
                               style: const TextStyle(
                                 color: Colors.white,
                                 fontSize: 15,

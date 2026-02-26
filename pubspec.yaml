@@ -16,7 +16,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
 # In Windows, build-name is used as the major, minor, and patch parts
 # of the product and file versions while build-number is used as the build suffix.
-version: 1.0.0+1
+version: 1.0.0+6
 
 environment:
   sdk: ^3.10.7
@@ -98,8 +98,8 @@ dev_dependencies:
   # rules and activating additional ones.
   flutter_lints: ^6.0.0
   
-  # Flutter Driver per screenshot automatici
-  flutter_driver:
+  # Integration test per screenshot automatici
+  integration_test:
     sdk: flutter
   test: ^1.24.0
   
@@ -124,6 +124,7 @@ flutter:
   assets:
     - cai_app_data.json
     - assets/icon/
+    - assets/screenshots_images/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
@@ -155,26 +156,36 @@ flutter:
 # Genera tutte le icone con: dart run flutter_launcher_icons
 #
 # File sorgente necessari in assets/icon/:
-#   - app_icon.png           → 1024x1024, PNG, sfondo pieno, NO trasparenza (usato per iOS)
+#   - app_icon.png           → 1024x1024, PNG, sfondo #2F6F55, NO trasparenza (iOS, web, macOS, Windows)
 #   - app_icon_foreground.png → 1024x1024, PNG, CON trasparenza, soggetto nel 66% centrale (adaptive Android)
 #
 flutter_launcher_icons:
-  # iOS
-  ios: true
+  # Icona base (usata come fallback e per piattaforme senza config specifica)
   image_path: "assets/icon/app_icon.png"
+
+  # iOS - usa l'icona piena con sfondo, senza alpha (requisito Apple)
+  ios: true
   remove_alpha_ios: true
 
-  # Android
+  # Android - icona adattiva (Android 8+) + fallback legacy
   android: true
-  adaptive_icon_background: "#155339"
+  adaptive_icon_background: "#2F6F55"
   adaptive_icon_foreground: "assets/icon/app_icon_foreground.png"
+  min_sdk_android: 21
 
-  # Web
+  # Web - favicon e icone PWA
   web:
     generate: true
     image_path: "assets/icon/app_icon.png"
+    background_color: "#2F6F55"
+    theme_color: "#2F6F55"
 
   # macOS
   macos:
+    generate: true
+    image_path: "assets/icon/app_icon.png"
+
+  # Windows
+  windows:
     generate: true
     image_path: "assets/icon/app_icon.png"

@@ -8,9 +8,9 @@ L'app utilizza tre prodotti consumabili per le donazioni:
 
 | ID Prodotto | Tipo | Descrizione | Prezzo Suggerito |
 |-------------|------|-------------|------------------|
-| `donation_coffee` | Consumabile | Offrimi un caffè | €2.99 |
-| `donation_lunch` | Consumabile | Offrimi un pranzo | €9.99 |
-| `donation_generous` | Consumabile | Donazione generosa | €19.99 |
+| `rifugi_donation_coffee` | Consumabile | Offrimi un caffè | €2.99 |
+| `rifugi_donation_lunch` | Consumabile | Offrimi un pranzo | €9.99 |
+| `rifugi_donation_generous` | Consumabile | Donazione generosa | €19.99 |
 
 ## iOS - App Store Connect
 
@@ -30,7 +30,7 @@ L'app utilizza tre prodotti consumabili per le donazioni:
 
 **Prodotto 1: Caffè**
 - **Reference Name**: Donation Coffee
-- **Product ID**: `donation_coffee` (DEVE corrispondere esattamente al codice)
+- **Product ID**: `rifugi_donation_coffee` (DEVE corrispondere esattamente al codice)
 - **Cleared for Sale**: Attivato
 - **Price**: €2.99 (o equivalente nella tua valuta)
 
@@ -40,7 +40,7 @@ L'app utilizza tre prodotti consumabili per le donazioni:
 
 **Prodotto 2: Pranzo**
 - **Reference Name**: Donation Lunch  
-- **Product ID**: `donation_lunch`
+- **Product ID**: `rifugi_donation_lunch`
 - **Cleared for Sale**: Attivato
 - **Price**: €9.99
 
@@ -50,7 +50,7 @@ L'app utilizza tre prodotti consumabili per le donazioni:
 
 **Prodotto 3: Donazione Generosa**
 - **Reference Name**: Donation Generous
-- **Product ID**: `donation_generous`
+- **Product ID**: `rifugi_donation_generous`
 - **Cleared for Sale**: Attivato
 - **Price**: €19.99
 
@@ -86,21 +86,21 @@ Nella sezione **Review Information** di ogni prodotto, carica uno screenshot del
 #### Per ogni prodotto:
 
 **Prodotto 1: Caffè**
-- **Product ID**: `donation_coffee` (DEVE corrispondere esattamente al codice)
+- **Product ID**: `rifugi_donation_coffee` (DEVE corrispondere esattamente al codice)
 - **Name**: Offrimi un caffè
 - **Description**: Supporta lo sviluppo dell'app offrendomi un caffè
 - **Status**: Active
 - **Price**: €2.99
 
 **Prodotto 2: Pranzo**
-- **Product ID**: `donation_lunch`
+- **Product ID**: `rifugi_donation_lunch`
 - **Name**: Offrimi un pranzo
 - **Description**: Supporta lo sviluppo dell'app offrendomi un pranzo
 - **Status**: Active
 - **Price**: €9.99
 
 **Prodotto 3: Donazione Generosa**
-- **Product ID**: `donation_generous`
+- **Product ID**: `rifugi_donation_generous`
 - **Name**: Donazione generosa
 - **Description**: Una donazione generosa per supportare lo sviluppo
 - **Status**: Active

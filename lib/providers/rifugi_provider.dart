@@ -13,8 +13,23 @@ class RifugiProvider extends ChangeNotifier {
   Position? _userPosition;
   DateTime? _lastSyncTime;
 
-  RifugiProvider() {
-    _initializeApp();
+  /// Se [testMode] è `true`, salta l'inizializzazione (Firebase, SQLite, Geo).
+  /// Usato per screenshot automatici e test.
+  RifugiProvider({bool testMode = false}) {
+    if (!testMode) {
+      _initializeApp();
+    } else {
+      _isLoading = false;
+    }
+  }
+
+  /// Inietta una lista di rifugi dall'esterno (per test/screenshot).
+  /// Non usare in produzione.
+  void setRifugiForTest(List<Rifugio> rifugi) {
+    _rifugi = rifugi;
+    _filteredRifugi = List.from(rifugi);
+    _isLoading = false;
+    notifyListeners();
   }
 
   /// Inizializza l'app: DB locale + sincronizzazione
@@ -22,13 +37,13 @@ class RifugiProvider extends ChangeNotifier {
     try {
       // Prima inizializza il DB locale
       await RifugiService.initializeWithLocalData();
-      
+
       // Poi carica i rifugi (offline-first)
       await _loadRifugi();
-      
+
       // Inizializza la posizione
       _initializeLocation();
-      
+
       // Sincronizza in background con Firestore
       _syncInBackground();
     } catch (e) {
@@ -43,12 +58,12 @@ class RifugiProvider extends ChangeNotifier {
     try {
       _isSyncing = true;
       notifyListeners();
-      
+
       await RifugiService.syncFromFirestore();
-      
+
       // Ricarica i dati dopo la sync
       await _loadRifugi();
-      
+
       _lastSyncTime = DateTime.now();
       _isSyncing = false;
       notifyListeners();
@@ -93,18 +108,19 @@ class RifugiProvider extends ChangeNotifier {
 
   double? getDistanceFromUser(Rifugio rifugio) {
     if (_userPosition == null) return null;
-    
+
     return Geolocator.distanceBetween(
-      _userPosition!.latitude,
-      _userPosition!.longitude,
-      rifugio.latitudine,
-      rifugio.longitudine,
-    ) / 1000; // Converti in km
+          _userPosition!.latitude,
+          _userPosition!.longitude,
+          rifugio.latitudine,
+          rifugio.longitudine,
+        ) /
+        1000; // Converti in km
   }
 
   void _sortByDistance() {
     if (_userPosition == null) return;
-    
+
     _filteredRifugi.sort((a, b) {
       final distA = Geolocator.distanceBetween(
         _userPosition!.latitude,
@@ -141,7 +157,7 @@ class RifugiProvider extends ChangeNotifier {
       _rifugi = await RifugiService.loadRifugiLocal();
       _filteredRifugi = List.from(_rifugi);
       _sortByDistance();
-      
+
       _isLoading = false;
       notifyListeners();
     } catch (e) {
@@ -171,7 +187,7 @@ class RifugiProvider extends ChangeNotifier {
         final descrizione = rifugio.descrizione?.toLowerCase() ?? '';
         final operatore = rifugio.operatore?.toLowerCase() ?? '';
         final queryLower = query.toLowerCase();
-        
+
         return nome.contains(queryLower) ||
             descrizione.contains(queryLower) ||
             operatore.contains(queryLower);

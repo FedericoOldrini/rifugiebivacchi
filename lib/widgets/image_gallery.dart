@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:rifugi_bivacchi/l10n/app_localizations.dart';
+import 'rifugio_image.dart';
 
 /// A horizontal image gallery with cached thumbnails.
 /// Tapping an image opens the fullscreen viewer.
@@ -33,16 +33,16 @@ class ImageGallery extends StatelessWidget {
             const SizedBox(width: 8),
             Text(
               l10n.gallery,
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
+              style: Theme.of(
+                context,
+              ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
             ),
             const Spacer(),
             Text(
               l10n.nPhotos(imageUrls.length),
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: Colors.grey[600],
-                  ),
+              style: Theme.of(
+                context,
+              ).textTheme.bodySmall?.copyWith(color: Colors.grey[600]),
             ),
           ],
         ),
@@ -107,7 +107,7 @@ class _GalleryThumbnail extends StatelessWidget {
         tag: 'gallery_$index',
         child: ClipRRect(
           borderRadius: BorderRadius.circular(12),
-          child: CachedNetworkImage(
+          child: RifugioImage(
             imageUrl: imageUrl,
             width: 200,
             height: 160,
@@ -212,13 +212,11 @@ class _FullscreenGalleryState extends State<_FullscreenGallery> {
                 child: Center(
                   child: Hero(
                     tag: 'gallery_$index',
-                    child: CachedNetworkImage(
+                    child: RifugioImage(
                       imageUrl: widget.imageUrls[index],
                       fit: BoxFit.contain,
                       placeholder: (context, url) => const Center(
-                        child: CircularProgressIndicator(
-                          color: Colors.white,
-                        ),
+                        child: CircularProgressIndicator(color: Colors.white),
                       ),
                       errorWidget: (context, url, error) => Column(
                         mainAxisAlignment: MainAxisAlignment.center,

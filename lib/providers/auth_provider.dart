@@ -3,36 +3,64 @@ import 'package:firebase_auth/firebase_auth.dart';
 import '../services/auth_service.dart';
 
 class AuthProvider with ChangeNotifier {
-  final AuthService _authService = AuthService();
+  AuthService? _authService;
   User? _user;
   bool _isLoading = false;
   String? _errorMessage;
 
-  AuthProvider() {
-    // Ascolta i cambiamenti dello stato di autenticazione
-    _authService.authStateChanges.listen((User? user) {
-      _user = user;
-      notifyListeners();
-    });
+  // Campi per testMode (screenshot)
+  final bool _testMode;
+  dynamic _fakeUser;
+
+  /// Se [testMode] è `true`, salta Firebase Auth e usa dati fake.
+  /// Usato per screenshot automatici e test.
+  AuthProvider({bool testMode = false}) : _testMode = testMode {
+    if (!testMode) {
+      _authService = AuthService();
+      // Ascolta i cambiamenti dello stato di autenticazione
+      _authService!.authStateChanges.listen((User? user) {
+        _user = user;
+        notifyListeners();
+      });
+    }
   }
 
-  User? get user => _user;
+  /// Inietta un utente fake dall'esterno (per test/screenshot).
+  /// Non usare in produzione.
+  void setFakeUser({
+    required String uid,
+    required String displayName,
+    required String email,
+    String? photoURL,
+  }) {
+    _fakeUser = _TestUser(
+      uid: uid,
+      displayName: displayName,
+      email: email,
+      photoURL: photoURL,
+    );
+    notifyListeners();
+  }
+
+  /// Restituisce l'utente — in testMode restituisce il fake user.
+  dynamic get user => _testMode ? _fakeUser : _user;
   bool get isLoading => _isLoading;
   String? get errorMessage => _errorMessage;
-  bool get isAuthenticated => _user != null;
+  bool get isAuthenticated => user != null;
 
   // Login con Google
   Future<bool> signInWithGoogle() async {
+    if (_testMode) return true;
     try {
       _isLoading = true;
       _errorMessage = null;
       notifyListeners();
 
-      final userCredential = await _authService.signInWithGoogle();
-      
+      final userCredential = await _authService!.signInWithGoogle();
+
       _isLoading = false;
       notifyListeners();
-      
+
       return userCredential != null;
     } catch (e) {
       _isLoading = false;
@@ -44,16 +72,17 @@ class AuthProvider with ChangeNotifier {
 
   // Login con Apple
   Future<bool> signInWithApple() async {
+    if (_testMode) return true;
     try {
       _isLoading = true;
       _errorMessage = null;
       notifyListeners();
 
-      final userCredential = await _authService.signInWithApple();
-      
+      final userCredential = await _authService!.signInWithApple();
+
       _isLoading = false;
       notifyListeners();
-      
+
       return userCredential != null;
     } catch (e) {
       _isLoading = false;
@@ -65,13 +94,14 @@ class AuthProvider with ChangeNotifier {
 
   // Logout
   Future<void> signOut() async {
+    if (_testMode) return;
     try {
       _isLoading = true;
       _errorMessage = null;
       notifyListeners();
 
-      await _authService.signOut();
-      
+      await _authService!.signOut();
+
       _isLoading = false;
       notifyListeners();
     } catch (e) {
@@ -83,20 +113,22 @@ class AuthProvider with ChangeNotifier {
 
   // Elimina account
   Future<bool> deleteAccount() async {
+    if (_testMode) return true;
     try {
       _isLoading = true;
       _errorMessage = null;
       notifyListeners();
 
-      await _authService.deleteAccount();
-      
+      await _authService!.deleteAccount();
+
       _isLoading = false;
       notifyListeners();
-      
+
       return true;
     } catch (e) {
       _isLoading = false;
-      _errorMessage = 'Errore durante l\'eliminazione dell\'account: ${e.toString()}';
+      _errorMessage =
+          'Errore durante l\'eliminazione dell\'account: ${e.toString()}';
       notifyListeners();
       return false;
     }
@@ -104,7 +136,8 @@ class AuthProvider with ChangeNotifier {
 
   // Verifica se Apple Sign In è disponibile
   Future<bool> isAppleSignInAvailable() async {
-    return await _authService.isAppleSignInAvailable();
+    if (_testMode) return false;
+    return await _authService!.isAppleSignInAvailable();
   }
 
   // Pulisci errori
@@ -112,4 +145,19 @@ class AuthProvider with ChangeNotifier {
     _errorMessage = null;
     notifyListeners();
   }
+}
+
+/// Utente fake per screenshot/test — espone la stessa API di [User].
+class _TestUser {
+  final String uid;
+  final String? displayName;
+  final String? email;
+  final String? photoURL;
+
+  const _TestUser({
+    required this.uid,
+    this.displayName,
+    this.email,
+    this.photoURL,
+  });
 }

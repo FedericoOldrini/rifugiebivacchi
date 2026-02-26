@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import '../models/rifugio.dart';
 import '../providers/rifugi_provider.dart';
 import '../providers/passaporto_provider.dart';
 import '../providers/preferiti_provider.dart';
 import 'package:rifugi_bivacchi/l10n/app_localizations.dart';
+import 'rifugio_image.dart';
 
 class RifugioCard extends StatelessWidget {
   final Rifugio rifugio;
@@ -57,7 +57,7 @@ class RifugioCard extends StatelessWidget {
                     children: [
                       ClipRRect(
                         borderRadius: BorderRadius.circular(8),
-                        child: CachedNetworkImage(
+                        child: RifugioImage(
                           imageUrl: rifugio.immagine!,
                           width: 80,
                           height: 80,
@@ -290,7 +290,10 @@ class RifugioCard extends StatelessWidget {
                               label: AppLocalizations.of(context)!.restaurant,
                             ),
                           if (rifugio.wifi == true)
-                            _InfoChip(icon: Icons.wifi, label: AppLocalizations.of(context)!.wifi),
+                            _InfoChip(
+                              icon: Icons.wifi,
+                              label: AppLocalizations.of(context)!.wifi,
+                            ),
                         ],
                       ),
                     ],

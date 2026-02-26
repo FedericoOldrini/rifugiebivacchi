@@ -67,6 +67,20 @@ Contenuto:
 
 ---
 
+### 3b. [IOS_BUILD_UPLOAD.md](IOS_BUILD_UPLOAD.md)
+**Guida operativa: comandi per build e upload iOS**
+
+Contenuto:
+- Procedura rapida (3 comandi per aggiornare una build)
+- Procedura dettagliata con troubleshooting
+- Credenziali App Store Connect API
+- Aggiornamento icona app con flutter_launcher_icons
+- Warning noti e come gestirli
+
+🚀 **Usa questo per le operazioni quotidiane di build e upload**
+
+---
+
 ## ⚖️ Documenti Legali
 
 ### 4. [../legal/PRIVACY_POLICY.md](../legal/PRIVACY_POLICY.md)

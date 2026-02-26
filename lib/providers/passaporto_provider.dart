@@ -5,17 +5,33 @@ import '../models/rifugio_checkin.dart';
 import '../services/passaporto_service.dart';
 
 class PassaportoProvider with ChangeNotifier {
-  final PassaportoService _passaportoService = PassaportoService();
-  
+  PassaportoService? _passaportoService;
+
   List<RifugioCheckIn> _checkIns = [];
   bool _isLoading = false;
   String? _error;
+
+  /// Se [testMode] è `true`, non crea il service Firebase.
+  final bool _testMode;
+
+  PassaportoProvider({bool testMode = false}) : _testMode = testMode {
+    if (!testMode) {
+      _passaportoService = PassaportoService();
+    }
+  }
+
+  /// Inietta check-in fake dall'esterno (per test/screenshot).
+  /// Non usare in produzione.
+  void setCheckInsForTest(List<RifugioCheckIn> checkIns) {
+    _checkIns = checkIns;
+    notifyListeners();
+  }
 
   List<RifugioCheckIn> get checkIns => _checkIns;
   bool get isLoading => _isLoading;
   String? get error => _error;
   int get visitCount => _checkIns.length;
-  
+
   // Raggruppa i check-in per rifugio
   Map<String, List<RifugioCheckIn>> get checkInsByRifugio {
     final Map<String, List<RifugioCheckIn>> grouped = {};
@@ -28,12 +44,12 @@ class PassaportoProvider with ChangeNotifier {
     });
     return grouped;
   }
-  
+
   // Ottieni il numero di visite per un rifugio
   int getVisitCount(String rifugioId) {
     return _checkIns.where((c) => c.rifugioId == rifugioId).length;
   }
-  
+
   // Ottieni la prima visita a un rifugio
   DateTime? getFirstVisit(String rifugioId) {
     final visits = _checkIns.where((c) => c.rifugioId == rifugioId).toList();
@@ -41,7 +57,7 @@ class PassaportoProvider with ChangeNotifier {
     visits.sort((a, b) => a.dataVisita.compareTo(b.dataVisita));
     return visits.first.dataVisita;
   }
-  
+
   // Ottieni l'ultima visita a un rifugio
   DateTime? getLastVisit(String rifugioId) {
     final visits = _checkIns.where((c) => c.rifugioId == rifugioId).toList();
@@ -49,7 +65,7 @@ class PassaportoProvider with ChangeNotifier {
     visits.sort((a, b) => b.dataVisita.compareTo(a.dataVisita));
     return visits.first.dataVisita;
   }
-  
+
   // Verifica se c'è già un check-in oggi per questo rifugio
   bool hasCheckedInToday(String rifugioId) {
     final today = DateTime.now();
@@ -57,14 +73,15 @@ class PassaportoProvider with ChangeNotifier {
       if (checkIn.rifugioId != rifugioId) return false;
       final checkInDate = checkIn.dataVisita;
       return checkInDate.year == today.year &&
-             checkInDate.month == today.month &&
-             checkInDate.day == today.day;
+          checkInDate.month == today.month &&
+          checkInDate.day == today.day;
     });
   }
 
   // Carica i check-in dell'utente
   void loadCheckIns(String userId) {
-    _passaportoService.getCheckIns(userId).listen((checkIns) {
+    if (_testMode) return;
+    _passaportoService!.getCheckIns(userId).listen((checkIns) {
       _checkIns = checkIns;
       notifyListeners();
     });
@@ -112,7 +129,7 @@ class PassaportoProvider with ChangeNotifier {
       _isLoading = true;
       _error = null;
       notifyListeners();
-      
+
       // Verifica se c'è già un check-in oggi per questo rifugio
       if (hasCheckedInToday(rifugio.id)) {
         _error = 'Hai già fatto check-in a questo rifugio oggi';
@@ -141,7 +158,7 @@ class PassaportoProvider with ChangeNotifier {
       );
 
       // Salva su Firestore
-      await _passaportoService.saveCheckIn(userId, checkIn);
+      await _passaportoService!.saveCheckIn(userId, checkIn);
 
       return true;
     } catch (e) {
@@ -155,17 +172,19 @@ class PassaportoProvider with ChangeNotifier {
 
   // Verifica se un rifugio è già stato visitato
   Future<bool> hasVisited(String userId, String rifugioId) async {
-    return await _passaportoService.hasVisited(userId, rifugioId);
+    if (_testMode) return _checkIns.any((c) => c.rifugioId == rifugioId);
+    return await _passaportoService!.hasVisited(userId, rifugioId);
   }
 
   // Elimina un check-in
   Future<void> deleteCheckIn(String userId, String rifugioId) async {
+    if (_testMode) return;
     try {
       _isLoading = true;
       _error = null;
       notifyListeners();
 
-      await _passaportoService.deleteCheckIn(userId, rifugioId);
+      await _passaportoService!.deleteCheckIn(userId, rifugioId);
     } catch (e) {
       _error = e.toString();
     } finally {

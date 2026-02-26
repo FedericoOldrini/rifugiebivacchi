@@ -284,7 +284,7 @@ Questa app fornisce informazioni su rifugi di montagna in Italia utilizzando dat
 - [ ] Account di test creato
 - [ ] Build caricata su App Store Connect
 - [ ] Certificati e provisioning profile configurati
-- [ ] In-App Purchase configurati (donation_coffee, donation_lunch, donation_generous)
+- [ ] In-App Purchase configurati (rifugi_donation_coffee, rifugi_donation_lunch, rifugi_donation_generous)
 - [ ] Google Maps API key configurata
 - [ ] Firebase configurato
 - [ ] Test su dispositivo fisico completati
