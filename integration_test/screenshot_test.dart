@@ -14,23 +14,48 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 import 'package:rifugi_bivacchi/main_screenshot.dart';
 
-/// Attende che tutte le immagini di rete visibili siano state caricate.
+/// Attende che tutte le immagini visibili siano state caricate e renderizzate.
 ///
-/// Esegue pump ripetuti fino a quando non ci sono più
-/// [CircularProgressIndicator] visibili (usati come placeholder
-/// da [CachedNetworkImage]) o fino al timeout.
+/// Gestisce sia le immagini di rete ([CachedNetworkImage], con spinner
+/// [CircularProgressIndicator]) sia le immagini da asset locali (prefisso
+/// `asset:`) usate in modalità screenshot.
+///
+/// Per gli asset locali, usa [precacheImage] per forzare la decodifica
+/// nel framework prima della cattura dello screenshot.
 Future<void> waitForImages(
   WidgetTester tester, {
   Duration timeout = const Duration(seconds: 15),
 }) async {
+  // 1. Pre-carica tutte le immagini asset visibili nel widget tree.
+  //    Cerchiamo tutti i widget Image che usano AssetImage e li
+  //    pre-decodifichiamo nella cache del framework.
+  final context = tester.element(find.byType(MaterialApp));
+  final imageFinder = find.byType(Image);
+  for (final element in imageFinder.evaluate()) {
+    final imageWidget = element.widget as Image;
+    final provider = imageWidget.image;
+    // Pre-carica l'immagine nella cache per forzarne la decodifica
+    try {
+      await precacheImage(provider, context);
+    } catch (_) {
+      // Ignora errori (immagine non trovata, ecc.) — lo screenshot
+      // mostrerà l'errorWidget se presente.
+    }
+  }
+
+  // 2. Attendi che eventuali spinner di rete spariscano (per CachedNetworkImage).
   final stopwatch = Stopwatch()..start();
   while (stopwatch.elapsed < timeout) {
     await tester.pump(const Duration(milliseconds: 500));
-    // Se non ci sono più spinner, le immagini sono caricate (o in errore)
     final spinners = find.byType(CircularProgressIndicator);
     if (spinners.evaluate().isEmpty) break;
   }
-  // Un ultimo pumpAndSettle per animazioni residue
+
+  // 3. Pump aggiuntivi per garantire che il framework abbia renderizzato
+  //    tutte le immagini decodificate nel frame corrente.
+  for (var i = 0; i < 5; i++) {
+    await tester.pump(const Duration(milliseconds: 200));
+  }
   await tester.pumpAndSettle();
 }
 
@@ -67,6 +92,9 @@ void main() {
       // Attendi che Google Maps carichi le tile e i marker
       await tester.pump(const Duration(seconds: 5));
       await tester.pumpAndSettle();
+
+      // Attendi eventuali immagini (marker custom, ecc.)
+      await waitForImages(tester);
 
       await binding.convertFlutterSurfaceToImage();
       await tester.pumpAndSettle();
@@ -115,6 +143,9 @@ void main() {
       // Il passaporto mostra i check-in raggruppati
       expect(find.text('Rifugio Auronzo'), findsWidgets);
 
+      // Attendi che eventuali immagini del passaporto siano caricate
+      await waitForImages(tester);
+
       await binding.convertFlutterSurfaceToImage();
       await tester.pumpAndSettle();
       await binding.takeScreenshot('05_passaporto');
@@ -132,6 +163,9 @@ void main() {
 
       // Verifica che il profilo mostra i dati dell'utente fake
       expect(find.text('Marco Rossi'), findsOneWidget);
+
+      // Attendi che eventuali immagini del profilo siano caricate
+      await waitForImages(tester);
 
       await binding.convertFlutterSurfaceToImage();
       await tester.pumpAndSettle();

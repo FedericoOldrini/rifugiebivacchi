@@ -1,21 +1,43 @@
 import 'package:flutter/material.dart';
 import 'package:in_app_review/in_app_review.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:rifugi_bivacchi/l10n/app_localizations.dart';
+import '../services/analytics_service.dart';
 import 'donations_screen.dart';
 import '../services/onboarding_service.dart';
 import 'onboarding_screen.dart';
 
-class SettingsScreen extends StatelessWidget {
+class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
+
+  @override
+  State<SettingsScreen> createState() => _SettingsScreenState();
+}
+
+class _SettingsScreenState extends State<SettingsScreen> {
+  String _appVersion = '';
+
+  @override
+  void initState() {
+    super.initState();
+    _loadAppVersion();
+  }
+
+  Future<void> _loadAppVersion() async {
+    final info = await PackageInfo.fromPlatform();
+    if (mounted) {
+      setState(() {
+        _appVersion = '${info.version} (${info.buildNumber})';
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(l10n.settings),
-      ),
+      appBar: AppBar(title: Text(l10n.settings)),
       body: ListView(
         children: [
           Padding(
@@ -32,7 +54,7 @@ class SettingsScreen extends StatelessWidget {
           ListTile(
             leading: const Icon(Icons.info_outline),
             title: Text(l10n.version),
-            subtitle: const Text('1.0.0'),
+            subtitle: Text(_appVersion),
           ),
           ListTile(
             leading: const Icon(Icons.description_outlined),
@@ -42,15 +64,13 @@ class SettingsScreen extends StatelessWidget {
               showAboutDialog(
                 context: context,
                 applicationName: l10n.appTitle,
-                applicationVersion: '1.0.0',
+                applicationVersion: _appVersion,
                 applicationIcon: const Icon(
                   Icons.landscape,
                   size: 48,
                   color: Color(0xFF2D5016),
                 ),
-                children: [
-                  Text(l10n.appAboutDescription),
-                ],
+                children: [Text(l10n.appAboutDescription)],
               );
             },
           ),
@@ -125,8 +145,9 @@ class SettingsScreen extends StatelessWidget {
             subtitle: Text(l10n.reviewOnboardingDesc),
             trailing: const Icon(Icons.chevron_right),
             onTap: () async {
+              AnalyticsService.instance.logReviewOnboarding();
               await OnboardingService.resetOnboarding();
-              
+
               if (context.mounted) {
                 Navigator.of(context).pushReplacement(
                   MaterialPageRoute(
@@ -168,20 +189,17 @@ class SettingsScreen extends StatelessWidget {
             subtitle: Text(l10n.rateAppDesc),
             trailing: const Icon(Icons.chevron_right),
             onTap: () async {
+              AnalyticsService.instance.logRateApp();
               final inAppReview = InAppReview.instance;
               if (await inAppReview.isAvailable()) {
                 await inAppReview.requestReview();
               } else {
                 // Fallback: apri la pagina dello store
-                await inAppReview.openStoreListing(
-                  appStoreId: '', // Inserisci il tuo App Store ID
-                );
+                await inAppReview.openStoreListing(appStoreId: '6740241514');
                 if (context.mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text(l10n.rateAppThanks),
-                    ),
-                  );
+                  ScaffoldMessenger.of(
+                    context,
+                  ).showSnackBar(SnackBar(content: Text(l10n.rateAppThanks)));
                 }
               }
             },
@@ -190,10 +208,7 @@ class SettingsScreen extends StatelessWidget {
           Center(
             child: Text(
               l10n.madeWithLove,
-              style: TextStyle(
-                fontSize: 12,
-                color: Colors.grey[600],
-              ),
+              style: TextStyle(fontSize: 12, color: Colors.grey[600]),
             ),
           ),
           const SizedBox(height: 16),

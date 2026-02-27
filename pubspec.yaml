@@ -84,6 +84,9 @@ dependencies:
   firebase_crashlytics: ^5.0.7
   firebase_analytics: ^12.1.1
   
+  # App info
+  package_info_plus: ^8.3.0
+  
   # In-app purchases
   in_app_purchase: ^3.2.0
 

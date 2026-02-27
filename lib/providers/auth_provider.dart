@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../services/auth_service.dart';
+import '../services/analytics_service.dart';
 
 class AuthProvider with ChangeNotifier {
   AuthService? _authService;
@@ -61,6 +62,9 @@ class AuthProvider with ChangeNotifier {
       _isLoading = false;
       notifyListeners();
 
+      if (userCredential != null) {
+        AnalyticsService.instance.logLogin(method: 'google');
+      }
       return userCredential != null;
     } catch (e) {
       _isLoading = false;
@@ -83,6 +87,9 @@ class AuthProvider with ChangeNotifier {
       _isLoading = false;
       notifyListeners();
 
+      if (userCredential != null) {
+        AnalyticsService.instance.logLogin(method: 'apple');
+      }
       return userCredential != null;
     } catch (e) {
       _isLoading = false;
@@ -101,6 +108,7 @@ class AuthProvider with ChangeNotifier {
       notifyListeners();
 
       await _authService!.signOut();
+      AnalyticsService.instance.logLogout();
 
       _isLoading = false;
       notifyListeners();

@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import '../services/preferiti_service.dart';
+import '../services/analytics_service.dart';
 
 class PreferitiProvider with ChangeNotifier {
   PreferitiService? _preferitiService;
@@ -50,11 +51,17 @@ class PreferitiProvider with ChangeNotifier {
       _error = null;
       notifyListeners();
 
-      if (isPreferito(rifugioId)) {
+      final aggiunto = !isPreferito(rifugioId);
+      if (!aggiunto) {
         await _preferitiService!.removePreferito(userId, rifugioId);
       } else {
         await _preferitiService!.addPreferito(userId, rifugioId);
       }
+
+      AnalyticsService.instance.logTogglePreferito(
+        rifugioId: rifugioId,
+        aggiunto: aggiunto,
+      );
 
       _isLoading = false;
       notifyListeners();

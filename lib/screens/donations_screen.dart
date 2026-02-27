@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
 import '../services/in_app_purchase_service.dart';
+import '../services/analytics_service.dart';
 import 'package:rifugi_bivacchi/l10n/app_localizations.dart';
 
 class DonationsScreen extends StatefulWidget {
@@ -18,6 +19,7 @@ class _DonationsScreenState extends State<DonationsScreen> {
   @override
   void initState() {
     super.initState();
+    AnalyticsService.instance.logOpenDonations();
     _initializePurchases();
   }
 
@@ -56,7 +58,9 @@ class _DonationsScreenState extends State<DonationsScreen> {
                   const Icon(Icons.error, color: Colors.white),
                   const SizedBox(width: 8),
                   Expanded(
-                    child: Text(AppLocalizations.of(context)!.purchaseError(error)),
+                    child: Text(
+                      AppLocalizations.of(context)!.purchaseError(error),
+                    ),
                   ),
                 ],
               ),
@@ -71,7 +75,9 @@ class _DonationsScreenState extends State<DonationsScreen> {
     setState(() {
       _isLoading = false;
       if (!_purchaseService.isAvailable) {
-        _errorMessage = AppLocalizations.of(context)!.inAppPurchasesNotAvailable;
+        _errorMessage = AppLocalizations.of(
+          context,
+        )!.inAppPurchasesNotAvailable;
       } else if (_purchaseService.queryProductError != null) {
         _errorMessage = _purchaseService.queryProductError;
       }
@@ -132,9 +138,7 @@ class _DonationsScreenState extends State<DonationsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(AppLocalizations.of(context)!.donations),
-      ),
+      appBar: AppBar(title: Text(AppLocalizations.of(context)!.donations)),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : SingleChildScrollView(
@@ -156,7 +160,9 @@ class _DonationsScreenState extends State<DonationsScreen> {
                           ),
                           const SizedBox(height: 16),
                           Text(
-                            AppLocalizations.of(context)!.supportDevelopmentTitle,
+                            AppLocalizations.of(
+                              context,
+                            )!.supportDevelopmentTitle,
                             style: const TextStyle(
                               fontSize: 24,
                               fontWeight: FontWeight.bold,
@@ -165,7 +171,9 @@ class _DonationsScreenState extends State<DonationsScreen> {
                           ),
                           const SizedBox(height: 8),
                           Text(
-                            AppLocalizations.of(context)!.supportDevelopmentDescription,
+                            AppLocalizations.of(
+                              context,
+                            )!.supportDevelopmentDescription,
                             style: TextStyle(
                               fontSize: 14,
                               color: Colors.grey[700],
@@ -189,11 +197,16 @@ class _DonationsScreenState extends State<DonationsScreen> {
                           children: [
                             Row(
                               children: [
-                                Icon(Icons.info_outline, color: Colors.orange[700]),
+                                Icon(
+                                  Icons.info_outline,
+                                  color: Colors.orange[700],
+                                ),
                                 const SizedBox(width: 12),
                                 Expanded(
                                   child: Text(
-                                    AppLocalizations.of(context)!.donationsInApp,
+                                    AppLocalizations.of(
+                                      context,
+                                    )!.donationsInApp,
                                     style: TextStyle(
                                       color: Colors.orange[700],
                                       fontWeight: FontWeight.bold,
@@ -213,7 +226,9 @@ class _DonationsScreenState extends State<DonationsScreen> {
                             ),
                             const SizedBox(height: 12),
                             Text(
-                              AppLocalizations.of(context)!.donationsNotAvailableNote,
+                              AppLocalizations.of(
+                                context,
+                              )!.donationsNotAvailableNote,
                               style: TextStyle(
                                 color: Colors.orange[700],
                                 fontSize: 12,
@@ -239,7 +254,9 @@ class _DonationsScreenState extends State<DonationsScreen> {
                   _FeatureItem(
                     icon: Icons.update,
                     title: AppLocalizations.of(context)!.regularUpdates,
-                    description: AppLocalizations.of(context)!.regularUpdatesDesc,
+                    description: AppLocalizations.of(
+                      context,
+                    )!.regularUpdatesDesc,
                   ),
                   _FeatureItem(
                     icon: Icons.add_location,
@@ -249,7 +266,9 @@ class _DonationsScreenState extends State<DonationsScreen> {
                   _FeatureItem(
                     icon: Icons.bug_report,
                     title: AppLocalizations.of(context)!.supportAndBugfix,
-                    description: AppLocalizations.of(context)!.supportAndBugfixDesc,
+                    description: AppLocalizations.of(
+                      context,
+                    )!.supportAndBugfixDesc,
                   ),
                   _FeatureItem(
                     icon: Icons.insights,
@@ -267,7 +286,7 @@ class _DonationsScreenState extends State<DonationsScreen> {
                     ),
                   ),
                   const SizedBox(height: 12),
-                  
+
                   // Mostra i prodotti disponibili
                   if (_purchaseService.isAvailable && _errorMessage == null)
                     ..._purchaseService.products.map((product) {
@@ -284,36 +303,36 @@ class _DonationsScreenState extends State<DonationsScreen> {
                       );
                     }).toList()
                   else
-                    // Fallback se i prodotti non sono disponibili
-                    ...[
-                      _DonationCard(
-                        icon: Icons.coffee,
-                        title: AppLocalizations.of(context)!.buyCoffee,
-                        subtitle: AppLocalizations.of(context)!.notAvailable,
-                        color: Colors.brown,
-                        isPending: false,
-                        onTap: () {},
-                      ),
-                      const SizedBox(height: 8),
-                      _DonationCard(
-                        icon: Icons.lunch_dining,
-                        title: AppLocalizations.of(context)!.buyLunch,
-                        subtitle: AppLocalizations.of(context)!.notAvailable,
-                        color: Colors.orange,
-                        isPending: false,
-                        onTap: () {},
-                      ),
-                      const SizedBox(height: 8),
-                      _DonationCard(
-                        icon: Icons.card_giftcard,
-                        title: AppLocalizations.of(context)!.generousDonation,
-                        subtitle: AppLocalizations.of(context)!.notAvailable,
-                        color: Colors.purple,
-                        isPending: false,
-                        onTap: () {},
-                      ),
-                    ],
-                  
+                  // Fallback se i prodotti non sono disponibili
+                  ...[
+                    _DonationCard(
+                      icon: Icons.coffee,
+                      title: AppLocalizations.of(context)!.buyCoffee,
+                      subtitle: AppLocalizations.of(context)!.notAvailable,
+                      color: Colors.brown,
+                      isPending: false,
+                      onTap: () {},
+                    ),
+                    const SizedBox(height: 8),
+                    _DonationCard(
+                      icon: Icons.lunch_dining,
+                      title: AppLocalizations.of(context)!.buyLunch,
+                      subtitle: AppLocalizations.of(context)!.notAvailable,
+                      color: Colors.orange,
+                      isPending: false,
+                      onTap: () {},
+                    ),
+                    const SizedBox(height: 8),
+                    _DonationCard(
+                      icon: Icons.card_giftcard,
+                      title: AppLocalizations.of(context)!.generousDonation,
+                      subtitle: AppLocalizations.of(context)!.notAvailable,
+                      color: Colors.purple,
+                      isPending: false,
+                      onTap: () {},
+                    ),
+                  ],
+
                   const SizedBox(height: 32),
 
                   // Info
@@ -323,10 +342,7 @@ class _DonationsScreenState extends State<DonationsScreen> {
                       padding: const EdgeInsets.all(16.0),
                       child: Column(
                         children: [
-                          Icon(
-                            Icons.info_outline,
-                            color: Colors.grey[600],
-                          ),
+                          Icon(Icons.info_outline, color: Colors.grey[600]),
                           const SizedBox(height: 8),
                           Text(
                             AppLocalizations.of(context)!.donationsInfo,
@@ -375,11 +391,7 @@ class _FeatureItem extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(
-            icon,
-            color: Theme.of(context).colorScheme.primary,
-            size: 24,
-          ),
+          Icon(icon, color: Theme.of(context).colorScheme.primary, size: 24),
           const SizedBox(width: 12),
           Expanded(
             child: Column(
@@ -394,10 +406,7 @@ class _FeatureItem extends StatelessWidget {
                 ),
                 Text(
                   description,
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Colors.grey[700],
-                  ),
+                  style: TextStyle(fontSize: 14, color: Colors.grey[700]),
                 ),
               ],
             ),
@@ -444,11 +453,7 @@ class _DonationCard extends StatelessWidget {
                     color: color.withValues(alpha: 0.2),
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  child: Icon(
-                    icon,
-                    color: color,
-                    size: 32,
-                  ),
+                  child: Icon(icon, color: color, size: 32),
                 ),
                 const SizedBox(width: 16),
                 Expanded(
@@ -464,10 +469,7 @@ class _DonationCard extends StatelessWidget {
                       ),
                       Text(
                         subtitle,
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: Colors.grey[600],
-                        ),
+                        style: TextStyle(fontSize: 14, color: Colors.grey[600]),
                       ),
                     ],
                   ),

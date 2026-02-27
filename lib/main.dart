@@ -18,41 +18,44 @@ import 'screens/home_screen.dart';
 import 'screens/onboarding_screen.dart';
 import 'screens/donations_screen.dart';
 import 'services/onboarding_service.dart';
+import 'services/analytics_service.dart';
 
 Future<void> main() async {
-  runZonedGuarded<Future<void>>(() async {
-    WidgetsFlutterBinding.ensureInitialized();
+  runZonedGuarded<Future<void>>(
+    () async {
+      WidgetsFlutterBinding.ensureInitialized();
 
-    // Inizializza il locale italiano per le date
-    await initializeDateFormatting('it_IT', null);
+      // Inizializza il locale italiano per le date
+      await initializeDateFormatting('it_IT', null);
 
-    // Inizializza Firebase
-    // NOTA: Richiede configurazione Firebase (vedi FIREBASE_SETUP.md)
-    try {
-      await Firebase.initializeApp(
-        options: DefaultFirebaseOptions.currentPlatform,
-      );
-      
-      // Configura Crashlytics
-      FlutterError.onError = (errorDetails) {
-        FirebaseCrashlytics.instance.recordFlutterFatalError(errorDetails);
-      };
-      
-      // Pass all uncaught asynchronous errors to Crashlytics
-      PlatformDispatcher.instance.onError = (error, stack) {
-        FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
-        return true;
-      };
-      
-    } catch (e) {
-      print('Errore inizializzazione Firebase: $e');
-      print('L\'app funzionerà comunque, ma senza autenticazione.');
-    }
+      // Inizializza Firebase
+      // NOTA: Richiede configurazione Firebase (vedi FIREBASE_SETUP.md)
+      try {
+        await Firebase.initializeApp(
+          options: DefaultFirebaseOptions.currentPlatform,
+        );
 
-    runApp(const MyApp());
-  }, (error, stack) {
-    FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
-  });
+        // Configura Crashlytics
+        FlutterError.onError = (errorDetails) {
+          FirebaseCrashlytics.instance.recordFlutterFatalError(errorDetails);
+        };
+
+        // Pass all uncaught asynchronous errors to Crashlytics
+        PlatformDispatcher.instance.onError = (error, stack) {
+          FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
+          return true;
+        };
+      } catch (e) {
+        print('Errore inizializzazione Firebase: $e');
+        print('L\'app funzionerà comunque, ma senza autenticazione.');
+      }
+
+      runApp(const MyApp());
+    },
+    (error, stack) {
+      FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
+    },
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -82,10 +85,9 @@ class MyApp extends StatelessWidget {
         theme: AppTheme.lightTheme,
         darkTheme: AppTheme.darkTheme,
         themeMode: ThemeMode.system,
+        navigatorObservers: [AnalyticsService.instance.observer],
         home: const AppInitializer(),
-        routes: {
-          '/donations': (context) => const DonationsScreen(),
-        },
+        routes: {'/donations': (context) => const DonationsScreen()},
       ),
     );
   }
