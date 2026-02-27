@@ -861,4 +861,95 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get errorLoginGeneric => 'Errore durante l\'accesso. Riprova.';
+
+  @override
+  String get filtersTitle => 'Filtri e Ordinamento';
+
+  @override
+  String get resetFilters => 'Resetta filtri';
+
+  @override
+  String get sortOrderTitle => 'Ordinamento';
+
+  @override
+  String get sortByDistance => 'Distanza';
+
+  @override
+  String get sortByAltitude => 'Altitudine';
+
+  @override
+  String get sortByName => 'Nome A-Z';
+
+  @override
+  String get sortByBeds => 'Posti letto';
+
+  @override
+  String get filterTypeTitle => 'Tipo di struttura';
+
+  @override
+  String get typeRifugio => 'Rifugio';
+
+  @override
+  String get typeBivacco => 'Bivacco';
+
+  @override
+  String get typeMalga => 'Malga';
+
+  @override
+  String get filterRegionTitle => 'Regione';
+
+  @override
+  String get clearAll => 'Cancella tutto';
+
+  @override
+  String get filterAltitudeTitle => 'Altitudine';
+
+  @override
+  String get filterServicesTitle => 'Servizi';
+
+  @override
+  String get filterWifi => 'WiFi';
+
+  @override
+  String get filterRistorante => 'Ristorante';
+
+  @override
+  String get filterDocce => 'Docce';
+
+  @override
+  String get filterAcquaCalda => 'Acqua calda';
+
+  @override
+  String get filterPos => 'POS';
+
+  @override
+  String get filterDefibrillatore => 'Defibrillatore';
+
+  @override
+  String get filterAccessibilityTitle => 'Accessibilità';
+
+  @override
+  String get filterDisabili => 'Disabili';
+
+  @override
+  String get filterFamiglie => 'Famiglie';
+
+  @override
+  String get filterAuto => 'Auto';
+
+  @override
+  String get filterMtb => 'MTB';
+
+  @override
+  String get filterAnimali => 'Animali';
+
+  @override
+  String get filterBedsTitle => 'Posti letto minimi';
+
+  @override
+  String get filterBedsAny => 'Tutti';
+
+  @override
+  String get noResultsWithFilters =>
+      'Prova a modificare i filtri per trovare risultati';
 }

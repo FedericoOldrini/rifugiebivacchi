@@ -1583,6 +1583,186 @@ abstract class AppLocalizations {
   /// In it, this message translates to:
   /// **'Errore durante l\'accesso. Riprova.'**
   String get errorLoginGeneric;
+
+  /// No description provided for @filtersTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Filtri e Ordinamento'**
+  String get filtersTitle;
+
+  /// No description provided for @resetFilters.
+  ///
+  /// In it, this message translates to:
+  /// **'Resetta filtri'**
+  String get resetFilters;
+
+  /// No description provided for @sortOrderTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Ordinamento'**
+  String get sortOrderTitle;
+
+  /// No description provided for @sortByDistance.
+  ///
+  /// In it, this message translates to:
+  /// **'Distanza'**
+  String get sortByDistance;
+
+  /// No description provided for @sortByAltitude.
+  ///
+  /// In it, this message translates to:
+  /// **'Altitudine'**
+  String get sortByAltitude;
+
+  /// No description provided for @sortByName.
+  ///
+  /// In it, this message translates to:
+  /// **'Nome A-Z'**
+  String get sortByName;
+
+  /// No description provided for @sortByBeds.
+  ///
+  /// In it, this message translates to:
+  /// **'Posti letto'**
+  String get sortByBeds;
+
+  /// No description provided for @filterTypeTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Tipo di struttura'**
+  String get filterTypeTitle;
+
+  /// No description provided for @typeRifugio.
+  ///
+  /// In it, this message translates to:
+  /// **'Rifugio'**
+  String get typeRifugio;
+
+  /// No description provided for @typeBivacco.
+  ///
+  /// In it, this message translates to:
+  /// **'Bivacco'**
+  String get typeBivacco;
+
+  /// No description provided for @typeMalga.
+  ///
+  /// In it, this message translates to:
+  /// **'Malga'**
+  String get typeMalga;
+
+  /// No description provided for @filterRegionTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Regione'**
+  String get filterRegionTitle;
+
+  /// No description provided for @clearAll.
+  ///
+  /// In it, this message translates to:
+  /// **'Cancella tutto'**
+  String get clearAll;
+
+  /// No description provided for @filterAltitudeTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Altitudine'**
+  String get filterAltitudeTitle;
+
+  /// No description provided for @filterServicesTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Servizi'**
+  String get filterServicesTitle;
+
+  /// No description provided for @filterWifi.
+  ///
+  /// In it, this message translates to:
+  /// **'WiFi'**
+  String get filterWifi;
+
+  /// No description provided for @filterRistorante.
+  ///
+  /// In it, this message translates to:
+  /// **'Ristorante'**
+  String get filterRistorante;
+
+  /// No description provided for @filterDocce.
+  ///
+  /// In it, this message translates to:
+  /// **'Docce'**
+  String get filterDocce;
+
+  /// No description provided for @filterAcquaCalda.
+  ///
+  /// In it, this message translates to:
+  /// **'Acqua calda'**
+  String get filterAcquaCalda;
+
+  /// No description provided for @filterPos.
+  ///
+  /// In it, this message translates to:
+  /// **'POS'**
+  String get filterPos;
+
+  /// No description provided for @filterDefibrillatore.
+  ///
+  /// In it, this message translates to:
+  /// **'Defibrillatore'**
+  String get filterDefibrillatore;
+
+  /// No description provided for @filterAccessibilityTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Accessibilità'**
+  String get filterAccessibilityTitle;
+
+  /// No description provided for @filterDisabili.
+  ///
+  /// In it, this message translates to:
+  /// **'Disabili'**
+  String get filterDisabili;
+
+  /// No description provided for @filterFamiglie.
+  ///
+  /// In it, this message translates to:
+  /// **'Famiglie'**
+  String get filterFamiglie;
+
+  /// No description provided for @filterAuto.
+  ///
+  /// In it, this message translates to:
+  /// **'Auto'**
+  String get filterAuto;
+
+  /// No description provided for @filterMtb.
+  ///
+  /// In it, this message translates to:
+  /// **'MTB'**
+  String get filterMtb;
+
+  /// No description provided for @filterAnimali.
+  ///
+  /// In it, this message translates to:
+  /// **'Animali'**
+  String get filterAnimali;
+
+  /// No description provided for @filterBedsTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Posti letto minimi'**
+  String get filterBedsTitle;
+
+  /// No description provided for @filterBedsAny.
+  ///
+  /// In it, this message translates to:
+  /// **'Tutti'**
+  String get filterBedsAny;
+
+  /// No description provided for @noResultsWithFilters.
+  ///
+  /// In it, this message translates to:
+  /// **'Prova a modificare i filtri per trovare risultati'**
+  String get noResultsWithFilters;
 }
 
 class _AppLocalizationsDelegate

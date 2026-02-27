@@ -198,6 +198,17 @@ class _ListaRifugiScreenState extends State<ListaRifugiScreen> {
             Expanded(
               child: Consumer3<RifugiProvider, PreferitiProvider, FiltroProvider>(
                 builder: (context, provider, preferitiProvider, filtroProvider, child) {
+                  // Applica filtri reattivamente ogni volta che cambia qualcosa
+                  if (!provider.isLoading && provider.errorMessage == null) {
+                    // Usa addPostFrameCallback per evitare setState durante build
+                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                      provider.applyFilters(
+                        filtroProvider,
+                        preferitiIds: preferitiProvider.preferiti.toSet(),
+                      );
+                    });
+                  }
+
                   // Mostra loading
                   if (provider.isLoading) {
                     return Center(
@@ -252,15 +263,10 @@ class _ListaRifugiScreenState extends State<ListaRifugiScreen> {
                     );
                   }
 
-                  // Filtra per preferiti se necessario
-                  var rifugi = provider.rifugi;
-                  if (filtroProvider.soloPreferiti) {
-                    rifugi = rifugi
-                        .where((r) => preferitiProvider.isPreferito(r.id))
-                        .toList();
-                  }
+                  final rifugi = provider.rifugi;
 
                   if (rifugi.isEmpty) {
+                    final hasFilters = filtroProvider.hasActiveFilters;
                     return Center(
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -268,6 +274,8 @@ class _ListaRifugiScreenState extends State<ListaRifugiScreen> {
                           Icon(
                             filtroProvider.soloPreferiti
                                 ? Icons.star_border
+                                : hasFilters
+                                ? Icons.filter_list_off
                                 : Icons.search_off,
                             size: 64,
                             color: colorScheme.onSurfaceVariant,
@@ -283,19 +291,35 @@ class _ListaRifugiScreenState extends State<ListaRifugiScreen> {
                             ),
                           ),
                           if (provider.searchQuery.isNotEmpty ||
-                              filtroProvider.soloPreferiti) ...[
+                              filtroProvider.soloPreferiti ||
+                              hasFilters) ...[
                             const SizedBox(height: 8),
                             Text(
                               filtroProvider.soloPreferiti
                                   ? AppLocalizations.of(
                                       context,
                                     )!.addFavoritesHint
+                                  : hasFilters
+                                  ? AppLocalizations.of(
+                                      context,
+                                    )!.noResultsWithFilters
                                   : AppLocalizations.of(
                                       context,
                                     )!.modifySearchHint,
                               style: TextStyle(
                                 fontSize: 14,
                                 color: colorScheme.onSurfaceVariant,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                          ],
+                          if (hasFilters) ...[
+                            const SizedBox(height: 16),
+                            OutlinedButton.icon(
+                              onPressed: () => filtroProvider.resetFilters(),
+                              icon: const Icon(Icons.restart_alt, size: 18),
+                              label: Text(
+                                AppLocalizations.of(context)!.resetFilters,
                               ),
                             ),
                           ],

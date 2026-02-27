@@ -114,6 +114,11 @@ class _AppInitializerState extends State<AppInitializer> {
   Future<void> _checkOnboarding() async {
     final shouldShow = await OnboardingService.shouldShowOnboarding();
 
+    // Carica i filtri persistiti
+    if (mounted) {
+      await Provider.of<FiltroProvider>(context, listen: false).loadFromPrefs();
+    }
+
     if (mounted) {
       setState(() {
         _showOnboarding = shouldShow;

@@ -7,7 +7,7 @@ import 'dart:convert';
 import '../models/rifugio.dart';
 
 /// Servizio per gestire i rifugi con supporto offline-first.
-/// 
+///
 /// Strategia:
 /// 1. Prima carica dai dati locali (SQLite) per funzionamento offline
 /// 2. Poi sincronizza con Firestore in background quando disponibile
@@ -99,7 +99,11 @@ class RifugiService {
     await db.execute('CREATE INDEX idx_nome ON $_tableName(nome)');
   }
 
-  static Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
+  static Future<void> _onUpgrade(
+    Database db,
+    int oldVersion,
+    int newVersion,
+  ) async {
     if (oldVersion < 3) {
       // Aggiorna schema: ricostruisci con tutti i campi del modello
       await db.execute('DROP TABLE IF EXISTS $_tableName');
@@ -110,7 +114,7 @@ class RifugiService {
   /// Inizializza il database con i dati dal JSON locale
   static Future<void> initializeWithLocalData() async {
     final db = await database;
-    
+
     // Controlla se il DB è già popolato
     final count = Sqflite.firstIntValue(
       await db.rawQuery('SELECT COUNT(*) FROM $_tableName'),
@@ -122,7 +126,9 @@ class RifugiService {
 
     try {
       // Carica il JSON dagli assets
-      final String jsonString = await rootBundle.loadString('cai_app_data.json');
+      final String jsonString = await rootBundle.loadString(
+        'cai_app_data.json',
+      );
       final List<dynamic> jsonList = json.decode(jsonString);
 
       final batch = db.batch();
@@ -162,7 +168,6 @@ class RifugiService {
   /// Sincronizza i rifugi da Firestore
   static Future<void> syncFromFirestore() async {
     try {
-      
       final db = await database;
       final querySnapshot = await _firestore
           .collection('rifugi')
@@ -178,15 +183,11 @@ class RifugiService {
         try {
           final data = doc.data();
           final rifugio = Rifugio.fromJson(data);
-          
-          batch.insert(
-            _tableName,
-            {
-              ..._rifugioToMap(rifugio),
-              'syncedAt': DateTime.now().millisecondsSinceEpoch,
-            },
-            conflictAlgorithm: ConflictAlgorithm.replace,
-          );
+
+          batch.insert(_tableName, {
+            ..._rifugioToMap(rifugio),
+            'syncedAt': DateTime.now().millisecondsSinceEpoch,
+          }, conflictAlgorithm: ConflictAlgorithm.replace);
         } catch (e) {
           debugPrint('Errore sincronizzazione ${doc.id}: $e');
         }
@@ -235,6 +236,39 @@ class RifugiService {
     return maps.map((map) => map['regione'] as String).toList();
   }
 
+  /// Ottiene tutte le province disponibili
+  static Future<List<String>> getProvinces() async {
+    final db = await database;
+    final List<Map<String, dynamic>> maps = await db.rawQuery(
+      'SELECT DISTINCT provincia FROM $_tableName WHERE provincia IS NOT NULL ORDER BY provincia',
+    );
+
+    return maps.map((map) => map['provincia'] as String).toList();
+  }
+
+  /// Ottiene il range di altitudine (min, max) presente nel database
+  static Future<({double min, double max})> getAltitudeRange() async {
+    final db = await database;
+    final List<Map<String, dynamic>> maps = await db.rawQuery(
+      'SELECT MIN(altitudine) as minAlt, MAX(altitudine) as maxAlt FROM $_tableName WHERE altitudine IS NOT NULL',
+    );
+
+    final minAlt = (maps.first['minAlt'] as num?)?.toDouble() ?? 0;
+    final maxAlt = (maps.first['maxAlt'] as num?)?.toDouble() ?? 4000;
+
+    return (min: minAlt, max: maxAlt);
+  }
+
+  /// Ottiene tutti i tipi distinti presenti nel database
+  static Future<List<String>> getTypes() async {
+    final db = await database;
+    final List<Map<String, dynamic>> maps = await db.rawQuery(
+      'SELECT DISTINCT tipo FROM $_tableName WHERE tipo IS NOT NULL ORDER BY tipo',
+    );
+
+    return maps.map((map) => map['tipo'] as String).toList();
+  }
+
   /// Converte un Rifugio in Map per SQLite
   static Map<String, dynamic> _rifugioToMap(Rifugio rifugio) {
     return {
@@ -263,21 +297,47 @@ class RifugiService {
       'regionalType': rifugio.regionalType,
       'buildYear': rifugio.buildYear,
       'wifi': rifugio.wifi == true ? 1 : (rifugio.wifi == false ? 0 : null),
-      'elettricita': rifugio.elettricita == true ? 1 : (rifugio.elettricita == false ? 0 : null),
-      'ristorante': rifugio.ristorante == true ? 1 : (rifugio.ristorante == false ? 0 : null),
+      'elettricita': rifugio.elettricita == true
+          ? 1
+          : (rifugio.elettricita == false ? 0 : null),
+      'ristorante': rifugio.ristorante == true
+          ? 1
+          : (rifugio.ristorante == false ? 0 : null),
       'postiTotali': rifugio.postiTotali,
-      'pagamentoPos': rifugio.pagamentoPos == true ? 1 : (rifugio.pagamentoPos == false ? 0 : null),
-      'defibrillatore': rifugio.defibrillatore == true ? 1 : (rifugio.defibrillatore == false ? 0 : null),
-      'hotWater': rifugio.hotWater == true ? 1 : (rifugio.hotWater == false ? 0 : null),
-      'showers': rifugio.showers == true ? 1 : (rifugio.showers == false ? 0 : null),
-      'insideWater': rifugio.insideWater == true ? 1 : (rifugio.insideWater == false ? 0 : null),
+      'pagamentoPos': rifugio.pagamentoPos == true
+          ? 1
+          : (rifugio.pagamentoPos == false ? 0 : null),
+      'defibrillatore': rifugio.defibrillatore == true
+          ? 1
+          : (rifugio.defibrillatore == false ? 0 : null),
+      'hotWater': rifugio.hotWater == true
+          ? 1
+          : (rifugio.hotWater == false ? 0 : null),
+      'showers': rifugio.showers == true
+          ? 1
+          : (rifugio.showers == false ? 0 : null),
+      'insideWater': rifugio.insideWater == true
+          ? 1
+          : (rifugio.insideWater == false ? 0 : null),
       'restaurantSeats': rifugio.restaurantSeats,
-      'disabledAccess': rifugio.disabledAccess == true ? 1 : (rifugio.disabledAccess == false ? 0 : null),
-      'disabledWc': rifugio.disabledWc == true ? 1 : (rifugio.disabledWc == false ? 0 : null),
-      'familiesChildrenAccess': rifugio.familiesChildrenAccess == true ? 1 : (rifugio.familiesChildrenAccess == false ? 0 : null),
-      'carAccess': rifugio.carAccess == true ? 1 : (rifugio.carAccess == false ? 0 : null),
-      'mountainBikeAccess': rifugio.mountainBikeAccess == true ? 1 : (rifugio.mountainBikeAccess == false ? 0 : null),
-      'petAccess': rifugio.petAccess == true ? 1 : (rifugio.petAccess == false ? 0 : null),
+      'disabledAccess': rifugio.disabledAccess == true
+          ? 1
+          : (rifugio.disabledAccess == false ? 0 : null),
+      'disabledWc': rifugio.disabledWc == true
+          ? 1
+          : (rifugio.disabledWc == false ? 0 : null),
+      'familiesChildrenAccess': rifugio.familiesChildrenAccess == true
+          ? 1
+          : (rifugio.familiesChildrenAccess == false ? 0 : null),
+      'carAccess': rifugio.carAccess == true
+          ? 1
+          : (rifugio.carAccess == false ? 0 : null),
+      'mountainBikeAccess': rifugio.mountainBikeAccess == true
+          ? 1
+          : (rifugio.mountainBikeAccess == false ? 0 : null),
+      'petAccess': rifugio.petAccess == true
+          ? 1
+          : (rifugio.petAccess == false ? 0 : null),
       'secondaryPhone': rifugio.secondaryPhone,
       'websiteProperty': rifugio.websiteProperty,
       'emailProperty': rifugio.emailProperty,
@@ -368,11 +428,11 @@ class RifugiService {
   /// Ottiene info sullo stato della sincronizzazione
   static Future<Map<String, dynamic>> getSyncStatus() async {
     final db = await database;
-    
+
     final totalCount = Sqflite.firstIntValue(
       await db.rawQuery('SELECT COUNT(*) FROM $_tableName'),
     );
-    
+
     final syncedCount = Sqflite.firstIntValue(
       await db.rawQuery(
         'SELECT COUNT(*) FROM $_tableName WHERE syncedAt IS NOT NULL',
@@ -386,7 +446,7 @@ class RifugiService {
     return {
       'total': totalCount ?? 0,
       'synced': syncedCount ?? 0,
-      'lastSyncTime': lastSync != null 
+      'lastSyncTime': lastSync != null
           ? DateTime.fromMillisecondsSinceEpoch(lastSync)
           : null,
     };

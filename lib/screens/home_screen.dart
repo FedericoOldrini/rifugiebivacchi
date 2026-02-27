@@ -9,6 +9,7 @@ import '../providers/auth_provider.dart';
 import '../providers/passaporto_provider.dart';
 import '../providers/preferiti_provider.dart';
 import '../providers/filtro_provider.dart';
+import '../widgets/filtri_sheet.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -74,22 +75,34 @@ class _HomeScreenState extends State<HomeScreen> {
           ],
         ),
         actions: [
-          // Pulsante filtro preferiti (visibile solo nella tab Lista)
-          if (_currentIndex == 0)
-            Consumer2<PreferitiProvider, FiltroProvider>(
-              builder: (context, preferitiProvider, filtroProvider, child) {
-                if (preferitiProvider.preferiti.isEmpty) {
-                  return const SizedBox.shrink();
-                }
-
+          // Pulsante filtri avanzati (visibile solo nella tab Lista e Mappa)
+          if (_currentIndex == 0 || _currentIndex == 1)
+            Consumer<FiltroProvider>(
+              builder: (context, filtroProvider, child) {
+                final count = filtroProvider.activeFilterCount;
                 return IconButton(
-                  icon: Icon(
-                    filtroProvider.soloPreferiti ? Icons.star : Icons.star_border,
-                    color: filtroProvider.soloPreferiti ? Colors.amber[700] : null,
+                  icon: Badge(
+                    isLabelVisible: count > 0,
+                    label: Text('$count'),
+                    child: Icon(
+                      filtroProvider.hasActiveFilters
+                          ? Icons.filter_list
+                          : Icons.filter_list_outlined,
+                    ),
                   ),
-                  tooltip: filtroProvider.soloPreferiti ? l10n.showAll : l10n.onlyFavorites,
+                  tooltip: l10n.filtersTitle,
                   onPressed: () {
-                    filtroProvider.togglePreferiti();
+                    showModalBottomSheet(
+                      context: context,
+                      isScrollControlled: true,
+                      useSafeArea: true,
+                      shape: const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.vertical(
+                          top: Radius.circular(20),
+                        ),
+                      ),
+                      builder: (_) => const FiltriSheet(),
+                    );
                   },
                 );
               },

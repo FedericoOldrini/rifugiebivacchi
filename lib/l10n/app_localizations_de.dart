@@ -859,4 +859,95 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get errorLoginGeneric => 'Anmeldefehler. Bitte versuche es erneut.';
+
+  @override
+  String get filtersTitle => 'Filter & Sortierung';
+
+  @override
+  String get resetFilters => 'Filter zurücksetzen';
+
+  @override
+  String get sortOrderTitle => 'Sortieren nach';
+
+  @override
+  String get sortByDistance => 'Entfernung';
+
+  @override
+  String get sortByAltitude => 'Höhe';
+
+  @override
+  String get sortByName => 'Name A-Z';
+
+  @override
+  String get sortByBeds => 'Schlafplätze';
+
+  @override
+  String get filterTypeTitle => 'Hüttentyp';
+
+  @override
+  String get typeRifugio => 'Schutzhütte';
+
+  @override
+  String get typeBivacco => 'Biwak';
+
+  @override
+  String get typeMalga => 'Almhütte';
+
+  @override
+  String get filterRegionTitle => 'Region';
+
+  @override
+  String get clearAll => 'Alle löschen';
+
+  @override
+  String get filterAltitudeTitle => 'Höhe';
+
+  @override
+  String get filterServicesTitle => 'Dienste';
+
+  @override
+  String get filterWifi => 'WLAN';
+
+  @override
+  String get filterRistorante => 'Restaurant';
+
+  @override
+  String get filterDocce => 'Duschen';
+
+  @override
+  String get filterAcquaCalda => 'Warmwasser';
+
+  @override
+  String get filterPos => 'Kartenzahlung';
+
+  @override
+  String get filterDefibrillatore => 'Defibrillator';
+
+  @override
+  String get filterAccessibilityTitle => 'Zugänglichkeit';
+
+  @override
+  String get filterDisabili => 'Barrierefrei';
+
+  @override
+  String get filterFamiglie => 'Familien';
+
+  @override
+  String get filterAuto => 'Autozugang';
+
+  @override
+  String get filterMtb => 'MTB';
+
+  @override
+  String get filterAnimali => 'Haustiere';
+
+  @override
+  String get filterBedsTitle => 'Mindestschlafplätze';
+
+  @override
+  String get filterBedsAny => 'Alle';
+
+  @override
+  String get noResultsWithFilters =>
+      'Versuche die Filter anzupassen, um Ergebnisse zu finden';
 }

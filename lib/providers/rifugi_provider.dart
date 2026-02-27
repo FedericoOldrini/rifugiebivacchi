@@ -1,7 +1,9 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import '../models/rifugio.dart';
 import '../services/rifugi_service.dart';
+import 'filtro_provider.dart';
 
 class RifugiProvider extends ChangeNotifier {
   List<Rifugio> _rifugi = [];
@@ -138,6 +140,8 @@ class RifugiProvider extends ChangeNotifier {
     });
   }
 
+  /// Lista completa (non filtrata) – utile per la mappa
+  List<Rifugio> get allRifugi => _rifugi;
   List<Rifugio> get rifugi => _filteredRifugi;
   String get searchQuery => _searchQuery;
   Position? get userPosition => _userPosition;
@@ -179,28 +183,163 @@ class RifugiProvider extends ChangeNotifier {
 
   void search(String query) {
     _searchQuery = query;
-    if (query.isEmpty) {
-      _filteredRifugi = List.from(_rifugi);
-    } else {
-      _filteredRifugi = _rifugi.where((rifugio) {
-        final nome = rifugio.nome.toLowerCase();
-        final descrizione = rifugio.descrizione?.toLowerCase() ?? '';
-        final operatore = rifugio.operatore?.toLowerCase() ?? '';
-        final queryLower = query.toLowerCase();
-
-        return nome.contains(queryLower) ||
-            descrizione.contains(queryLower) ||
-            operatore.contains(queryLower);
-      }).toList();
-    }
-    _sortByDistance();
     notifyListeners();
   }
 
   void clearSearch() {
     _searchQuery = '';
-    _filteredRifugi = List.from(_rifugi);
-    _sortByDistance();
+    notifyListeners();
+  }
+
+  /// Applica tutti i filtri e l'ordinamento sulla lista completa.
+  /// Chiamato da lista_rifugi_screen ogni volta che cambia FiltroProvider,
+  /// PreferitiProvider o la query di ricerca.
+  void applyFilters(FiltroProvider filtro, {Set<String>? preferitiIds}) {
+    List<Rifugio> result = List.from(_rifugi);
+
+    // ── Ricerca testuale ──
+    if (_searchQuery.isNotEmpty) {
+      final q = _searchQuery.toLowerCase();
+      result = result.where((r) {
+        final nome = r.nome.toLowerCase();
+        final descrizione = r.descrizione?.toLowerCase() ?? '';
+        final operatore = r.operatore?.toLowerCase() ?? '';
+        return nome.contains(q) ||
+            descrizione.contains(q) ||
+            operatore.contains(q);
+      }).toList();
+    }
+
+    // ── Preferiti ──
+    if (filtro.soloPreferiti && preferitiIds != null) {
+      result = result.where((r) => preferitiIds.contains(r.id)).toList();
+    }
+
+    // ── Tipo ──
+    if (filtro.selectedTypes.isNotEmpty) {
+      result = result
+          .where((r) => filtro.selectedTypes.contains(r.tipo))
+          .toList();
+    }
+
+    // ── Regione ──
+    if (filtro.selectedRegions.isNotEmpty) {
+      result = result
+          .where(
+            (r) =>
+                r.region != null && filtro.selectedRegions.contains(r.region),
+          )
+          .toList();
+    }
+
+    // ── Altitudine ──
+    if (filtro.altMin != null) {
+      result = result
+          .where((r) => r.altitudine != null && r.altitudine! >= filtro.altMin!)
+          .toList();
+    }
+    if (filtro.altMax != null) {
+      result = result
+          .where((r) => r.altitudine != null && r.altitudine! <= filtro.altMax!)
+          .toList();
+    }
+
+    // ── Servizi ──
+    if (filtro.filterWifi) {
+      result = result.where((r) => r.wifi == true).toList();
+    }
+    if (filtro.filterRistorante) {
+      result = result.where((r) => r.ristorante == true).toList();
+    }
+    if (filtro.filterDocce) {
+      result = result.where((r) => r.showers == true).toList();
+    }
+    if (filtro.filterAcquaCalda) {
+      result = result.where((r) => r.hotWater == true).toList();
+    }
+    if (filtro.filterPos) {
+      result = result.where((r) => r.pagamentoPos == true).toList();
+    }
+    if (filtro.filterDefibrillatore) {
+      result = result.where((r) => r.defibrillatore == true).toList();
+    }
+
+    // ── Accessibilità ──
+    if (filtro.filterDisabili) {
+      result = result.where((r) => r.disabledAccess == true).toList();
+    }
+    if (filtro.filterFamiglie) {
+      result = result.where((r) => r.familiesChildrenAccess == true).toList();
+    }
+    if (filtro.filterAuto) {
+      result = result.where((r) => r.carAccess == true).toList();
+    }
+    if (filtro.filterMtb) {
+      result = result.where((r) => r.mountainBikeAccess == true).toList();
+    }
+    if (filtro.filterAnimali) {
+      result = result.where((r) => r.petAccess == true).toList();
+    }
+
+    // ── Posti letto minimo ──
+    if (filtro.minPostiLetto != null) {
+      result = result
+          .where(
+            (r) =>
+                r.postiLetto != null && r.postiLetto! >= filtro.minPostiLetto!,
+          )
+          .toList();
+    }
+
+    // ── Ordinamento ──
+    switch (filtro.sortOrder) {
+      case SortOrder.distance:
+        if (_userPosition != null) {
+          result.sort((a, b) {
+            final distA = Geolocator.distanceBetween(
+              _userPosition!.latitude,
+              _userPosition!.longitude,
+              a.latitudine,
+              a.longitudine,
+            );
+            final distB = Geolocator.distanceBetween(
+              _userPosition!.latitude,
+              _userPosition!.longitude,
+              b.latitudine,
+              b.longitudine,
+            );
+            return distA.compareTo(distB);
+          });
+        }
+        break;
+      case SortOrder.altitude:
+        result.sort((a, b) {
+          final altA = a.altitudine ?? 0;
+          final altB = b.altitudine ?? 0;
+          return altB.compareTo(altA); // decrescente
+        });
+        break;
+      case SortOrder.nameAZ:
+        result.sort(
+          (a, b) => a.nome.toLowerCase().compareTo(b.nome.toLowerCase()),
+        );
+        break;
+      case SortOrder.beds:
+        result.sort((a, b) {
+          final bedsA = a.postiLetto ?? 0;
+          final bedsB = b.postiLetto ?? 0;
+          return bedsB.compareTo(bedsA); // decrescente
+        });
+        break;
+    }
+
+    // Guard: evita notifyListeners se la lista filtrata non è cambiata.
+    // Previene loop infiniti nel Consumer3 → addPostFrameCallback → applyFilters.
+    final oldIds = _filteredRifugi.map((r) => r.id).toList();
+    final newIds = result.map((r) => r.id).toList();
+    if (listEquals(oldIds, newIds)) return;
+
+    _filteredRifugi = result;
     notifyListeners();
   }
 
