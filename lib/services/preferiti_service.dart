@@ -12,11 +12,11 @@ class PreferitiService {
           .collection('preferiti')
           .doc(rifugioId)
           .set({
-        'rifugioId': rifugioId,
-        'aggiuntoIl': DateTime.now().toIso8601String(),
-      });
+            'rifugioId': rifugioId,
+            'aggiuntoIl': DateTime.now().toIso8601String(),
+          });
     } catch (e) {
-      throw Exception('Errore nell\'aggiungere il preferito: $e');
+      throw Exception('add_preferito_error:$e');
     }
   }
 
@@ -30,7 +30,7 @@ class PreferitiService {
           .doc(rifugioId)
           .delete();
     } catch (e) {
-      throw Exception('Errore nel rimuovere il preferito: $e');
+      throw Exception('remove_preferito_error:$e');
     }
   }
 

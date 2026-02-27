@@ -23,6 +23,16 @@ class _ListaRifugiScreenState extends State<ListaRifugiScreen> {
     super.dispose();
   }
 
+  String _resolveProviderError(BuildContext context, String errorCode) {
+    final l10n = AppLocalizations.of(context)!;
+    if (errorCode.startsWith('init_error:')) {
+      return l10n.errorInitialization;
+    } else if (errorCode.startsWith('load_error:')) {
+      return l10n.errorLoadingRifugi;
+    }
+    return l10n.error;
+  }
+
   // Calcola il numero totale di items considerando le card donazioni
   int _calculateTotalItems(int rifugiCount) {
     if (rifugiCount <= 3) return rifugiCount;
@@ -226,7 +236,10 @@ class _ListaRifugiScreenState extends State<ListaRifugiScreen> {
                           Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 32),
                             child: Text(
-                              provider.errorMessage!,
+                              _resolveProviderError(
+                                context,
+                                provider.errorMessage!,
+                              ),
                               textAlign: TextAlign.center,
                               style: TextStyle(
                                 fontSize: 14,

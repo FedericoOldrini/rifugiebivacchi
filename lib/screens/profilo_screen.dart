@@ -11,6 +11,28 @@ import 'package:rifugi_bivacchi/l10n/app_localizations.dart';
 class ProfiloScreen extends StatelessWidget {
   const ProfiloScreen({super.key});
 
+  String _resolveAuthError(BuildContext context, String errorCode) {
+    final l10n = AppLocalizations.of(context)!;
+    // Auth errors use format 'error_code:details'
+    // We show a localized prefix + the technical details
+    final parts = errorCode.split(':');
+    final code = parts.first;
+    final details = parts.length > 1 ? parts.sublist(1).join(':') : '';
+
+    switch (code) {
+      case 'google_login_error':
+        return '${l10n.error}: Google login - $details';
+      case 'apple_login_error':
+        return '${l10n.error}: Apple login - $details';
+      case 'logout_error':
+        return '${l10n.error}: Logout - $details';
+      case 'delete_account_error':
+        return '${l10n.error}: ${l10n.deleteAccount} - $details';
+      default:
+        return errorCode;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -468,7 +490,7 @@ class ProfiloScreen extends StatelessWidget {
           if (authProvider.errorMessage != null) ...[
             const SizedBox(height: 16),
             Text(
-              authProvider.errorMessage!,
+              _resolveAuthError(context, authProvider.errorMessage!),
               style: TextStyle(
                 color: Theme.of(context).colorScheme.error,
                 fontSize: 14,

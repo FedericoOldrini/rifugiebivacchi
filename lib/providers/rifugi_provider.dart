@@ -47,7 +47,7 @@ class RifugiProvider extends ChangeNotifier {
       // Sincronizza in background con Firestore
       _syncInBackground();
     } catch (e) {
-      _errorMessage = 'Errore nell\'inizializzazione: $e';
+      _errorMessage = 'init_error:$e';
       _isLoading = false;
       notifyListeners();
     }
@@ -162,7 +162,7 @@ class RifugiProvider extends ChangeNotifier {
       notifyListeners();
     } catch (e) {
       _isLoading = false;
-      _errorMessage = 'Errore nel caricamento dei rifugi: $e';
+      _errorMessage = 'load_error:$e';
       notifyListeners();
     }
   }

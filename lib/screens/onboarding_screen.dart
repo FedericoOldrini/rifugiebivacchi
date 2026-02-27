@@ -18,6 +18,15 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   int _currentPage = 0;
   bool _isRequestingPermission = false;
 
+  String _resolveAuthError(BuildContext context, String errorCode) {
+    final l10n = AppLocalizations.of(context)!;
+    if (errorCode.startsWith('google_login_error:') ||
+        errorCode.startsWith('apple_login_error:')) {
+      return l10n.errorLoginGeneric;
+    }
+    return l10n.error;
+  }
+
   List<OnboardingPage> _getPages(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     return [
@@ -292,7 +301,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           if (authProvider.errorMessage != null) ...[
             const SizedBox(height: 16),
             Text(
-              authProvider.errorMessage!,
+              _resolveAuthError(context, authProvider.errorMessage!),
               style: TextStyle(
                 color: Theme.of(context).colorScheme.error,
                 fontSize: 14,

@@ -42,15 +42,18 @@ Obiettivo: correggere il debito tecnico della v1.0 e aggiungere le feature più 
 - **File modificati**: `main.dart`, `lista_rifugi_screen.dart`, `settings_screen.dart`, `profilo_screen.dart`, `donations_screen.dart`, `onboarding_screen.dart`, `dettaglio_rifugio_screen.dart`, `offline_map_screen.dart`, `weather_widget.dart`, `rifugio_card.dart`, `image_gallery.dart`, `rifugio_image.dart`, `checkin_section.dart`, `contacts_section.dart`, `header_section.dart`, `map_section.dart`
 - **File esclusi** (design branded intenzionale): `share_checkin_card.dart`, `share_dialog.dart`, `mountain_pattern_painter.dart`, `passaporto_screen.dart`
 
-### 🔴 Audit stringhe hardcoded e localizzazione
-- 🔲 Scansione **sistematica di tutti i file** in `lib/` alla ricerca di stringhe in italiano non passate per `AppLocalizations`
-- 🔲 Estrarre tutte le stringhe hardcoded trovate verso i file ARB (`app_it.arb` come template)
-- 🔲 Includere in particolare: `passaporto_screen.dart`, `weather.dart` (descrizioni meteo WMO), `settings_screen.dart`, widget estratti in `widgets/dettaglio/`, `donations_screen.dart`, `onboarding_screen.dart`, `offline_map_screen.dart`
-- 🔲 Verificare che **placeholder e parametri** (nomi, numeri, date) usino la sintassi ICU corretta nei file ARB
-- 🔲 Completare traduzioni EN, DE, FR per tutte le stringhe nuove e quelle estratte
-- 🔲 Eseguire `flutter gen-l10n` e verificare che la compilazione sia pulita
+### ✅ Audit stringhe hardcoded e localizzazione
+- ✅ Scansione sistematica di tutti i file in `lib/` alla ricerca di stringhe in italiano non passate per `AppLocalizations`
+- ✅ Estratte tutte le stringhe hardcoded trovate verso i file ARB (`app_it.arb` come template)
+- ✅ Localizzati: `passaporto_screen.dart`, `weather.dart` (18 descrizioni meteo WMO), `share_checkin_card.dart`, `map_section.dart`, `dettaglio_rifugio_screen.dart`
+- ✅ Provider con error codes al posto di stringhe italiane: `auth_provider.dart`, `passaporto_provider.dart`, `rifugi_provider.dart`
+- ✅ Service con error codes: `in_app_purchase_service.dart`, `preferiti_service.dart`, `passaporto_service.dart`
+- ✅ Error resolver in tutti gli screen consumer: `profilo_screen.dart`, `onboarding_screen.dart`, `lista_rifugi_screen.dart`, `donations_screen.dart`, `dettaglio_rifugio_screen.dart`
+- ✅ Placeholder e parametri con sintassi ICU corretta nei file ARB
+- ✅ Completate traduzioni EN, DE, FR per ~50 nuove chiavi
+- ✅ `flutter gen-l10n` eseguito, compilazione pulita (0 errori, 0 warning)
 - 🔲 Testare l'app con locale forzato a EN, DE, FR per verificare che non compaiano stringhe in italiano
-- **File coinvolti**: `app_it.arb`, `app_en.arb`, `app_de.arb`, `app_fr.arb`, tutti gli screen e widget con stringhe visibili all'utente
+- **File coinvolti**: 4 ARB + 5 ARB generati, `weather.dart`, `rifugio.dart`, `weather_widget.dart`, `share_checkin_card.dart`, `map_section.dart`, `auth_provider.dart`, `passaporto_provider.dart`, `rifugi_provider.dart`, `in_app_purchase_service.dart`, `preferiti_service.dart`, `passaporto_service.dart`, `dettaglio_rifugio_screen.dart`, `passaporto_screen.dart`, `profilo_screen.dart`, `onboarding_screen.dart`, `lista_rifugi_screen.dart`, `donations_screen.dart`
 
 ### 🔴 Filtri avanzati
 - 🔲 Filtro per **tipo**: rifugio, bivacco, malga (checkbox/chip)

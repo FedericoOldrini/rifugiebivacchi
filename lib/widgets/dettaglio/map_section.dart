@@ -28,12 +28,12 @@ class MapSection extends StatelessWidget {
 
     // Altitudine
     if (rifugio.altitudine != null) {
-      parts.add('${rifugio.altitudine!.toInt()} m s.l.m.');
+      parts.add(l10n.altitudeValue(rifugio.altitudine!.toInt()));
     }
 
     // Posti letto
     if (rifugio.postiLetto != null && rifugio.postiLetto! > 0) {
-      parts.add('🛏️ ${rifugio.postiLetto} posti');
+      parts.add('🛏️ ${l10n.bedsShort(rifugio.postiLetto!)}');
     }
 
     return parts.join(' • ');

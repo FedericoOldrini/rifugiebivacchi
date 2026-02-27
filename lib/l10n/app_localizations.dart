@@ -1301,6 +1301,288 @@ abstract class AppLocalizations {
   /// In it, this message translates to:
   /// **'Impossibile caricare l\'immagine'**
   String get imageLoadError;
+
+  /// No description provided for @weatherClear.
+  ///
+  /// In it, this message translates to:
+  /// **'Sereno'**
+  String get weatherClear;
+
+  /// No description provided for @weatherMostlyClear.
+  ///
+  /// In it, this message translates to:
+  /// **'Prevalentemente sereno'**
+  String get weatherMostlyClear;
+
+  /// No description provided for @weatherPartlyCloudy.
+  ///
+  /// In it, this message translates to:
+  /// **'Parzialmente nuvoloso'**
+  String get weatherPartlyCloudy;
+
+  /// No description provided for @weatherCloudy.
+  ///
+  /// In it, this message translates to:
+  /// **'Nuvoloso'**
+  String get weatherCloudy;
+
+  /// No description provided for @weatherFog.
+  ///
+  /// In it, this message translates to:
+  /// **'Nebbia'**
+  String get weatherFog;
+
+  /// No description provided for @weatherDrizzle.
+  ///
+  /// In it, this message translates to:
+  /// **'Pioggerella'**
+  String get weatherDrizzle;
+
+  /// No description provided for @weatherLightRain.
+  ///
+  /// In it, this message translates to:
+  /// **'Pioggia leggera'**
+  String get weatherLightRain;
+
+  /// No description provided for @weatherModerateRain.
+  ///
+  /// In it, this message translates to:
+  /// **'Pioggia moderata'**
+  String get weatherModerateRain;
+
+  /// No description provided for @weatherHeavyRain.
+  ///
+  /// In it, this message translates to:
+  /// **'Pioggia intensa'**
+  String get weatherHeavyRain;
+
+  /// No description provided for @weatherLightSnow.
+  ///
+  /// In it, this message translates to:
+  /// **'Neve leggera'**
+  String get weatherLightSnow;
+
+  /// No description provided for @weatherModerateSnow.
+  ///
+  /// In it, this message translates to:
+  /// **'Neve moderata'**
+  String get weatherModerateSnow;
+
+  /// No description provided for @weatherHeavySnow.
+  ///
+  /// In it, this message translates to:
+  /// **'Neve intensa'**
+  String get weatherHeavySnow;
+
+  /// No description provided for @weatherSnowGrains.
+  ///
+  /// In it, this message translates to:
+  /// **'Granuli di neve'**
+  String get weatherSnowGrains;
+
+  /// No description provided for @weatherShowers.
+  ///
+  /// In it, this message translates to:
+  /// **'Rovesci'**
+  String get weatherShowers;
+
+  /// No description provided for @weatherSnowShowers.
+  ///
+  /// In it, this message translates to:
+  /// **'Rovesci di neve'**
+  String get weatherSnowShowers;
+
+  /// No description provided for @weatherThunderstorm.
+  ///
+  /// In it, this message translates to:
+  /// **'Temporale'**
+  String get weatherThunderstorm;
+
+  /// No description provided for @weatherThunderstormHail.
+  ///
+  /// In it, this message translates to:
+  /// **'Temporale con grandine'**
+  String get weatherThunderstormHail;
+
+  /// No description provided for @weatherNotAvailable.
+  ///
+  /// In it, this message translates to:
+  /// **'Meteo non disponibile'**
+  String get weatherNotAvailable;
+
+  /// No description provided for @nVisits.
+  ///
+  /// In it, this message translates to:
+  /// **'{count, plural, =1{1 visita} other{{count} visite}}'**
+  String nVisits(int count);
+
+  /// No description provided for @firstVisitLabel.
+  ///
+  /// In it, this message translates to:
+  /// **'Prima visita'**
+  String get firstVisitLabel;
+
+  /// No description provided for @lastVisitLabel.
+  ///
+  /// In it, this message translates to:
+  /// **'Ultima visita'**
+  String get lastVisitLabel;
+
+  /// No description provided for @visited.
+  ///
+  /// In it, this message translates to:
+  /// **'VISITATO'**
+  String get visited;
+
+  /// No description provided for @shareVisitLabel.
+  ///
+  /// In it, this message translates to:
+  /// **'VISITA N. {count}'**
+  String shareVisitLabel(int count);
+
+  /// No description provided for @shareCheckInLabel.
+  ///
+  /// In it, this message translates to:
+  /// **'CHECK-IN'**
+  String get shareCheckInLabel;
+
+  /// No description provided for @shareAltitudeUnit.
+  ///
+  /// In it, this message translates to:
+  /// **'m s.l.m.'**
+  String get shareAltitudeUnit;
+
+  /// No description provided for @shareHashtags.
+  ///
+  /// In it, this message translates to:
+  /// **'#RifugiEBivacchi #Montagna #Trekking'**
+  String get shareHashtags;
+
+  /// No description provided for @shareAltitude.
+  ///
+  /// In it, this message translates to:
+  /// **'📍 {meters} m'**
+  String shareAltitude(int meters);
+
+  /// No description provided for @shareMyPassportTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'IL MIO PASSAPORTO'**
+  String get shareMyPassportTitle;
+
+  /// No description provided for @shareOfSheltersTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'DEI RIFUGI'**
+  String get shareOfSheltersTitle;
+
+  /// No description provided for @shareVisitSingular.
+  ///
+  /// In it, this message translates to:
+  /// **'VISITA'**
+  String get shareVisitSingular;
+
+  /// No description provided for @shareVisitPlural.
+  ///
+  /// In it, this message translates to:
+  /// **'VISITE'**
+  String get shareVisitPlural;
+
+  /// No description provided for @shareShelterSingular.
+  ///
+  /// In it, this message translates to:
+  /// **'RIFUGIO'**
+  String get shareShelterSingular;
+
+  /// No description provided for @shareShelterPlural.
+  ///
+  /// In it, this message translates to:
+  /// **'RIFUGI'**
+  String get shareShelterPlural;
+
+  /// No description provided for @shareMaxAltitude.
+  ///
+  /// In it, this message translates to:
+  /// **'ALTITUDINE MAX'**
+  String get shareMaxAltitude;
+
+  /// No description provided for @shareSheltersVisited.
+  ///
+  /// In it, this message translates to:
+  /// **'RIFUGI VISITATI'**
+  String get shareSheltersVisited;
+
+  /// No description provided for @shareTrueExplorer.
+  ///
+  /// In it, this message translates to:
+  /// **'Vero Esploratore!'**
+  String get shareTrueExplorer;
+
+  /// No description provided for @shareVisitedCount.
+  ///
+  /// In it, this message translates to:
+  /// **'Hai visitato {count} rifugi!'**
+  String shareVisitedCount(int count);
+
+  /// No description provided for @sharePassaportoHashtags.
+  ///
+  /// In it, this message translates to:
+  /// **'#RifugiEBivacchi #PassaportoDeiRifugi #Montagna'**
+  String get sharePassaportoHashtags;
+
+  /// No description provided for @sharePassaportoText.
+  ///
+  /// In it, this message translates to:
+  /// **'🏔️ Il mio passaporto dei rifugi!\n{count} rifugi visitati\n#RifugiEBivacchi'**
+  String sharePassaportoText(int count);
+
+  /// No description provided for @errorIapNotAvailable.
+  ///
+  /// In it, this message translates to:
+  /// **'Acquisti in-app non disponibili su questo dispositivo'**
+  String get errorIapNotAvailable;
+
+  /// No description provided for @errorIapProductsNotConfigured.
+  ///
+  /// In it, this message translates to:
+  /// **'Prodotti non ancora configurati. Le donazioni saranno disponibili a breve.'**
+  String get errorIapProductsNotConfigured;
+
+  /// No description provided for @errorIapNoProductsFound.
+  ///
+  /// In it, this message translates to:
+  /// **'Nessun prodotto trovato. Riprova più tardi.'**
+  String get errorIapNoProductsFound;
+
+  /// No description provided for @errorIapProductLoadError.
+  ///
+  /// In it, this message translates to:
+  /// **'Errore nel caricamento dei prodotti: {details}'**
+  String errorIapProductLoadError(String details);
+
+  /// No description provided for @errorIapConnectionError.
+  ///
+  /// In it, this message translates to:
+  /// **'Errore di connessione. Verifica la connessione Internet e riprova.'**
+  String get errorIapConnectionError;
+
+  /// No description provided for @errorInitialization.
+  ///
+  /// In it, this message translates to:
+  /// **'Errore nell\'inizializzazione dell\'app. Riprova.'**
+  String get errorInitialization;
+
+  /// No description provided for @errorLoadingRifugi.
+  ///
+  /// In it, this message translates to:
+  /// **'Errore nel caricamento dei rifugi. Riprova.'**
+  String get errorLoadingRifugi;
+
+  /// No description provided for @errorLoginGeneric.
+  ///
+  /// In it, this message translates to:
+  /// **'Errore durante l\'accesso. Riprova.'**
+  String get errorLoginGeneric;
 }
 
 class _AppLocalizationsDelegate

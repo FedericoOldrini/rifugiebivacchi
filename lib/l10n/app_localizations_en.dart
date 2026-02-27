@@ -688,4 +688,169 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get imageLoadError => 'Unable to load image';
+
+  @override
+  String get weatherClear => 'Clear';
+
+  @override
+  String get weatherMostlyClear => 'Mostly clear';
+
+  @override
+  String get weatherPartlyCloudy => 'Partly cloudy';
+
+  @override
+  String get weatherCloudy => 'Cloudy';
+
+  @override
+  String get weatherFog => 'Fog';
+
+  @override
+  String get weatherDrizzle => 'Drizzle';
+
+  @override
+  String get weatherLightRain => 'Light rain';
+
+  @override
+  String get weatherModerateRain => 'Moderate rain';
+
+  @override
+  String get weatherHeavyRain => 'Heavy rain';
+
+  @override
+  String get weatherLightSnow => 'Light snow';
+
+  @override
+  String get weatherModerateSnow => 'Moderate snow';
+
+  @override
+  String get weatherHeavySnow => 'Heavy snow';
+
+  @override
+  String get weatherSnowGrains => 'Snow grains';
+
+  @override
+  String get weatherShowers => 'Showers';
+
+  @override
+  String get weatherSnowShowers => 'Snow showers';
+
+  @override
+  String get weatherThunderstorm => 'Thunderstorm';
+
+  @override
+  String get weatherThunderstormHail => 'Thunderstorm with hail';
+
+  @override
+  String get weatherNotAvailable => 'Weather not available';
+
+  @override
+  String nVisits(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count visits',
+      one: '1 visit',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get firstVisitLabel => 'First visit';
+
+  @override
+  String get lastVisitLabel => 'Last visit';
+
+  @override
+  String get visited => 'VISITED';
+
+  @override
+  String shareVisitLabel(int count) {
+    return 'VISIT NO. $count';
+  }
+
+  @override
+  String get shareCheckInLabel => 'CHECK-IN';
+
+  @override
+  String get shareAltitudeUnit => 'm a.s.l.';
+
+  @override
+  String get shareHashtags => '#MountainShelters #Mountains #Trekking';
+
+  @override
+  String shareAltitude(int meters) {
+    return '📍 $meters m';
+  }
+
+  @override
+  String get shareMyPassportTitle => 'MY PASSPORT';
+
+  @override
+  String get shareOfSheltersTitle => 'OF SHELTERS';
+
+  @override
+  String get shareVisitSingular => 'VISIT';
+
+  @override
+  String get shareVisitPlural => 'VISITS';
+
+  @override
+  String get shareShelterSingular => 'SHELTER';
+
+  @override
+  String get shareShelterPlural => 'SHELTERS';
+
+  @override
+  String get shareMaxAltitude => 'MAX ALTITUDE';
+
+  @override
+  String get shareSheltersVisited => 'SHELTERS VISITED';
+
+  @override
+  String get shareTrueExplorer => 'True Explorer!';
+
+  @override
+  String shareVisitedCount(int count) {
+    return 'You visited $count shelters!';
+  }
+
+  @override
+  String get sharePassaportoHashtags =>
+      '#MountainShelters #ShelterPassport #Mountains';
+
+  @override
+  String sharePassaportoText(int count) {
+    return '🏔️ My shelter passport!\n$count shelters visited\n#MountainShelters';
+  }
+
+  @override
+  String get errorIapNotAvailable =>
+      'In-app purchases not available on this device';
+
+  @override
+  String get errorIapProductsNotConfigured =>
+      'Products not yet configured. Donations will be available soon.';
+
+  @override
+  String get errorIapNoProductsFound =>
+      'No products found. Please try again later.';
+
+  @override
+  String errorIapProductLoadError(String details) {
+    return 'Error loading products: $details';
+  }
+
+  @override
+  String get errorIapConnectionError =>
+      'Connection error. Check your internet connection and try again.';
+
+  @override
+  String get errorInitialization =>
+      'Error initializing the app. Please try again.';
+
+  @override
+  String get errorLoadingRifugi => 'Error loading shelters. Please try again.';
+
+  @override
+  String get errorLoginGeneric => 'Login error. Please try again.';
 }

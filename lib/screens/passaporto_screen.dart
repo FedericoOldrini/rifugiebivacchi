@@ -170,6 +170,7 @@ class PassaportoScreen extends StatelessWidget {
     BuildContext context,
     List<dynamic> checkIns,
   ) async {
+    final l10n = AppLocalizations.of(context)!;
     try {
       final latestCheckIn = checkIns.first;
       final screenshotController = ScreenshotController();
@@ -191,6 +192,11 @@ class PassaportoScreen extends StatelessWidget {
           altitudine: latestCheckIn.altitudine,
           visitCount: checkIns.length,
           dataCheckin: latestCheckIn.dataVisita,
+          appName: l10n.appTitle,
+          visitLabel: l10n.shareVisitLabel(checkIns.length),
+          checkInLabel: l10n.shareCheckInLabel,
+          altitudeUnit: l10n.shareAltitudeUnit,
+          customHashtags: l10n.shareHashtags,
         ),
         delay: const Duration(milliseconds: 100),
       );
@@ -211,17 +217,18 @@ class PassaportoScreen extends StatelessWidget {
       await Share.shareXFiles(
         [XFile(imagePath)],
         text:
-            '🏔️ Check-in al ${latestCheckIn.rifugioNome}!\n'
-            '${latestCheckIn.altitudine != null ? "📍 ${latestCheckIn.altitudine!.toInt()} m s.l.m.\n" : ""}'
-            '${checkIns.length > 1 ? "✅ Visita n. ${checkIns.length}\n" : ""}'
-            '\n#RifugiEBivacchi #Montagna',
+            l10n.checkInShareText(latestCheckIn.rifugioNome, checkIns.length) +
+            (latestCheckIn.altitudine != null
+                ? '\n${l10n.shareAltitude(latestCheckIn.altitudine!.toInt())}'
+                : '') +
+            '\n${l10n.shareHashtags}',
         sharePositionOrigin: shareRect,
       );
     } catch (e) {
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Errore nella condivisione: $e')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(l10n.shareError(e.toString()))));
       }
     }
   }
@@ -230,11 +237,29 @@ class PassaportoScreen extends StatelessWidget {
     BuildContext context,
     List<dynamic> checkIns,
   ) async {
+    final l10n = AppLocalizations.of(context)!;
     try {
       final screenshotController = ScreenshotController();
 
+      final totalRifugi = checkIns.length;
+      final rifugiUnici = checkIns.map((c) => c.rifugioId).toSet().length;
+
       final image = await screenshotController.captureFromWidget(
-        _SharePassaportoWidget(checkIns: checkIns),
+        _SharePassaportoWidget(
+          checkIns: checkIns,
+          myPassportTitle: l10n.shareMyPassportTitle,
+          ofSheltersTitle: l10n.shareOfSheltersTitle,
+          visitLabel: l10n.shareVisitSingular,
+          visitsLabel: l10n.shareVisitPlural,
+          shelterLabel: l10n.shareShelterSingular,
+          sheltersLabel: l10n.shareShelterPlural,
+          maxAltitudeLabel: l10n.shareMaxAltitude,
+          sheltersVisitedLabel: l10n.shareSheltersVisited,
+          trueExplorerText: l10n.shareTrueExplorer,
+          visitedCountText: l10n.shareVisitedCount(totalRifugi),
+          appName: l10n.appTitle,
+          hashtags: l10n.sharePassaportoHashtags,
+        ),
         delay: const Duration(milliseconds: 100),
       );
 
@@ -252,17 +277,14 @@ class PassaportoScreen extends StatelessWidget {
 
       await Share.shareXFiles(
         [XFile(imagePath)],
-        text:
-            '🏔️ Il mio Passaporto dei Rifugi!\n'
-            '📊 ${checkIns.length} ${checkIns.length == 1 ? 'rifugio visitato' : 'rifugi visitati'}\n\n'
-            '#RifugiEBivacchi #Montagna #PassaportoDeiRifugi',
+        text: l10n.sharePassaportoText(rifugiUnici),
         sharePositionOrigin: shareRect,
       );
     } catch (e) {
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Errore nella condivisione: $e')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(l10n.shareError(e.toString()))));
       }
     }
   }
@@ -283,7 +305,11 @@ class _PassaportoStampCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final dateFormat = DateFormat('dd MMM yyyy', 'it_IT');
+    final l10n = AppLocalizations.of(context)!;
+    final dateFormat = DateFormat(
+      'dd MMM yyyy',
+      Localizations.localeOf(context).languageCode,
+    );
     final latestCheckIn = checkIns.first; // Lista già ordinata per data
     final oldestCheckIn = checkIns.last;
     final visitCount = checkIns.length;
@@ -337,7 +363,7 @@ class _PassaportoStampCard extends StatelessWidget {
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Text(
-                      visitCount > 1 ? '$visitCount visite' : '1 visita',
+                      l10n.nVisits(visitCount),
                       style: const TextStyle(
                         color: Colors.white,
                         fontSize: 12,
@@ -429,7 +455,7 @@ class _PassaportoStampCard extends StatelessWidget {
                     const SizedBox(height: 6),
                     // Prima visita
                     Text(
-                      '1ª visita:',
+                      l10n.firstVisitLabel,
                       style: TextStyle(
                         fontSize: 8,
                         color: Colors.grey[600],
@@ -449,7 +475,7 @@ class _PassaportoStampCard extends StatelessWidget {
                     if (visitCount > 1) ...[
                       const SizedBox(height: 4),
                       Text(
-                        'Ultima:',
+                        l10n.lastVisitLabel,
                         style: TextStyle(
                           fontSize: 8,
                           color: Colors.grey[600],
@@ -496,7 +522,7 @@ class _PassaportoStampCard extends StatelessWidget {
                       borderRadius: BorderRadius.circular(4),
                     ),
                     child: Text(
-                      'VISITATO',
+                      l10n.visited,
                       style: TextStyle(
                         color: AppTheme.deepTeal.withAlpha((0.7 * 255).toInt()),
                         fontSize: 8,
@@ -518,8 +544,34 @@ class _PassaportoStampCard extends StatelessWidget {
 // Widget per condividere l'intero passaporto con design accattivante
 class _SharePassaportoWidget extends StatelessWidget {
   final List<dynamic> checkIns;
+  final String myPassportTitle;
+  final String ofSheltersTitle;
+  final String visitLabel;
+  final String visitsLabel;
+  final String shelterLabel;
+  final String sheltersLabel;
+  final String maxAltitudeLabel;
+  final String sheltersVisitedLabel;
+  final String trueExplorerText;
+  final String visitedCountText;
+  final String appName;
+  final String hashtags;
 
-  const _SharePassaportoWidget({required this.checkIns});
+  const _SharePassaportoWidget({
+    required this.checkIns,
+    required this.myPassportTitle,
+    required this.ofSheltersTitle,
+    required this.visitLabel,
+    required this.visitsLabel,
+    required this.shelterLabel,
+    required this.sheltersLabel,
+    required this.maxAltitudeLabel,
+    required this.sheltersVisitedLabel,
+    required this.trueExplorerText,
+    required this.visitedCountText,
+    required this.appName,
+    required this.hashtags,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -583,9 +635,9 @@ class _SharePassaportoWidget extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(height: 24),
-                        const Text(
-                          'IL MIO PASSAPORTO',
-                          style: TextStyle(
+                        Text(
+                          myPassportTitle,
+                          style: const TextStyle(
                             color: Colors.white,
                             fontSize: 24,
                             fontWeight: FontWeight.w300,
@@ -593,9 +645,9 @@ class _SharePassaportoWidget extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(height: 8),
-                        const Text(
-                          'DEI RIFUGI',
-                          style: TextStyle(
+                        Text(
+                          ofSheltersTitle,
+                          style: const TextStyle(
                             color: Colors.white,
                             fontSize: 42,
                             fontWeight: FontWeight.bold,
@@ -613,7 +665,9 @@ class _SharePassaportoWidget extends StatelessWidget {
                               child: _StatCard(
                                 icon: Icons.check_circle,
                                 value: totalRifugi.toString(),
-                                label: totalRifugi == 1 ? 'VISITA' : 'VISITE',
+                                label: totalRifugi == 1
+                                    ? visitLabel
+                                    : visitsLabel,
                               ),
                             ),
                             const SizedBox(width: 24),
@@ -621,7 +675,9 @@ class _SharePassaportoWidget extends StatelessWidget {
                               child: _StatCard(
                                 icon: Icons.location_on,
                                 value: rifugiUnici.toString(),
-                                label: rifugiUnici == 1 ? 'RIFUGIO' : 'RIFUGI',
+                                label: rifugiUnici == 1
+                                    ? shelterLabel
+                                    : sheltersLabel,
                               ),
                             ),
                           ],
@@ -631,7 +687,7 @@ class _SharePassaportoWidget extends StatelessWidget {
                           _StatCard(
                             icon: Icons.terrain,
                             value: '${altitudineMax.toInt()} m',
-                            label: 'QUOTA MASSIMA',
+                            label: maxAltitudeLabel,
                             fullWidth: true,
                           ),
                         ],
@@ -651,9 +707,9 @@ class _SharePassaportoWidget extends StatelessWidget {
                         ),
                         child: Column(
                           children: [
-                            const Text(
-                              'RIFUGI VISITATI',
-                              style: TextStyle(
+                            Text(
+                              sheltersVisitedLabel,
+                              style: const TextStyle(
                                 color: Colors.white,
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,
@@ -713,7 +769,7 @@ class _SharePassaportoWidget extends StatelessWidget {
                             ),
                             const SizedBox(height: 12),
                             Text(
-                              'Un vero esploratore!',
+                              trueExplorerText,
                               style: const TextStyle(
                                 color: Colors.white,
                                 fontSize: 22,
@@ -722,7 +778,7 @@ class _SharePassaportoWidget extends StatelessWidget {
                             ),
                             const SizedBox(height: 6),
                             Text(
-                              'Hai visitato $totalRifugi rifugi diversi',
+                              visitedCountText,
                               style: const TextStyle(
                                 color: Colors.white,
                                 fontSize: 16,
@@ -750,9 +806,9 @@ class _SharePassaportoWidget extends StatelessWidget {
                               ),
                             ),
                             const SizedBox(width: 12),
-                            const Text(
-                              'Rifugi e Bivacchi',
-                              style: TextStyle(
+                            Text(
+                              appName,
+                              style: const TextStyle(
                                 color: Colors.white,
                                 fontSize: 24,
                                 fontWeight: FontWeight.bold,
@@ -761,9 +817,9 @@ class _SharePassaportoWidget extends StatelessWidget {
                           ],
                         ),
                         const SizedBox(height: 16),
-                        const Text(
-                          '#RifugiEBivacchi #Montagna #PassaportoDeiRifugi',
-                          style: TextStyle(
+                        Text(
+                          hashtags,
+                          style: const TextStyle(
                             color: Colors.white,
                             fontSize: 18,
                             fontWeight: FontWeight.w500,

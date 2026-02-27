@@ -18,6 +18,47 @@ class WeatherWidget extends StatefulWidget {
   State<WeatherWidget> createState() => _WeatherWidgetState();
 }
 
+String _localizeWeather(AppLocalizations l10n, String key) {
+  switch (key) {
+    case 'clear':
+      return l10n.weatherClear;
+    case 'mostlyClear':
+      return l10n.weatherMostlyClear;
+    case 'partlyCloudy':
+      return l10n.weatherPartlyCloudy;
+    case 'cloudy':
+      return l10n.weatherCloudy;
+    case 'fog':
+      return l10n.weatherFog;
+    case 'drizzle':
+      return l10n.weatherDrizzle;
+    case 'lightRain':
+      return l10n.weatherLightRain;
+    case 'moderateRain':
+      return l10n.weatherModerateRain;
+    case 'heavyRain':
+      return l10n.weatherHeavyRain;
+    case 'lightSnow':
+      return l10n.weatherLightSnow;
+    case 'moderateSnow':
+      return l10n.weatherModerateSnow;
+    case 'heavySnow':
+      return l10n.weatherHeavySnow;
+    case 'snowGrains':
+      return l10n.weatherSnowGrains;
+    case 'showers':
+      return l10n.weatherShowers;
+    case 'snowShowers':
+      return l10n.weatherSnowShowers;
+    case 'thunderstorm':
+      return l10n.weatherThunderstorm;
+    case 'thunderstormHail':
+      return l10n.weatherThunderstormHail;
+    default:
+      return l10n.weatherNotAvailable;
+  }
+}
+
 class _WeatherWidgetState extends State<WeatherWidget> {
   final WeatherService _weatherService = WeatherService();
   Weather? _weather;
@@ -142,7 +183,10 @@ class _WeatherWidgetState extends State<WeatherWidget> {
                       children: [
                         const SizedBox(height: 2),
                         Text(
-                          weather.weatherDescription,
+                          _localizeWeather(
+                            AppLocalizations.of(context)!,
+                            weather.weatherDescriptionKey,
+                          ),
                           style: TextStyle(
                             fontSize: 13,
                             color: Theme.of(context).colorScheme.onSurface,

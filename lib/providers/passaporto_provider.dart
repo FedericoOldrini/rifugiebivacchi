@@ -132,7 +132,7 @@ class PassaportoProvider with ChangeNotifier {
 
       // Verifica se c'è già un check-in oggi per questo rifugio
       if (hasCheckedInToday(rifugio.id)) {
-        _error = 'Hai già fatto check-in a questo rifugio oggi';
+        _error = 'already_checked_in_today';
         _isLoading = false;
         notifyListeners();
         return false;
@@ -141,7 +141,7 @@ class PassaportoProvider with ChangeNotifier {
       // Verifica se l'utente è vicino al rifugio
       final isNear = await isNearRifugio(rifugio);
       if (!isNear) {
-        _error = 'Devi essere vicino al rifugio per fare check-in';
+        _error = 'not_near_rifugio';
         _isLoading = false;
         notifyListeners();
         return false;

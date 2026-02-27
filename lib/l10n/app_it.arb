@@ -338,5 +338,97 @@
       }
     }
   },
-  "imageLoadError": "Impossibile caricare l'immagine"
+  "imageLoadError": "Impossibile caricare l'immagine",
+
+  "weatherClear": "Sereno",
+  "weatherMostlyClear": "Prevalentemente sereno",
+  "weatherPartlyCloudy": "Parzialmente nuvoloso",
+  "weatherCloudy": "Nuvoloso",
+  "weatherFog": "Nebbia",
+  "weatherDrizzle": "Pioggerella",
+  "weatherLightRain": "Pioggia leggera",
+  "weatherModerateRain": "Pioggia moderata",
+  "weatherHeavyRain": "Pioggia intensa",
+  "weatherLightSnow": "Neve leggera",
+  "weatherModerateSnow": "Neve moderata",
+  "weatherHeavySnow": "Neve intensa",
+  "weatherSnowGrains": "Granuli di neve",
+  "weatherShowers": "Rovesci",
+  "weatherSnowShowers": "Rovesci di neve",
+  "weatherThunderstorm": "Temporale",
+  "weatherThunderstormHail": "Temporale con grandine",
+  "weatherNotAvailable": "Meteo non disponibile",
+
+  "nVisits": "{count, plural, =1{1 visita} other{{count} visite}}",
+  "@nVisits": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "firstVisitLabel": "Prima visita",
+  "lastVisitLabel": "Ultima visita",
+  "visited": "VISITATO",
+  "shareVisitLabel": "VISITA N. {count}",
+  "@shareVisitLabel": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "shareCheckInLabel": "CHECK-IN",
+  "shareAltitudeUnit": "m s.l.m.",
+  "shareHashtags": "#RifugiEBivacchi #Montagna #Trekking",
+  "shareAltitude": "📍 {meters} m",
+  "@shareAltitude": {
+    "placeholders": {
+      "meters": {
+        "type": "int"
+      }
+    }
+  },
+  "shareMyPassportTitle": "IL MIO PASSAPORTO",
+  "shareOfSheltersTitle": "DEI RIFUGI",
+  "shareVisitSingular": "VISITA",
+  "shareVisitPlural": "VISITE",
+  "shareShelterSingular": "RIFUGIO",
+  "shareShelterPlural": "RIFUGI",
+  "shareMaxAltitude": "ALTITUDINE MAX",
+  "shareSheltersVisited": "RIFUGI VISITATI",
+  "shareTrueExplorer": "Vero Esploratore!",
+  "shareVisitedCount": "Hai visitato {count} rifugi!",
+  "@shareVisitedCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "sharePassaportoHashtags": "#RifugiEBivacchi #PassaportoDeiRifugi #Montagna",
+  "sharePassaportoText": "🏔️ Il mio passaporto dei rifugi!\n{count} rifugi visitati\n#RifugiEBivacchi",
+  "@sharePassaportoText": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+
+  "errorIapNotAvailable": "Acquisti in-app non disponibili su questo dispositivo",
+  "errorIapProductsNotConfigured": "Prodotti non ancora configurati. Le donazioni saranno disponibili a breve.",
+  "errorIapNoProductsFound": "Nessun prodotto trovato. Riprova più tardi.",
+  "errorIapProductLoadError": "Errore nel caricamento dei prodotti: {details}",
+  "@errorIapProductLoadError": {
+    "placeholders": {
+      "details": {
+        "type": "String"
+      }
+    }
+  },
+  "errorIapConnectionError": "Errore di connessione. Verifica la connessione Internet e riprova.",
+  "errorInitialization": "Errore nell'inizializzazione dell'app. Riprova.",
+  "errorLoadingRifugi": "Errore nel caricamento dei rifugi. Riprova.",
+  "errorLoginGeneric": "Errore durante l'accesso. Riprova."
 }

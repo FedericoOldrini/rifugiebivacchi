@@ -68,7 +68,7 @@ class AuthProvider with ChangeNotifier {
       return userCredential != null;
     } catch (e) {
       _isLoading = false;
-      _errorMessage = 'Errore durante il login con Google: ${e.toString()}';
+      _errorMessage = 'google_login_error:${e.toString()}';
       notifyListeners();
       return false;
     }
@@ -93,7 +93,7 @@ class AuthProvider with ChangeNotifier {
       return userCredential != null;
     } catch (e) {
       _isLoading = false;
-      _errorMessage = 'Errore durante il login con Apple: ${e.toString()}';
+      _errorMessage = 'apple_login_error:${e.toString()}';
       notifyListeners();
       return false;
     }
@@ -114,7 +114,7 @@ class AuthProvider with ChangeNotifier {
       notifyListeners();
     } catch (e) {
       _isLoading = false;
-      _errorMessage = 'Errore durante il logout: ${e.toString()}';
+      _errorMessage = 'logout_error:${e.toString()}';
       notifyListeners();
     }
   }
@@ -135,8 +135,7 @@ class AuthProvider with ChangeNotifier {
       return true;
     } catch (e) {
       _isLoading = false;
-      _errorMessage =
-          'Errore durante l\'eliminazione dell\'account: ${e.toString()}';
+      _errorMessage = 'delete_account_error:${e.toString()}';
       notifyListeners();
       return false;
     }

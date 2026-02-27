@@ -11,7 +11,7 @@ class Rifugio {
   final String? email;
   final String? sitoWeb;
   final String? immagine;
-  
+
   // Nuovi campi dal file CAI
   final String? source;
   final String? locality;
@@ -24,7 +24,7 @@ class Rifugio {
   final String? status;
   final String? regionalType;
   final int? buildYear;
-  
+
   // Servizi
   final bool? wifi;
   final int? postiLetto;
@@ -37,7 +37,7 @@ class Rifugio {
   final bool? showers;
   final bool? insideWater;
   final int? restaurantSeats;
-  
+
   // Accessibilità
   final bool? disabledAccess;
   final bool? disabledWc;
@@ -45,13 +45,13 @@ class Rifugio {
   final bool? carAccess;
   final bool? mountainBikeAccess;
   final bool? petAccess;
-  
+
   // Contatti aggiuntivi
   final String? secondaryPhone;
   final String? websiteProperty;
   final String? emailProperty;
   final String? propertyName;
-  
+
   // Media
   final List<String>? imageUrls;
 
@@ -111,7 +111,7 @@ class Rifugio {
     final accessibilita = json['accessibilita'] as Map<String, dynamic>?;
     final property = json['property'] as Map<String, dynamic>?;
     final mediaList = json['mediaList'] as List?;
-    
+
     // Parsing altitudine
     double? altitude;
     if (geo?['altitude'] != null) {
@@ -121,7 +121,7 @@ class Rifugio {
         altitude = null;
       }
     }
-    
+
     // Estrai URLs immagini
     List<String>? images;
     if (mediaList != null && mediaList.isNotEmpty) {
@@ -131,16 +131,18 @@ class Rifugio {
           .cast<String>()
           .toList();
     }
-    
+
     // Determina il tipo
     String tipo = 'rifugio';
     final typeStr = json['type']?.toString().toLowerCase() ?? '';
     final nameLower = (json['name'] ?? '').toString().toLowerCase();
-    
+
     if (typeStr.contains('bivacco') || nameLower.contains('bivacco')) {
       tipo = 'bivacco';
-    } else if (typeStr.contains('malga') || nameLower.contains('malga') || 
-               nameLower.contains('alpe') || nameLower.contains('baita')) {
+    } else if (typeStr.contains('malga') ||
+        nameLower.contains('malga') ||
+        nameLower.contains('alpe') ||
+        nameLower.contains('baita')) {
       tipo = 'malga';
     } else if (typeStr.contains('rifugio')) {
       tipo = 'rifugio';
@@ -148,7 +150,7 @@ class Rifugio {
 
     return Rifugio(
       id: json['sourceId']?.toString() ?? json['id']?.toString() ?? '',
-      nome: json['name'] ?? 'Senza nome',
+      nome: json['name'] ?? 'Unnamed',
       descrizione: geo?['description'],
       latitudine: (geo?['lat'] ?? 0.0).toDouble(),
       longitudine: (geo?['lng'] ?? 0.0).toDouble(),

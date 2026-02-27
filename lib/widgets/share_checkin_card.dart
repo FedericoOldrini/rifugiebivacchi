@@ -13,6 +13,10 @@ class ShareCheckinCard extends StatelessWidget {
   final int visitCount;
   final DateTime dataCheckin;
   final String? customHashtags;
+  final String appName;
+  final String visitLabel;
+  final String checkInLabel;
+  final String altitudeUnit;
 
   const ShareCheckinCard({
     super.key,
@@ -22,6 +26,10 @@ class ShareCheckinCard extends StatelessWidget {
     required this.visitCount,
     required this.dataCheckin,
     this.customHashtags,
+    this.appName = 'Rifugi e Bivacchi',
+    this.visitLabel = '',
+    this.checkInLabel = 'CHECK-IN',
+    this.altitudeUnit = 'm s.l.m.',
   });
 
   /// Factory per creare la card da un oggetto Rifugio
@@ -32,6 +40,10 @@ class ShareCheckinCard extends StatelessWidget {
     required int visitCount,
     DateTime? dataCheckin,
     String? customHashtags,
+    String appName = 'Rifugi e Bivacchi',
+    String visitLabel = '',
+    String checkInLabel = 'CHECK-IN',
+    String altitudeUnit = 'm s.l.m.',
   }) {
     return ShareCheckinCard(
       rifugioNome: rifugioNome,
@@ -40,6 +52,10 @@ class ShareCheckinCard extends StatelessWidget {
       visitCount: visitCount,
       dataCheckin: dataCheckin ?? DateTime.now(),
       customHashtags: customHashtags,
+      appName: appName,
+      visitLabel: visitLabel,
+      checkInLabel: checkInLabel,
+      altitudeUnit: altitudeUnit,
     );
   }
 
@@ -92,9 +108,9 @@ class ShareCheckinCard extends StatelessWidget {
                               ),
                             ),
                             const SizedBox(width: 16),
-                            const Text(
-                              'Rifugi e Bivacchi',
-                              style: TextStyle(
+                            Text(
+                              appName,
+                              style: const TextStyle(
                                 color: Colors.white,
                                 fontSize: 32,
                                 fontWeight: FontWeight.bold,
@@ -113,7 +129,9 @@ class ShareCheckinCard extends StatelessWidget {
                               borderRadius: BorderRadius.circular(24),
                             ),
                             child: Text(
-                              'VISITA N. $visitCount',
+                              visitLabel.isNotEmpty
+                                  ? visitLabel
+                                  : 'VISITA N. $visitCount',
                               style: TextStyle(
                                 color: AppTheme.deepTeal,
                                 fontSize: 20,
@@ -188,9 +206,9 @@ class ShareCheckinCard extends StatelessWidget {
                                 size: 28,
                               ),
                               const SizedBox(width: 12),
-                              const Text(
-                                'CHECK-IN',
-                                style: TextStyle(
+                              Text(
+                                checkInLabel,
+                                style: const TextStyle(
                                   color: Colors.white,
                                   fontWeight: FontWeight.bold,
                                   fontSize: 24,
@@ -238,7 +256,7 @@ class ShareCheckinCard extends StatelessWidget {
                                 ),
                                 const SizedBox(width: 16),
                                 Text(
-                                  '${altitudine!.toInt()} m s.l.m.',
+                                  '${altitudine!.toInt()} $altitudeUnit',
                                   style: const TextStyle(
                                     color: Colors.white,
                                     fontSize: 28,

@@ -7,7 +7,7 @@ class Weather {
   final int humidity;
   final double precipitation;
   final DateTime time;
-  
+
   // Previsioni per i prossimi giorni
   final List<DailyForecast>? dailyForecasts;
 
@@ -26,7 +26,7 @@ class Weather {
   factory Weather.fromJson(Map<String, dynamic> json) {
     final current = json['current'] as Map<String, dynamic>;
     final daily = json['daily'] as Map<String, dynamic>?;
-    
+
     List<DailyForecast>? forecasts;
     if (daily != null) {
       final times = daily['time'] as List<dynamic>;
@@ -34,7 +34,7 @@ class Weather {
       final tempMinList = daily['temperature_2m_min'] as List<dynamic>;
       final weatherCodes = daily['weather_code'] as List<dynamic>;
       final precipitationSum = daily['precipitation_sum'] as List<dynamic>;
-      
+
       forecasts = List.generate(
         times.length > 7 ? 7 : times.length,
         (index) => DailyForecast(
@@ -60,52 +60,52 @@ class Weather {
     );
   }
 
-  String get weatherDescription {
-    // WMO Weather interpretation codes
+  String get weatherDescriptionKey {
+    // WMO Weather interpretation codes - returns a key for localization
     switch (weatherCode) {
       case 0:
-        return 'Sereno';
+        return 'clear';
       case 1:
-        return 'Prevalentemente sereno';
+        return 'mostlyClear';
       case 2:
-        return 'Parzialmente nuvoloso';
+        return 'partlyCloudy';
       case 3:
-        return 'Nuvoloso';
+        return 'cloudy';
       case 45:
       case 48:
-        return 'Nebbia';
+        return 'fog';
       case 51:
       case 53:
       case 55:
-        return 'Pioggerella';
+        return 'drizzle';
       case 61:
-        return 'Pioggia leggera';
+        return 'lightRain';
       case 63:
-        return 'Pioggia moderata';
+        return 'moderateRain';
       case 65:
-        return 'Pioggia intensa';
+        return 'heavyRain';
       case 71:
-        return 'Neve leggera';
+        return 'lightSnow';
       case 73:
-        return 'Neve moderata';
+        return 'moderateSnow';
       case 75:
-        return 'Neve intensa';
+        return 'heavySnow';
       case 77:
-        return 'Grani di neve';
+        return 'snowGrains';
       case 80:
       case 81:
       case 82:
-        return 'Rovesci';
+        return 'showers';
       case 85:
       case 86:
-        return 'Rovesci di neve';
+        return 'snowShowers';
       case 95:
-        return 'Temporale';
+        return 'thunderstorm';
       case 96:
       case 99:
-        return 'Temporale con grandine';
+        return 'thunderstormHail';
       default:
-        return 'Non disponibile';
+        return 'weatherNotAvailable';
     }
   }
 
@@ -201,51 +201,52 @@ class DailyForecast {
     }
   }
 
-  String get weatherDescription {
+  String get weatherDescriptionKey {
+    // WMO Weather interpretation codes - returns a key for localization
     switch (weatherCode) {
       case 0:
-        return 'Sereno';
+        return 'clear';
       case 1:
-        return 'Prevalentemente sereno';
+        return 'mostlyClear';
       case 2:
-        return 'Parzialmente nuvoloso';
+        return 'partlyCloudy';
       case 3:
-        return 'Nuvoloso';
+        return 'cloudy';
       case 45:
       case 48:
-        return 'Nebbia';
+        return 'fog';
       case 51:
       case 53:
       case 55:
-        return 'Pioggerella';
+        return 'drizzle';
       case 61:
-        return 'Pioggia leggera';
+        return 'lightRain';
       case 63:
-        return 'Pioggia moderata';
+        return 'moderateRain';
       case 65:
-        return 'Pioggia intensa';
+        return 'heavyRain';
       case 71:
-        return 'Neve leggera';
+        return 'lightSnow';
       case 73:
-        return 'Neve moderata';
+        return 'moderateSnow';
       case 75:
-        return 'Neve intensa';
+        return 'heavySnow';
       case 77:
-        return 'Grani di neve';
+        return 'snowGrains';
       case 80:
       case 81:
       case 82:
-        return 'Rovesci';
+        return 'showers';
       case 85:
       case 86:
-        return 'Rovesci di neve';
+        return 'snowShowers';
       case 95:
-        return 'Temporale';
+        return 'thunderstorm';
       case 96:
       case 99:
-        return 'Temporale con grandine';
+        return 'thunderstormHail';
       default:
-        return 'Non disponibile';
+        return 'weatherNotAvailable';
     }
   }
 }

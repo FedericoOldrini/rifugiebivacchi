@@ -81,9 +81,29 @@ class _DonationsScreenState extends State<DonationsScreen> {
           context,
         )!.inAppPurchasesNotAvailable;
       } else if (_purchaseService.queryProductError != null) {
-        _errorMessage = _purchaseService.queryProductError;
+        _errorMessage = _resolveIapError(
+          context,
+          _purchaseService.queryProductError!,
+        );
       }
     });
+  }
+
+  String _resolveIapError(BuildContext context, String errorCode) {
+    final l10n = AppLocalizations.of(context)!;
+    if (errorCode == 'iap_not_available') {
+      return l10n.errorIapNotAvailable;
+    } else if (errorCode == 'iap_products_not_configured') {
+      return l10n.errorIapProductsNotConfigured;
+    } else if (errorCode == 'iap_no_products_found') {
+      return l10n.errorIapNoProductsFound;
+    } else if (errorCode.startsWith('iap_product_load_error:')) {
+      final details = errorCode.substring('iap_product_load_error:'.length);
+      return l10n.errorIapProductLoadError(details);
+    } else if (errorCode.startsWith('iap_connection_error:')) {
+      return l10n.errorIapConnectionError;
+    }
+    return errorCode;
   }
 
   Future<void> _buyProduct(ProductDetails product) async {

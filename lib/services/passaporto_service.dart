@@ -10,9 +10,11 @@ class PassaportoService {
   Future<void> saveCheckIn(String userId, RifugioCheckIn checkIn) async {
     try {
       // Genera un ID univoco basato su timestamp se non presente
-      final checkInId = checkIn.id ?? '${checkIn.rifugioId}_${DateTime.now().millisecondsSinceEpoch}';
+      final checkInId =
+          checkIn.id ??
+          '${checkIn.rifugioId}_${DateTime.now().millisecondsSinceEpoch}';
       final checkInWithId = checkIn.copyWith(id: checkInId);
-      
+
       await _firestore
           .collection('users')
           .doc(userId)
@@ -20,7 +22,7 @@ class PassaportoService {
           .doc(checkInId)
           .set(checkInWithId.toMap());
     } catch (e) {
-      throw Exception('Errore nel salvare il check-in: $e');
+      throw Exception('save_checkin_error:$e');
     }
   }
 
@@ -32,9 +34,11 @@ class PassaportoService {
         .collection('checkins')
         .orderBy('dataVisita', descending: true)
         .snapshots()
-        .map((snapshot) => snapshot.docs
-            .map((doc) => RifugioCheckIn.fromMap(doc.data()))
-            .toList());
+        .map(
+          (snapshot) => snapshot.docs
+              .map((doc) => RifugioCheckIn.fromMap(doc.data()))
+              .toList(),
+        );
   }
 
   // Verifica se un rifugio è già stato visitato
@@ -52,7 +56,7 @@ class PassaportoService {
       return false;
     }
   }
-  
+
   // Conta il numero di visite a un rifugio specifico
   Future<int> getRifugioVisitCount(String userId, String rifugioId) async {
     try {
@@ -67,21 +71,21 @@ class PassaportoService {
       return 0;
     }
   }
-  
+
   // Verifica se c'è un check-in oggi per questo rifugio
   Future<bool> hasCheckedInToday(String userId, String rifugioId) async {
     try {
       final now = DateTime.now();
       final startOfDay = DateTime(now.year, now.month, now.day);
       final endOfDay = DateTime(now.year, now.month, now.day, 23, 59, 59);
-      
+
       final snapshot = await _firestore
           .collection('users')
           .doc(userId)
           .collection('checkins')
           .where('rifugioId', isEqualTo: rifugioId)
           .get();
-      
+
       // Verifica se almeno uno è di oggi
       return snapshot.docs.any((doc) {
         final data = doc.data();
@@ -102,7 +106,7 @@ class PassaportoService {
           .collection('checkins')
           .doc(rifugioId)
           .get();
-      
+
       if (doc.exists) {
         return RifugioCheckIn.fromMap(doc.data()!);
       }
@@ -121,24 +125,25 @@ class PassaportoService {
       print('🔐 Trying to write as: $userId');
       print('🔐 User authenticated: ${currentUser != null}');
       print('🔐 UIDs match: ${currentUser?.uid == userId}');
-      
+
       if (currentUser == null) {
-        throw Exception('Utente non autenticato');
+        throw Exception('user_not_authenticated');
       }
-      
+
       if (currentUser.uid != userId) {
-        throw Exception('UID mismatch: current=${currentUser.uid}, requested=$userId');
+        throw Exception(
+          'UID mismatch: current=${currentUser.uid}, requested=$userId',
+        );
       }
-      
+
       print('📝 Setting passaporto enabled for user $userId to $enabled');
-      await _firestore
-          .collection('users')
-          .doc(userId)
-          .set({'passaportoEnabled': enabled}, SetOptions(merge: true));
+      await _firestore.collection('users').doc(userId).set({
+        'passaportoEnabled': enabled,
+      }, SetOptions(merge: true));
       print('✅ Firestore write successful');
     } catch (e) {
       print('❌ Firestore write error: $e');
-      throw Exception('Errore nell\'aggiornare le impostazioni: $e');
+      throw Exception('update_settings_error:$e');
     }
   }
 
@@ -185,7 +190,7 @@ class PassaportoService {
           .doc(rifugioId)
           .delete();
     } catch (e) {
-      throw Exception('Errore nell\'eliminare il check-in: $e');
+      throw Exception('delete_checkin_error:$e');
     }
   }
 }

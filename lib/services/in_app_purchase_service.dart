@@ -73,8 +73,7 @@ class InAppPurchaseService {
   /// Carica i prodotti disponibili
   Future<void> loadProducts() async {
     if (!_isAvailable) {
-      _queryProductError =
-          'In-App Purchase non disponibile su questo dispositivo';
+      _queryProductError = 'iap_not_available';
       return;
     }
 
@@ -86,23 +85,16 @@ class InAppPurchaseService {
         final errorMsg = productDetailResponse.error!.message;
         // Gestisci errori comuni di configurazione
         if (errorMsg.contains('Failed to get response from platform')) {
-          _queryProductError =
-              'Prodotti non configurati.\n'
-              'Per usare le donazioni in-app:\n'
-              '1. Configura i prodotti su App Store Connect\n'
-              '2. Vedi IN_APP_PURCHASE_SETUP.md per i dettagli';
+          _queryProductError = 'iap_products_not_configured';
         } else {
-          _queryProductError = 'Errore caricamento prodotti: $errorMsg';
+          _queryProductError = 'iap_product_load_error:$errorMsg';
         }
         debugPrint('Error loading products: $errorMsg');
         return;
       }
 
       if (productDetailResponse.productDetails.isEmpty) {
-        _queryProductError =
-            'Nessun prodotto trovato.\n'
-            'Assicurati che i prodotti siano configurati su App Store Connect.\n'
-            'IDs richiesti: ${_productIds.join(", ")}';
+        _queryProductError = 'iap_no_products_found';
         debugPrint('No products found. Expected IDs: $_productIds');
         return;
       }
@@ -117,9 +109,7 @@ class InAppPurchaseService {
         );
       }
     } catch (e) {
-      _queryProductError =
-          'Errore di connessione: ${e.toString()}\n'
-          'Verifica la connessione Internet e riprova.';
+      _queryProductError = 'iap_connection_error:${e.toString()}';
       debugPrint('Exception loading products: $e');
     }
   }

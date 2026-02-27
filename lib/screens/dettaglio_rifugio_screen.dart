@@ -20,6 +20,7 @@ import '../widgets/dettaglio/services_section.dart';
 import '../widgets/dettaglio/contacts_section.dart';
 import '../widgets/dettaglio/share_dialog.dart';
 import 'package:rifugi_bivacchi/l10n/app_localizations.dart';
+import 'package:intl/intl.dart';
 import '../services/analytics_service.dart';
 
 class DettaglioRifugioScreen extends StatefulWidget {
@@ -107,8 +108,7 @@ class _DettaglioRifugioScreenState extends State<DettaglioRifugioScreen> {
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
-                    passaportoProvider.error ??
-                        AppLocalizations.of(context)!.nearRifugioRequired,
+                    _resolvePassaportoError(context, passaportoProvider.error),
                   ),
                 ),
               ],
@@ -121,22 +121,21 @@ class _DettaglioRifugioScreenState extends State<DettaglioRifugioScreen> {
     }
   }
 
+  String _resolvePassaportoError(BuildContext context, String? errorCode) {
+    final l10n = AppLocalizations.of(context)!;
+    switch (errorCode) {
+      case 'already_checked_in_today':
+        return l10n.checkInAlreadyToday;
+      case 'not_near_rifugio':
+        return l10n.nearRifugioRequired;
+      default:
+        return errorCode ?? l10n.nearRifugioRequired;
+    }
+  }
+
   String _formatDate(DateTime date) {
-    final months = [
-      'gen',
-      'feb',
-      'mar',
-      'apr',
-      'mag',
-      'giu',
-      'lug',
-      'ago',
-      'set',
-      'ott',
-      'nov',
-      'dic',
-    ];
-    return '${date.day} ${months[date.month - 1]} ${date.year}';
+    final locale = Localizations.localeOf(context).languageCode;
+    return DateFormat('dd MMM yyyy', locale).format(date);
   }
 
   void _showShareDialog() {
