@@ -33,7 +33,7 @@ class _OfflineMapScreenState extends State<OfflineMapScreen> {
   Future<void> _initFMTC() async {
     try {
       await FMTCObjectBoxBackend().initialise();
-      
+
       // Crea store per i tile se non esiste
       final store = FMTCStore('osmTiles');
       await store.manage.create();
@@ -70,10 +70,7 @@ class _OfflineMapScreenState extends State<OfflineMapScreen> {
         _isLoading = false;
       });
 
-      _mapController.move(
-        LatLng(position.latitude, position.longitude),
-        10,
-      );
+      _mapController.move(LatLng(position.latitude, position.longitude), 10);
     } catch (_) {
       setState(() => _isLoading = false);
     }
@@ -113,7 +110,8 @@ class _OfflineMapScreenState extends State<OfflineMapScreen> {
         // Filtra rifugi entro 50km se abbiamo la posizione
         final rifugi = userPos != null
             ? provider.rifugi.where((rifugio) {
-                final distance = Geolocator.distanceBetween(
+                final distance =
+                    Geolocator.distanceBetween(
                       userPos.latitude,
                       userPos.longitude,
                       rifugio.latitudine,
@@ -166,49 +164,51 @@ class _OfflineMapScreenState extends State<OfflineMapScreen> {
                         ),
                       ),
                     // Rifugi markers
-                    ...rifugi.map((rifugio) => Marker(
-                          point:
-                              LatLng(rifugio.latitudine, rifugio.longitudine),
-                          width: 36,
-                          height: 36,
-                          child: GestureDetector(
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) =>
-                                      DettaglioRifugioScreen(rifugio: rifugio),
+                    ...rifugi.map(
+                      (rifugio) => Marker(
+                        point: LatLng(rifugio.latitudine, rifugio.longitudine),
+                        width: 36,
+                        height: 36,
+                        child: GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    DettaglioRifugioScreen(rifugio: rifugio),
+                              ),
+                            );
+                          },
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: _getMarkerColor(rifugio.tipo),
+                              shape: BoxShape.circle,
+                              border: Border.all(color: Colors.white, width: 2),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withValues(alpha: 0.3),
+                                  blurRadius: 4,
                                 ),
-                              );
-                            },
-                            child: Container(
-                              decoration: BoxDecoration(
-                                color: _getMarkerColor(rifugio.tipo),
-                                shape: BoxShape.circle,
-                                border:
-                                    Border.all(color: Colors.white, width: 2),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black.withValues(alpha: 0.3),
-                                    blurRadius: 4,
-                                  ),
-                                ],
-                              ),
-                              child: Icon(
-                                _getMarkerIcon(rifugio.tipo),
-                                color: Colors.white,
-                                size: 18,
-                              ),
+                              ],
+                            ),
+                            child: Icon(
+                              _getMarkerIcon(rifugio.tipo),
+                              color: Colors.white,
+                              size: 18,
                             ),
                           ),
-                        )),
+                        ),
+                      ),
+                    ),
                   ],
                 ),
               ],
             ),
             if (_isLoading)
               Container(
-                color: Colors.white.withValues(alpha: 0.7),
+                color: Theme.of(
+                  context,
+                ).colorScheme.surface.withValues(alpha: 0.7),
                 child: const Center(child: CircularProgressIndicator()),
               ),
             // Legenda
@@ -222,12 +222,20 @@ class _OfflineMapScreenState extends State<OfflineMapScreen> {
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      _LegendItem(color: Colors.blue[600]!, label: AppLocalizations.of(context)!.legendRifugi),
+                      _LegendItem(
+                        color: Colors.blue[600]!,
+                        label: AppLocalizations.of(context)!.legendRifugi,
+                      ),
                       const SizedBox(width: 12),
                       _LegendItem(
-                          color: Colors.orange[700]!, label: AppLocalizations.of(context)!.legendBivacchi),
+                        color: Colors.orange[700]!,
+                        label: AppLocalizations.of(context)!.legendBivacchi,
+                      ),
                       const SizedBox(width: 12),
-                      _LegendItem(color: Colors.green[700]!, label: AppLocalizations.of(context)!.legendMalghe),
+                      _LegendItem(
+                        color: Colors.green[700]!,
+                        label: AppLocalizations.of(context)!.legendMalghe,
+                      ),
                     ],
                   ),
                 ),

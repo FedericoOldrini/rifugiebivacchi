@@ -80,7 +80,10 @@ class ProfiloScreen extends StatelessWidget {
                     const SizedBox(height: 8),
                     Text(
                       user.email!,
-                      style: TextStyle(fontSize: 16, color: Colors.grey[600]),
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      ),
                       textAlign: TextAlign.center,
                     ),
                   ],
@@ -103,7 +106,9 @@ class ProfiloScreen extends StatelessWidget {
                   ),
                   title: Text(AppLocalizations.of(context)!.passaportoRifugi),
                   subtitle: Text(
-                    AppLocalizations.of(context)!.nRifugiVisitati(rifugiVisitati),
+                    AppLocalizations.of(
+                      context,
+                    )!.nRifugiVisitati(rifugiVisitati),
                   ),
                   trailing: const Icon(Icons.chevron_right),
                   onTap: () {
@@ -133,13 +138,20 @@ class ProfiloScreen extends StatelessWidget {
                   children: [
                     ListTile(
                       leading: Icon(Icons.star, color: Colors.amber[700]),
-                      title: Text(AppLocalizations.of(context)!.rifugiPreferiti),
+                      title: Text(
+                        AppLocalizations.of(context)!.rifugiPreferiti,
+                      ),
                       subtitle: Text(
                         AppLocalizations.of(context)!.nRifugi(preferiti.length),
                       ),
                       trailing: preferiti.isEmpty
                           ? null
-                          : Icon(Icons.chevron_right, color: Colors.grey[400]),
+                          : Icon(
+                              Icons.chevron_right,
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.onSurfaceVariant,
+                            ),
                     ),
                     if (rifugiPreferiti.isNotEmpty) ...[
                       const Divider(height: 1),
@@ -167,7 +179,9 @@ class ProfiloScreen extends StatelessWidget {
                                   : null,
                               trailing: Icon(
                                 Icons.chevron_right,
-                                color: Colors.grey[400],
+                                color: Theme.of(
+                                  context,
+                                ).colorScheme.onSurfaceVariant,
                                 size: 20,
                               ),
                               onTap: () {
@@ -187,10 +201,14 @@ class ProfiloScreen extends StatelessWidget {
                         Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: Text(
-                            AppLocalizations.of(context)!.andOthers(rifugiPreferiti.length - 3),
+                            AppLocalizations.of(
+                              context,
+                            )!.andOthers(rifugiPreferiti.length - 3),
                             style: TextStyle(
                               fontSize: 12,
-                              color: Colors.grey[600],
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.onSurfaceVariant,
                               fontStyle: FontStyle.italic,
                             ),
                           ),
@@ -203,7 +221,9 @@ class ProfiloScreen extends StatelessWidget {
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             fontSize: 14,
-                            color: Colors.grey[600],
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.onSurfaceVariant,
                           ),
                         ),
                       ),
@@ -239,7 +259,9 @@ class ProfiloScreen extends StatelessWidget {
                       final shouldLogout = await showDialog<bool>(
                         context: context,
                         builder: (context) => AlertDialog(
-                          title: Text(AppLocalizations.of(context)!.confirmLogout),
+                          title: Text(
+                            AppLocalizations.of(context)!.confirmLogout,
+                          ),
                           content: Text(
                             AppLocalizations.of(context)!.confirmLogoutMessage,
                           ),
@@ -283,9 +305,13 @@ class ProfiloScreen extends StatelessWidget {
                     final shouldDelete = await showDialog<bool>(
                       context: context,
                       builder: (context) => AlertDialog(
-                        title: Text(AppLocalizations.of(context)!.confirmDeleteAccount),
+                        title: Text(
+                          AppLocalizations.of(context)!.confirmDeleteAccount,
+                        ),
                         content: Text(
-                          AppLocalizations.of(context)!.confirmDeleteAccountMessage,
+                          AppLocalizations.of(
+                            context,
+                          )!.confirmDeleteAccountMessage,
                         ),
                         actions: [
                           TextButton(
@@ -310,7 +336,9 @@ class ProfiloScreen extends StatelessWidget {
                       if (success && context.mounted) {
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
-                            content: Text(AppLocalizations.of(context)!.accountDeleted),
+                            content: Text(
+                              AppLocalizations.of(context)!.accountDeleted,
+                            ),
                           ),
                         );
                       }
@@ -346,7 +374,10 @@ class ProfiloScreen extends StatelessWidget {
                   const SizedBox(height: 24),
                   Text(
                     AppLocalizations.of(context)!.loginToAccount,
-                    style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                    style: const TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                    ),
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 16),
@@ -354,7 +385,7 @@ class ProfiloScreen extends StatelessWidget {
                     AppLocalizations.of(context)!.loginDescription,
                     style: TextStyle(
                       fontSize: 16,
-                      color: Colors.grey[600],
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
                       height: 1.5,
                     ),
                     textAlign: TextAlign.center,
@@ -388,7 +419,9 @@ class ProfiloScreen extends StatelessWidget {
                 ),
                 style: OutlinedButton.styleFrom(
                   padding: const EdgeInsets.symmetric(vertical: 16),
-                  side: BorderSide(color: Colors.grey[300]!),
+                  side: BorderSide(
+                    color: Theme.of(context).colorScheme.outlineVariant,
+                  ),
                 ),
               ),
             ),
@@ -414,7 +447,11 @@ class ProfiloScreen extends StatelessWidget {
                           ),
                           style: OutlinedButton.styleFrom(
                             padding: const EdgeInsets.symmetric(vertical: 16),
-                            side: BorderSide(color: Colors.grey[300]!),
+                            side: BorderSide(
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.outlineVariant,
+                            ),
                           ),
                         ),
                       ),
@@ -444,17 +481,23 @@ class ProfiloScreen extends StatelessWidget {
 
           // Info sull'utilizzo senza account
           Card(
-            color: Colors.blue[50],
+            color: Theme.of(context).colorScheme.primaryContainer,
             child: Padding(
               padding: const EdgeInsets.all(16.0),
               child: Row(
                 children: [
-                  Icon(Icons.info_outline, color: Colors.blue[700]),
+                  Icon(
+                    Icons.info_outline,
+                    color: Theme.of(context).colorScheme.onPrimaryContainer,
+                  ),
                   const SizedBox(width: 12),
                   Expanded(
                     child: Text(
                       AppLocalizations.of(context)!.continueWithoutAccount,
-                      style: TextStyle(fontSize: 14, color: Colors.blue[900]),
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Theme.of(context).colorScheme.onPrimaryContainer,
+                      ),
                     ),
                   ),
                 ],

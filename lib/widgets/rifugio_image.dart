@@ -67,11 +67,15 @@ class RifugioImage extends StatelessWidget {
   }
 
   Widget _defaultError(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Container(
       width: width,
       height: height,
-      color: Colors.grey[200],
-      child: Icon(Icons.broken_image_outlined, color: Colors.grey[400]),
+      color: colorScheme.surfaceContainerHighest,
+      child: Icon(
+        Icons.broken_image_outlined,
+        color: colorScheme.onSurfaceVariant,
+      ),
     );
   }
 }

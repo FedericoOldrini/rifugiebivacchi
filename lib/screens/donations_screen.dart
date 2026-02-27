@@ -32,18 +32,19 @@ class _DonationsScreenState extends State<DonationsScreen> {
     await _purchaseService.initialize(
       onPurchaseCompleted: (PurchaseDetails details) {
         if (mounted) {
+          final colorScheme = Theme.of(context).colorScheme;
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Row(
                 children: [
-                  const Icon(Icons.check_circle, color: Colors.white),
+                  Icon(Icons.check_circle, color: colorScheme.onPrimary),
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(AppLocalizations.of(context)!.donationThanks),
                   ),
                 ],
               ),
-              backgroundColor: Colors.green,
+              backgroundColor: colorScheme.primary,
               duration: const Duration(seconds: 3),
             ),
           );
@@ -51,11 +52,12 @@ class _DonationsScreenState extends State<DonationsScreen> {
       },
       onPurchaseError: (String error) {
         if (mounted) {
+          final colorScheme = Theme.of(context).colorScheme;
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Row(
                 children: [
-                  const Icon(Icons.error, color: Colors.white),
+                  Icon(Icons.error, color: colorScheme.onError),
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(
@@ -64,7 +66,7 @@ class _DonationsScreenState extends State<DonationsScreen> {
                   ),
                 ],
               ),
-              backgroundColor: Colors.red,
+              backgroundColor: colorScheme.error,
               duration: const Duration(seconds: 4),
             ),
           );
@@ -90,7 +92,7 @@ class _DonationsScreenState extends State<DonationsScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(AppLocalizations.of(context)!.cannotStartPurchase),
-          backgroundColor: Colors.red,
+          backgroundColor: Theme.of(context).colorScheme.error,
         ),
       );
     }
@@ -122,16 +124,17 @@ class _DonationsScreenState extends State<DonationsScreen> {
     }
   }
 
-  Color _getColorForProductId(String productId) {
+  Color _getColorForProductId(String productId, BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     switch (productId) {
       case InAppPurchaseService.donationSmallId:
-        return Colors.brown;
+        return colorScheme.tertiary;
       case InAppPurchaseService.donationMediumId:
-        return Colors.orange;
+        return colorScheme.secondary;
       case InAppPurchaseService.donationLargeId:
-        return Colors.purple;
+        return colorScheme.primary;
       default:
-        return Colors.blue;
+        return colorScheme.primary;
     }
   }
 
@@ -176,7 +179,7 @@ class _DonationsScreenState extends State<DonationsScreen> {
                             )!.supportDevelopmentDescription,
                             style: TextStyle(
                               fontSize: 14,
-                              color: Colors.grey[700],
+                              color: Theme.of(context).colorScheme.onSurface,
                             ),
                             textAlign: TextAlign.center,
                           ),
@@ -188,56 +191,61 @@ class _DonationsScreenState extends State<DonationsScreen> {
 
                   // Errore se presente
                   if (_errorMessage != null) ...[
-                    Card(
-                      color: Colors.orange[50],
-                      child: Padding(
-                        padding: const EdgeInsets.all(16.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
+                    Builder(
+                      builder: (context) {
+                        final colorScheme = Theme.of(context).colorScheme;
+                        return Card(
+                          color: colorScheme.tertiaryContainer,
+                          child: Padding(
+                            padding: const EdgeInsets.all(16.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Icon(
-                                  Icons.info_outline,
-                                  color: Colors.orange[700],
-                                ),
-                                const SizedBox(width: 12),
-                                Expanded(
-                                  child: Text(
-                                    AppLocalizations.of(
-                                      context,
-                                    )!.donationsInApp,
-                                    style: TextStyle(
-                                      color: Colors.orange[700],
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 16,
+                                Row(
+                                  children: [
+                                    Icon(
+                                      Icons.info_outline,
+                                      color: colorScheme.tertiary,
                                     ),
+                                    const SizedBox(width: 12),
+                                    Expanded(
+                                      child: Text(
+                                        AppLocalizations.of(
+                                          context,
+                                        )!.donationsInApp,
+                                        style: TextStyle(
+                                          color: colorScheme.tertiary,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 8),
+                                Text(
+                                  _errorMessage!,
+                                  style: TextStyle(
+                                    color: colorScheme.onTertiaryContainer,
+                                    fontSize: 13,
+                                  ),
+                                ),
+                                const SizedBox(height: 12),
+                                Text(
+                                  AppLocalizations.of(
+                                    context,
+                                  )!.donationsNotAvailableNote,
+                                  style: TextStyle(
+                                    color: colorScheme.tertiary,
+                                    fontSize: 12,
+                                    fontStyle: FontStyle.italic,
                                   ),
                                 ),
                               ],
                             ),
-                            const SizedBox(height: 8),
-                            Text(
-                              _errorMessage!,
-                              style: TextStyle(
-                                color: Colors.orange[900],
-                                fontSize: 13,
-                              ),
-                            ),
-                            const SizedBox(height: 12),
-                            Text(
-                              AppLocalizations.of(
-                                context,
-                              )!.donationsNotAvailableNote,
-                              style: TextStyle(
-                                color: Colors.orange[700],
-                                fontSize: 12,
-                                fontStyle: FontStyle.italic,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
+                          ),
+                        );
+                      },
                     ),
                     const SizedBox(height: 16),
                   ],
@@ -296,7 +304,7 @@ class _DonationsScreenState extends State<DonationsScreen> {
                           icon: _getIconForProductId(product.id),
                           title: _getTitleForProductId(product.id, context),
                           subtitle: product.price,
-                          color: _getColorForProductId(product.id),
+                          color: _getColorForProductId(product.id, context),
                           isPending: _purchaseService.purchasePending,
                           onTap: () => _buyProduct(product),
                         ),
@@ -305,56 +313,81 @@ class _DonationsScreenState extends State<DonationsScreen> {
                   else
                   // Fallback se i prodotti non sono disponibili
                   ...[
-                    _DonationCard(
-                      icon: Icons.coffee,
-                      title: AppLocalizations.of(context)!.buyCoffee,
-                      subtitle: AppLocalizations.of(context)!.notAvailable,
-                      color: Colors.brown,
-                      isPending: false,
-                      onTap: () {},
-                    ),
-                    const SizedBox(height: 8),
-                    _DonationCard(
-                      icon: Icons.lunch_dining,
-                      title: AppLocalizations.of(context)!.buyLunch,
-                      subtitle: AppLocalizations.of(context)!.notAvailable,
-                      color: Colors.orange,
-                      isPending: false,
-                      onTap: () {},
-                    ),
-                    const SizedBox(height: 8),
-                    _DonationCard(
-                      icon: Icons.card_giftcard,
-                      title: AppLocalizations.of(context)!.generousDonation,
-                      subtitle: AppLocalizations.of(context)!.notAvailable,
-                      color: Colors.purple,
-                      isPending: false,
-                      onTap: () {},
+                    Builder(
+                      builder: (context) {
+                        final colorScheme = Theme.of(context).colorScheme;
+                        return Column(
+                          children: [
+                            _DonationCard(
+                              icon: Icons.coffee,
+                              title: AppLocalizations.of(context)!.buyCoffee,
+                              subtitle: AppLocalizations.of(
+                                context,
+                              )!.notAvailable,
+                              color: colorScheme.tertiary,
+                              isPending: false,
+                              onTap: () {},
+                            ),
+                            const SizedBox(height: 8),
+                            _DonationCard(
+                              icon: Icons.lunch_dining,
+                              title: AppLocalizations.of(context)!.buyLunch,
+                              subtitle: AppLocalizations.of(
+                                context,
+                              )!.notAvailable,
+                              color: colorScheme.secondary,
+                              isPending: false,
+                              onTap: () {},
+                            ),
+                            const SizedBox(height: 8),
+                            _DonationCard(
+                              icon: Icons.card_giftcard,
+                              title: AppLocalizations.of(
+                                context,
+                              )!.generousDonation,
+                              subtitle: AppLocalizations.of(
+                                context,
+                              )!.notAvailable,
+                              color: colorScheme.primary,
+                              isPending: false,
+                              onTap: () {},
+                            ),
+                          ],
+                        );
+                      },
                     ),
                   ],
 
                   const SizedBox(height: 32),
 
                   // Info
-                  Card(
-                    color: Colors.grey[100],
-                    child: Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Column(
-                        children: [
-                          Icon(Icons.info_outline, color: Colors.grey[600]),
-                          const SizedBox(height: 8),
-                          Text(
-                            AppLocalizations.of(context)!.donationsInfo,
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: Colors.grey[700],
-                            ),
-                            textAlign: TextAlign.center,
+                  Builder(
+                    builder: (context) {
+                      final colorScheme = Theme.of(context).colorScheme;
+                      return Card(
+                        color: colorScheme.surfaceContainerHighest,
+                        child: Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: Column(
+                            children: [
+                              Icon(
+                                Icons.info_outline,
+                                color: colorScheme.onSurfaceVariant,
+                              ),
+                              const SizedBox(height: 8),
+                              Text(
+                                AppLocalizations.of(context)!.donationsInfo,
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: colorScheme.onSurface,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                            ],
                           ),
-                        ],
-                      ),
-                    ),
+                        ),
+                      );
+                    },
                   ),
                   const SizedBox(height: 16),
                   Text(
@@ -406,7 +439,10 @@ class _FeatureItem extends StatelessWidget {
                 ),
                 Text(
                   description,
-                  style: TextStyle(fontSize: 14, color: Colors.grey[700]),
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Theme.of(context).colorScheme.onSurface,
+                  ),
                 ),
               ],
             ),
@@ -469,7 +505,10 @@ class _DonationCard extends StatelessWidget {
                       ),
                       Text(
                         subtitle,
-                        style: TextStyle(fontSize: 14, color: Colors.grey[600]),
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        ),
                       ),
                     ],
                   ),

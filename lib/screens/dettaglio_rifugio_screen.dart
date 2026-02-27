@@ -98,11 +98,12 @@ class _DettaglioRifugioScreenState extends State<DettaglioRifugioScreen> {
         );
         _showShareDialog();
       } else {
+        final colorScheme = Theme.of(context).colorScheme;
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Row(
               children: [
-                const Icon(Icons.error, color: Colors.white),
+                Icon(Icons.error, color: colorScheme.onError),
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
@@ -112,7 +113,7 @@ class _DettaglioRifugioScreenState extends State<DettaglioRifugioScreen> {
                 ),
               ],
             ),
-            backgroundColor: Colors.red,
+            backgroundColor: colorScheme.error,
             duration: const Duration(seconds: 4),
           ),
         );
@@ -262,6 +263,7 @@ class _DettaglioRifugioScreenState extends State<DettaglioRifugioScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Stack(
       children: [
         Scaffold(
@@ -292,8 +294,8 @@ class _DettaglioRifugioScreenState extends State<DettaglioRifugioScreen> {
                               label: Text(widget.rifugio.status!),
                               backgroundColor:
                                   widget.rifugio.status == 'In attività'
-                                  ? Colors.green[100]
-                                  : Colors.orange[100],
+                                  ? colorScheme.primaryContainer
+                                  : colorScheme.tertiaryContainer,
                             ),
                           ],
                         ],

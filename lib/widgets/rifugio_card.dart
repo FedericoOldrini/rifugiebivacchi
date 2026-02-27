@@ -112,16 +112,15 @@ class RifugioCard extends StatelessWidget {
                               vertical: 4,
                             ),
                             decoration: BoxDecoration(
-                              color: Colors.green[700],
+                              color: Theme.of(context).colorScheme.primary,
                               borderRadius: const BorderRadius.only(
                                 topRight: Radius.circular(8),
                                 bottomLeft: Radius.circular(8),
                               ),
                               boxShadow: [
                                 BoxShadow(
-                                  color: Colors.black.withAlpha(
-                                    (0.2 * 255).toInt(),
-                                  ),
+                                  color: Theme.of(context).colorScheme.shadow
+                                      .withAlpha((0.2 * 255).toInt()),
                                   blurRadius: 4,
                                   offset: const Offset(0, 2),
                                 ),
@@ -186,7 +185,7 @@ class RifugioCard extends StatelessWidget {
                                 vertical: 2,
                               ),
                               decoration: BoxDecoration(
-                                color: Colors.green[700],
+                                color: Theme.of(context).colorScheme.primary,
                                 borderRadius: BorderRadius.circular(12),
                               ),
                               child: Row(
@@ -233,27 +232,35 @@ class RifugioCard extends StatelessWidget {
                                       _getLabelForType(rifugio.tipo, context),
                                       style: TextStyle(
                                         fontSize: 12,
-                                        color: Colors.grey[600],
+                                        color: Theme.of(
+                                          context,
+                                        ).colorScheme.onSurfaceVariant,
                                       ),
                                     ),
                                     if (rifugio.altitudine != null) ...[
                                       Text(
                                         ' • ',
                                         style: TextStyle(
-                                          color: Colors.grey[600],
+                                          color: Theme.of(
+                                            context,
+                                          ).colorScheme.onSurfaceVariant,
                                         ),
                                       ),
                                       Icon(
                                         Icons.terrain,
                                         size: 12,
-                                        color: Colors.grey[600],
+                                        color: Theme.of(
+                                          context,
+                                        ).colorScheme.onSurfaceVariant,
                                       ),
                                       const SizedBox(width: 2),
                                       Text(
                                         '${rifugio.altitudine!.toInt()} m',
                                         style: TextStyle(
                                           fontSize: 12,
-                                          color: Colors.grey[600],
+                                          color: Theme.of(
+                                            context,
+                                          ).colorScheme.onSurfaceVariant,
                                         ),
                                       ),
                                     ],
@@ -262,7 +269,12 @@ class RifugioCard extends StatelessWidget {
                               ],
                             ),
                           ),
-                          Icon(Icons.chevron_right, color: Colors.grey[400]),
+                          Icon(
+                            Icons.chevron_right,
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.onSurfaceVariant,
+                          ),
                         ],
                       ),
                       const SizedBox(height: 12),
@@ -344,11 +356,18 @@ class _InfoChip extends StatelessWidget {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Icon(icon, size: 16, color: color ?? Colors.grey[600]),
+        Icon(
+          icon,
+          size: 16,
+          color: color ?? Theme.of(context).colorScheme.onSurfaceVariant,
+        ),
         const SizedBox(width: 4),
         Text(
           label,
-          style: TextStyle(fontSize: 12, color: color ?? Colors.grey[600]),
+          style: TextStyle(
+            fontSize: 12,
+            color: color ?? Theme.of(context).colorScheme.onSurfaceVariant,
+          ),
         ),
       ],
     );

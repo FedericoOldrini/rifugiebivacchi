@@ -25,6 +25,8 @@ class CheckinSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
 
     return Consumer2<AuthProvider, PassaportoProvider>(
       builder: (context, authProvider, passaportoProvider, child) {
@@ -45,16 +47,16 @@ class CheckinSection extends StatelessWidget {
                   width: double.infinity,
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    color: Colors.green[50],
+                    color: colorScheme.primaryContainer,
                     borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: Colors.green[200]!),
+                    border: Border.all(color: colorScheme.outline),
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Row(
                         children: [
-                          Icon(Icons.check_circle, color: Colors.green[700]),
+                          Icon(Icons.check_circle, color: colorScheme.primary),
                           const SizedBox(width: 12),
                           Expanded(
                             child: Text(
@@ -75,7 +77,7 @@ class CheckinSection extends StatelessWidget {
                           l10n.firstVisit(formatDate(firstVisit)),
                           style: TextStyle(
                             fontSize: 12,
-                            color: Colors.grey[700],
+                            color: colorScheme.onSurface,
                           ),
                         ),
                         if (visitCount > 1 && lastVisit != null)
@@ -83,7 +85,7 @@ class CheckinSection extends StatelessWidget {
                             l10n.lastVisit(formatDate(lastVisit)),
                             style: TextStyle(
                               fontSize: 12,
-                              color: Colors.grey[700],
+                              color: colorScheme.onSurface,
                             ),
                           ),
                       ],
@@ -97,13 +99,13 @@ class CheckinSection extends StatelessWidget {
                   child: ElevatedButton.icon(
                     onPressed: isCheckingIn ? null : onCheckIn,
                     icon: isCheckingIn
-                        ? const SizedBox(
+                        ? SizedBox(
                             width: 20,
                             height: 20,
                             child: CircularProgressIndicator(
                               strokeWidth: 2,
                               valueColor: AlwaysStoppedAnimation<Color>(
-                                Colors.white,
+                                colorScheme.onPrimary,
                               ),
                             ),
                           )
@@ -117,8 +119,8 @@ class CheckinSection extends StatelessWidget {
                     ),
                     style: ElevatedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(vertical: 16),
-                      backgroundColor: Theme.of(context).colorScheme.primary,
-                      foregroundColor: Colors.white,
+                      backgroundColor: colorScheme.primary,
+                      foregroundColor: colorScheme.onPrimary,
                     ),
                   ),
                 )
@@ -128,13 +130,13 @@ class CheckinSection extends StatelessWidget {
                   width: double.infinity,
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    color: Colors.orange[50],
+                    color: colorScheme.tertiaryContainer,
                     borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: Colors.orange[200]!),
+                    border: Border.all(color: colorScheme.outline),
                   ),
                   child: Row(
                     children: [
-                      Icon(Icons.info_outline, color: Colors.orange[700]),
+                      Icon(Icons.info_outline, color: colorScheme.tertiary),
                       const SizedBox(width: 12),
                       Expanded(
                         child: Text(
@@ -149,7 +151,10 @@ class CheckinSection extends StatelessWidget {
               const SizedBox(height: 8),
               Text(
                 l10n.checkInRadius,
-                style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+                style: TextStyle(
+                  fontSize: 12,
+                  color: colorScheme.onSurfaceVariant,
+                ),
               ),
               const SizedBox(height: 16),
             ],

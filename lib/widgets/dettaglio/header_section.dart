@@ -61,7 +61,7 @@ class HeaderSection extends StatelessWidget {
                     ),
                     duration: const Duration(seconds: 2),
                     backgroundColor: isPreferito
-                        ? Colors.grey[700]
+                        ? Theme.of(context).colorScheme.inverseSurface
                         : Colors.amber[700],
                   ),
                 );

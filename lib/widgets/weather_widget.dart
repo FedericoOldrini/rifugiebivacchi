@@ -66,9 +66,7 @@ class _WeatherWidgetState extends State<WeatherWidget> {
 
     return Card(
       elevation: 2,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: Padding(
         padding: const EdgeInsets.all(12),
         child: Column(
@@ -120,10 +118,7 @@ class _WeatherWidgetState extends State<WeatherWidget> {
     return Row(
       children: [
         // Icona e temperatura
-        Text(
-          weather.weatherIcon,
-          style: const TextStyle(fontSize: 40),
-        ),
+        Text(weather.weatherIcon, style: const TextStyle(fontSize: 40)),
         const SizedBox(width: 12),
         Expanded(
           child: Column(
@@ -150,7 +145,7 @@ class _WeatherWidgetState extends State<WeatherWidget> {
                           weather.weatherDescription,
                           style: TextStyle(
                             fontSize: 13,
-                            color: Colors.grey[700],
+                            color: Theme.of(context).colorScheme.onSurface,
                             height: 1.2,
                           ),
                         ),
@@ -186,21 +181,16 @@ class _WeatherWidgetState extends State<WeatherWidget> {
     );
   }
 
-  Widget _buildCompactDetail({
-    required IconData icon,
-    required String value,
-  }) {
+  Widget _buildCompactDetail({required IconData icon, required String value}) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Icon(icon, size: 14, color: Colors.grey[600]),
+        Icon(icon, size: 14, color: colorScheme.onSurfaceVariant),
         const SizedBox(width: 3),
         Text(
           value,
-          style: TextStyle(
-            fontSize: 12,
-            color: Colors.grey[700],
-          ),
+          style: TextStyle(fontSize: 12, color: colorScheme.onSurface),
         ),
       ],
     );
@@ -219,7 +209,7 @@ class _WeatherWidgetState extends State<WeatherWidget> {
           style: TextStyle(
             fontSize: 13,
             fontWeight: FontWeight.w600,
-            color: Colors.grey[700],
+            color: Theme.of(context).colorScheme.onSurface,
           ),
         ),
         const SizedBox(height: 8),
@@ -235,12 +225,11 @@ class _WeatherWidgetState extends State<WeatherWidget> {
               return Container(
                 width: 60,
                 margin: const EdgeInsets.only(right: 8),
-                padding:
-                    const EdgeInsets.symmetric(vertical: 6, horizontal: 4),
+                padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 4),
                 decoration: BoxDecoration(
                   color: isToday
                       ? Theme.of(context).colorScheme.primaryContainer
-                      : Colors.grey[100],
+                      : Theme.of(context).colorScheme.surfaceContainerHighest,
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Column(
@@ -250,11 +239,15 @@ class _WeatherWidgetState extends State<WeatherWidget> {
                     Text(
                       isToday
                           ? AppLocalizations.of(context)!.today
-                          : DateFormat('E', Localizations.localeOf(context).languageCode).format(forecast.date),
+                          : DateFormat(
+                              'E',
+                              Localizations.localeOf(context).languageCode,
+                            ).format(forecast.date),
                       style: TextStyle(
                         fontSize: 11,
-                        fontWeight:
-                            isToday ? FontWeight.bold : FontWeight.normal,
+                        fontWeight: isToday
+                            ? FontWeight.bold
+                            : FontWeight.normal,
                       ),
                     ),
                     const SizedBox(height: 2),
@@ -277,7 +270,9 @@ class _WeatherWidgetState extends State<WeatherWidget> {
                           '${forecast.temperatureMin.round()}°',
                           style: TextStyle(
                             fontSize: 10,
-                            color: Colors.grey[600],
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.onSurfaceVariant,
                           ),
                         ),
                       ],
@@ -291,14 +286,18 @@ class _WeatherWidgetState extends State<WeatherWidget> {
         const SizedBox(height: 6),
         Row(
           children: [
-            Icon(Icons.info_outline, size: 12, color: Colors.grey[500]),
+            Icon(
+              Icons.info_outline,
+              size: 12,
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
             const SizedBox(width: 4),
             Expanded(
               child: Text(
                 AppLocalizations.of(context)!.dataOpenMeteo,
                 style: TextStyle(
                   fontSize: 10,
-                  color: Colors.grey[600],
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
                 ),
               ),
             ),

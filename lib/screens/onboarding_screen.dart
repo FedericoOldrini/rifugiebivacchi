@@ -69,11 +69,11 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
     try {
       LocationPermission permission = await Geolocator.checkPermission();
-      
+
       if (permission == LocationPermission.denied) {
         permission = await Geolocator.requestPermission();
       }
-      
+
       if (permission == LocationPermission.whileInUse ||
           permission == LocationPermission.always) {
         await _completeOnboarding();
@@ -87,9 +87,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           final l10n = AppLocalizations.of(context)!;
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text(
-                l10n.permissionDeniedSnack,
-              ),
+              content: Text(l10n.permissionDeniedSnack),
               duration: Duration(seconds: 3),
             ),
           );
@@ -112,9 +110,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       context: context,
       builder: (context) => AlertDialog(
         title: Text(l10n.permissionDenied),
-        content: Text(
-          l10n.permissionDeniedMessage,
-        ),
+        content: Text(l10n.permissionDeniedMessage),
         actions: [
           TextButton(
             onPressed: () {
@@ -139,12 +135,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   Future<void> _completeOnboarding() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool('onboarding_completed', true);
-    
+
     if (mounted) {
       Navigator.of(context).pushReplacement(
-        MaterialPageRoute(
-          builder: (context) => const HomeScreen(),
-        ),
+        MaterialPageRoute(builder: (context) => const HomeScreen()),
       );
     }
   }
@@ -159,7 +153,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
   Widget _buildLoginPage(OnboardingPage page) {
     final authProvider = Provider.of<AuthProvider>(context);
-    
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
     return Padding(
       padding: const EdgeInsets.all(32.0),
       child: Column(
@@ -173,11 +169,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               color: page.color.withValues(alpha: 0.1),
               shape: BoxShape.circle,
             ),
-            child: Icon(
-              page.icon,
-              size: 60,
-              color: page.color,
-            ),
+            child: Icon(page.icon, size: 60, color: page.color),
           ),
           const SizedBox(height: 48),
 
@@ -199,7 +191,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             style: TextStyle(
               fontSize: 16,
               height: 1.5,
-              color: Colors.grey[700],
+              color: colorScheme.onSurface,
             ),
             textAlign: TextAlign.center,
           ),
@@ -225,8 +217,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 icon: Image.asset(
                   'assets/images/google_logo.png',
                   height: 24,
-                  errorBuilder: (context, error, stackTrace) => 
-                    const Icon(Icons.g_mobiledata, size: 24),
+                  errorBuilder: (context, error, stackTrace) =>
+                      const Icon(Icons.g_mobiledata, size: 24),
                 ),
                 label: Text(
                   AppLocalizations.of(context)!.continueWithGoogleOnboarding,
@@ -234,7 +226,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 ),
                 style: OutlinedButton.styleFrom(
                   padding: const EdgeInsets.symmetric(vertical: 16),
-                  side: BorderSide(color: Colors.grey[300]!),
+                  side: BorderSide(color: colorScheme.outlineVariant),
                 ),
               ),
             ),
@@ -251,7 +243,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                         width: double.infinity,
                         child: OutlinedButton.icon(
                           onPressed: () async {
-                            final success = await authProvider.signInWithApple();
+                            final success = await authProvider
+                                .signInWithApple();
                             if (success && mounted) {
                               _pageController.nextPage(
                                 duration: const Duration(milliseconds: 300),
@@ -261,12 +254,14 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                           },
                           icon: const Icon(Icons.apple, size: 24),
                           label: Text(
-                            AppLocalizations.of(context)!.continueWithAppleOnboarding,
+                            AppLocalizations.of(
+                              context,
+                            )!.continueWithAppleOnboarding,
                             style: const TextStyle(fontSize: 16),
                           ),
                           style: OutlinedButton.styleFrom(
                             padding: const EdgeInsets.symmetric(vertical: 16),
-                            side: BorderSide(color: Colors.grey[300]!),
+                            side: BorderSide(color: colorScheme.outlineVariant),
                           ),
                         ),
                       ),
@@ -314,6 +309,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   Widget build(BuildContext context) {
     final pages = _getPages(context);
     final l10n = AppLocalizations.of(context)!;
+    final colorScheme = Theme.of(context).colorScheme;
     return Scaffold(
       body: SafeArea(
         child: Column(
@@ -332,7 +328,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     decoration: BoxDecoration(
                       color: _currentPage == index
                           ? pages[index].color
-                          : Colors.grey[300],
+                          : colorScheme.outlineVariant,
                       borderRadius: BorderRadius.circular(4),
                     ),
                   ),
@@ -352,12 +348,12 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 itemCount: pages.length,
                 itemBuilder: (context, index) {
                   final page = pages[index];
-                  
+
                   // Pagina login speciale
                   if (page.isLoginPage) {
                     return _buildLoginPage(page);
                   }
-                  
+
                   return Padding(
                     padding: const EdgeInsets.all(32.0),
                     child: Column(
@@ -371,11 +367,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                             color: page.color.withValues(alpha: 0.1),
                             shape: BoxShape.circle,
                           ),
-                          child: Icon(
-                            page.icon,
-                            size: 60,
-                            color: page.color,
-                          ),
+                          child: Icon(page.icon, size: 60, color: page.color),
                         ),
                         const SizedBox(height: 48),
 
@@ -397,7 +389,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                           style: TextStyle(
                             fontSize: 16,
                             height: 1.5,
-                            color: Colors.grey[700],
+                            color: colorScheme.onSurface,
                           ),
                           textAlign: TextAlign.center,
                         ),
@@ -439,12 +431,12 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                             }
                           },
                     child: _isRequestingPermission
-                        ? const SizedBox(
+                        ? SizedBox(
                             width: 20,
                             height: 20,
                             child: CircularProgressIndicator(
                               strokeWidth: 2,
-                              color: Colors.white,
+                              color: colorScheme.onPrimary,
                             ),
                           )
                         : Row(

@@ -22,6 +22,36 @@
 
 Obiettivo: correggere il debito tecnico della v1.0 e aggiungere le feature più richieste.
 
+### 🔴 Ridurre visibilità card donazioni nella lista
+- ✅ Rimosso gradiente rosa/viola e sostituito con sfondo `surfaceContainerLow` (si fonde con il background)
+- ✅ Rimosso container icona con ombra, sostituito con icona outline discreta (`favorite_border`)
+- ✅ Rimossa seconda riga di testo (`supportDevelopment`), tenuto solo il messaggio principale
+- ✅ Tutti i colori ora usano il `colorScheme` del tema (funziona in light e dark mode)
+- ✅ Elevazione rimossa, bordo sottile e tenue
+- **File modificato**: `lista_rifugi_screen.dart`
+
+### 🔴 Audit colori e tema scuro
+- ✅ Revisione **completa di tutti gli screen** in dark mode: verificato contrasto testi, icone, bordi, sfondi e divisori
+- ✅ Sostituiti colori hardcoded (`Colors.white`, `Colors.black`, `Color(0xFF...)`, `Colors.grey[*]`, `Colors.green[*]`, `Colors.blue[*]`, ecc.) con riferimenti al tema (`Theme.of(context).colorScheme`)
+- ✅ Verificate card, chip, bottoni e dialog in dark mode
+- ✅ Marker mappa mantenuti con colori semantici (blu=rifugi, arancione=bivacchi, verde=malghe) — scelta intenzionale
+- ✅ Galleria immagini e placeholder aggiornati per dark mode
+- ✅ Onboarding e schermata donazioni aggiornati per dark mode
+- ✅ Elementi branded (share card, passaporto, mountain pattern) lasciati intenzionali — hanno sfondi gradient custom
+- 🔲 Testare su dispositivo fisico sia light che dark (i colori su schermo reale differiscono dall'emulatore)
+- **File modificati**: `main.dart`, `lista_rifugi_screen.dart`, `settings_screen.dart`, `profilo_screen.dart`, `donations_screen.dart`, `onboarding_screen.dart`, `dettaglio_rifugio_screen.dart`, `offline_map_screen.dart`, `weather_widget.dart`, `rifugio_card.dart`, `image_gallery.dart`, `rifugio_image.dart`, `checkin_section.dart`, `contacts_section.dart`, `header_section.dart`, `map_section.dart`
+- **File esclusi** (design branded intenzionale): `share_checkin_card.dart`, `share_dialog.dart`, `mountain_pattern_painter.dart`, `passaporto_screen.dart`
+
+### 🔴 Audit stringhe hardcoded e localizzazione
+- 🔲 Scansione **sistematica di tutti i file** in `lib/` alla ricerca di stringhe in italiano non passate per `AppLocalizations`
+- 🔲 Estrarre tutte le stringhe hardcoded trovate verso i file ARB (`app_it.arb` come template)
+- 🔲 Includere in particolare: `passaporto_screen.dart`, `weather.dart` (descrizioni meteo WMO), `settings_screen.dart`, widget estratti in `widgets/dettaglio/`, `donations_screen.dart`, `onboarding_screen.dart`, `offline_map_screen.dart`
+- 🔲 Verificare che **placeholder e parametri** (nomi, numeri, date) usino la sintassi ICU corretta nei file ARB
+- 🔲 Completare traduzioni EN, DE, FR per tutte le stringhe nuove e quelle estratte
+- 🔲 Eseguire `flutter gen-l10n` e verificare che la compilazione sia pulita
+- 🔲 Testare l'app con locale forzato a EN, DE, FR per verificare che non compaiano stringhe in italiano
+- **File coinvolti**: `app_it.arb`, `app_en.arb`, `app_de.arb`, `app_fr.arb`, tutti gli screen e widget con stringhe visibili all'utente
+
 ### 🔴 Filtri avanzati
 - 🔲 Filtro per **tipo**: rifugio, bivacco, malga (checkbox/chip)
 - 🔲 Filtro per **regione/provincia** (dropdown o multi-select)
@@ -44,13 +74,6 @@ Obiettivo: correggere il debito tecnico della v1.0 e aggiungere le feature più 
 - 🔲 Verifica build iOS funzionante
 - **Motivo**: obbligatorio per iOS post-26, warning attivo
 
-### 🟡 Localizzazione completa
-- 🔲 Estrarre tutte le stringhe hardcoded in `passaporto_screen.dart` verso ARB
-- 🔲 Estrarre stringhe hardcoded in `weather.dart` (descrizioni meteo)
-- 🔲 Estrarre stringhe hardcoded in `settings_screen.dart`
-- 🔲 Completare traduzioni EN, DE, FR per tutte le nuove stringhe
-- **File coinvolti**: `app_it.arb`, `app_en.arb`, `app_de.arb`, `app_fr.arb`, vari screen
-
 ### 🟡 Note e foto nei check-in
 - 🔲 Aggiungere campo **nota** al UI del check-in (il modello `RifugioCheckin` ha già il campo `note`)
 - 🔲 Aggiungere possibilità di **scattare/allegare una foto** al check-in (campo `fotoUrl` già nel modello)
@@ -58,13 +81,13 @@ Obiettivo: correggere il debito tecnico della v1.0 e aggiungere le feature più 
 - 🔲 Mostrare nota e foto nella vista passaporto e nella card di condivisione
 - **File coinvolti**: `dettaglio_rifugio_screen.dart`, `passaporto_screen.dart`, `passaporto_provider.dart`, `passaporto_service.dart`, `share_checkin_card.dart`
 
-### 🟡 Debito tecnico
-- 🔲 Spezzare `dettaglio_rifugio_screen.dart` (~1300 righe) in widget separati: `_HeaderSection`, `_MapSection`, `_WeatherSection`, `_ServicesSection`, `_ContactsSection`, `_GallerySection`
-- 🔲 Estrarre `_MountainPatternPainter` duplicato (in `share_checkin_card.dart` e `passaporto_screen.dart`) in widget condiviso
-- 🔲 Leggere versione app da `package_info_plus` invece di hardcodare "1.0.0" in settings
-- 🔲 Configurare `appStoreId` per `in_app_review` in `settings_screen.dart`
-- 🔲 Aggiungere custom event tracking con Firebase Analytics (schermate viste, check-in, ricerche, donazioni)
-- 🔲 Gestire il warning del submodule `site/` (`.gitignore` o `git submodule`)
+### ✅ Debito tecnico
+- ✅ Spezzato `dettaglio_rifugio_screen.dart` (1452→~260 righe) in 8 widget separati in `lib/widgets/dettaglio/`
+- ✅ Estratto `MountainPatternPainter` duplicato in widget condiviso `lib/widgets/mountain_pattern_painter.dart`
+- ✅ Versione app dinamica con `package_info_plus` in `settings_screen.dart`
+- ✅ Configurato `appStoreId: '6740241514'` per `in_app_review`
+- ✅ Creato `AnalyticsService` con 12 custom event Firebase Analytics
+- ✅ Ripristinato submodule `site/` con `.gitmodules` corretto
 
 ---
 
@@ -126,6 +149,29 @@ Obiettivo: aggiungere elementi social per aumentare engagement e retention.
 - 🔲 Galleria community nel dettaglio rifugio (separata dalle foto ufficiali)
 - 🔲 Moderazione e segnalazione
 - **Backend**: Firebase Storage + collection `rifugi/{id}/communityPhotos`
+
+### 🟡 Segnalazioni gestori rifugio (Fase 1)
+- 🔲 Bottone **"Sei il gestore? Segnala una modifica"** nel dettaglio rifugio
+- 🔲 Form di segnalazione: nome gestore, ruolo, campi da modificare (contatti, orari, servizi, descrizione, foto), nota libera
+- 🔲 Invio segnalazione salvata su Firestore come richiesta pending
+- 🔲 Notifica via email all'admin (Cloud Functions trigger su nuova segnalazione)
+- 🔲 Pannello admin minimale (web o sezione nascosta in-app) per approvare/rifiutare le segnalazioni
+- 🔲 Tracking stato segnalazione: pending → approvata / rifiutata, con feedback al gestore
+- **Backend**: nuova collection Firestore `changeRequests/{id}` con campi: `rifugioId`, `requesterId`, `requesterName`, `requesterRole`, `changes` (mappa chiave→valore), `note`, `status`, `createdAt`, `reviewedAt`, `reviewedBy`
+- **Dipendenze**: `firebase_messaging` o email per notifiche, Cloud Functions per trigger
+- **File coinvolti**: nuovo `segnalazione_gestore_screen.dart`, `dettaglio_rifugio_screen.dart` (bottone), nuove Firestore rules
+
+### 🟡 Badge "Rifugio Verificato"
+- 🔲 Concetto di **rifugio verificato**: le informazioni sono state confermate o aggiornate direttamente dal gestore
+- 🔲 **Badge visivo** (icona ✓ con tooltip) visibile ovunque appaia il rifugio: card nella lista, dettaglio, mappa (marker differenziato), passaporto
+- 🔲 **Sezione nel dettaglio**: "Informazioni verificate dal gestore" con data ultima verifica
+- 🔲 Un rifugio diventa verificato quando una segnalazione del gestore viene approvata (Fase 1) o quando il gestore conferma i dati dalla dashboard (Fase 2)
+- 🔲 **Scadenza verifica**: il badge ha una validità temporale (es. 12 mesi); dopo la scadenza il rifugio torna "non verificato" e il gestore riceve un promemoria per riconfermare i dati
+- 🔲 Filtro **"Solo rifugi verificati"** nella ricerca
+- 🔲 Ordinamento con priorità ai rifugi verificati (opzionale, a scelta dell'utente)
+- **Backend**: nuovi campi nel documento `rifugi/{id}`: `verified` (bool), `verifiedAt` (timestamp), `verifiedBy` (uid gestore), `verificationExpiresAt` (timestamp). Cloud Function schedulata per reset scadenze
+- **Modello dati**: aggiornare `Rifugio` in `rifugio.dart` con campi `verified`, `verifiedAt`, `verifiedBy`
+- **File coinvolti**: `rifugio.dart`, `rifugio_card.dart`, `dettaglio_rifugio_screen.dart`, `filtro_provider.dart`, `rifugi_provider.dart`, nuovo widget `verified_badge.dart`
 
 ---
 
@@ -191,6 +237,19 @@ Obiettivo: espandere l'app oltre i confini attuali e creare sostenibilità.
 - 🔲 Notifica meteo avverso per rifugi in lista
 - **Dipendenze**: `firebase_messaging`, Cloud Functions
 
+### 🟡 Pannello gestori rifugio (Fase 2)
+- 🔲 Ruolo **"gestore"** nel sistema: utenti verificati associati a uno o più rifugi
+- 🔲 Flusso di **verifica gestore**: richiesta claim rifugio → verifica manuale (email/telefono al rifugio) → approvazione
+- 🔲 **Dashboard gestore** in-app: modifica diretta dei dati del proprio rifugio (contatti, servizi, orari, descrizione, foto, periodi apertura) senza approvazione admin
+- 🔲 **Conferma periodica dati**: pulsante "Confermo che i dati sono aggiornati" che rinnova il badge verificato senza dover modificare nulla
+- 🔲 Storico modifiche con versioning (chi ha modificato cosa e quando)
+- 🔲 Possibilità per il gestore di rispondere alle recensioni degli utenti (dipende da v1.3 Recensioni)
+- 🔲 Notifiche al gestore: nuove recensioni, nuovi check-in al proprio rifugio, **promemoria rinnovo verifica** in prossimità della scadenza
+- 🔲 Statistiche per il gestore: visualizzazioni del rifugio, check-in, preferiti, **stato verifica e storico**
+- **Backend**: campo `role` in `users/{uid}` (`user` | `gestore` | `admin`), collection `gestori/{uid}` con `rifugiIds[]` e `verifiedAt`, Firestore rules con write condizionato al ruolo, Cloud Functions per verifica, notifiche e scadenza badge
+- **File coinvolti**: nuovo `gestore_dashboard_screen.dart`, `auth_provider.dart` (ruoli), `auth_service.dart` (claims), nuove Firestore rules avanzate
+- **Note**: valutare Firebase Custom Claims per ruoli server-side vs campo Firestore; Custom Claims è più sicuro ma richiede Cloud Functions per l'assegnazione
+
 ### 🟢 Monetizzazione avanzata
 - 🔲 Versione **Premium** (subscription) con: mappe offline illimitate, niente pubblicità, filtri avanzati, export GPX
 - 🔲 Oppure: mantenere tutto gratuito con solo donazioni (modello attuale)
@@ -206,6 +265,8 @@ Obiettivo: espandere l'app oltre i confini attuali e creare sostenibilità.
 | AR (Realtà Aumentata) | Puntare fotocamera per vedere rifugi in direzione |
 | Chatbot / AI assistant | "Consigliami un rifugio per famiglie in Trentino con ristorante" |
 | Prenotazione diretta | Integrazione con sistemi di prenotazione rifugi (se disponibili) |
+| Portale web gestori | Dashboard web (Flutter web o React) per gestori che preferiscono lavorare da desktop |
+| Gestione collaborativa multi-gestore | Più gestori per lo stesso rifugio con ruoli (proprietario, collaboratore) |
 | Segnalazione problemi sentieri | Community-driven trail conditions |
 | Integrazione Komoot/Strava | Import percorsi da altre piattaforme |
 | Dark sky / osservazione stellare | Mappa inquinamento luminoso per bivacchi |

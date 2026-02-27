@@ -40,9 +40,9 @@ class ImageGallery extends StatelessWidget {
             const Spacer(),
             Text(
               l10n.nPhotos(imageUrls.length),
-              style: Theme.of(
-                context,
-              ).textTheme.bodySmall?.copyWith(color: Colors.grey[600]),
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
             ),
           ],
         ),
@@ -117,7 +117,7 @@ class _GalleryThumbnail extends StatelessWidget {
               width: 200,
               height: 160,
               decoration: BoxDecoration(
-                color: Colors.grey[200],
+                color: Theme.of(context).colorScheme.surfaceContainerHighest,
                 borderRadius: BorderRadius.circular(12),
               ),
               child: const Center(
@@ -128,12 +128,12 @@ class _GalleryThumbnail extends StatelessWidget {
               width: 200,
               height: 160,
               decoration: BoxDecoration(
-                color: Colors.grey[200],
+                color: Theme.of(context).colorScheme.surfaceContainerHighest,
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Icon(
                 Icons.broken_image_outlined,
-                color: Colors.grey[400],
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
                 size: 40,
               ),
             ),
@@ -221,15 +221,15 @@ class _FullscreenGalleryState extends State<_FullscreenGallery> {
                       errorWidget: (context, url, error) => Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Icon(
+                          const Icon(
                             Icons.broken_image_outlined,
-                            color: Colors.grey[600],
+                            color: Colors.white54,
                             size: 64,
                           ),
                           const SizedBox(height: 16),
                           Text(
                             l10n.imageLoadError,
-                            style: TextStyle(color: Colors.grey[400]),
+                            style: const TextStyle(color: Colors.white70),
                           ),
                         ],
                       ),

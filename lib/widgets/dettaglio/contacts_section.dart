@@ -98,8 +98,8 @@ class ContactsSection extends StatelessWidget {
             icon: const Icon(Icons.favorite),
             label: Text(l10n.supportDevelopment),
             style: OutlinedButton.styleFrom(
-              foregroundColor: Colors.pink[700],
-              side: BorderSide(color: Colors.pink[700]!),
+              foregroundColor: Theme.of(context).colorScheme.error,
+              side: BorderSide(color: Theme.of(context).colorScheme.error),
             ),
           ),
         ),

@@ -35,6 +35,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
 
     return Scaffold(
       appBar: AppBar(title: Text(l10n.settings)),
@@ -44,10 +46,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
             padding: const EdgeInsets.all(16.0),
             child: Text(
               l10n.appInfo,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.bold,
-                color: Colors.grey,
+                color: colorScheme.outline,
               ),
             ),
           ),
@@ -65,10 +67,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 context: context,
                 applicationName: l10n.appTitle,
                 applicationVersion: _appVersion,
-                applicationIcon: const Icon(
+                applicationIcon: Icon(
                   Icons.landscape,
                   size: 48,
-                  color: Color(0xFF2D5016),
+                  color: colorScheme.primary,
                 ),
                 children: [Text(l10n.appAboutDescription)],
               );
@@ -79,10 +81,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
             padding: const EdgeInsets.all(16.0),
             child: Text(
               l10n.privacyAndPermissions,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.bold,
-                color: Colors.grey,
+                color: colorScheme.outline,
               ),
             ),
           ),
@@ -132,10 +134,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
             padding: const EdgeInsets.all(16.0),
             child: Text(
               l10n.help,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.bold,
-                color: Colors.grey,
+                color: colorScheme.outline,
               ),
             ),
           ),
@@ -162,15 +164,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
             padding: const EdgeInsets.all(16.0),
             child: Text(
               l10n.supportProject,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.bold,
-                color: Colors.grey,
+                color: colorScheme.outline,
               ),
             ),
           ),
           ListTile(
-            leading: const Icon(Icons.favorite_outlined, color: Colors.red),
+            leading: Icon(Icons.favorite_outlined, color: colorScheme.error),
             title: Text(l10n.supportUs),
             subtitle: Text(l10n.supportUsDesc),
             trailing: const Icon(Icons.chevron_right),
@@ -208,7 +210,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
           Center(
             child: Text(
               l10n.madeWithLove,
-              style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+              style: TextStyle(
+                fontSize: 12,
+                color: colorScheme.onSurfaceVariant,
+              ),
             ),
           ),
           const SizedBox(height: 16),

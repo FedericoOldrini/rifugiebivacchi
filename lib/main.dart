@@ -132,18 +132,24 @@ class _AppInitializerState extends State<AppInitializer> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(Icons.hiking, size: 80, color: Colors.white),
+              Icon(
+                Icons.hiking,
+                size: 80,
+                color: Theme.of(context).colorScheme.onPrimary,
+              ),
               const SizedBox(height: 24),
               Text(
                 AppLocalizations.of(context)!.appTitle,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 28,
                   fontWeight: FontWeight.bold,
-                  color: Colors.white,
+                  color: Theme.of(context).colorScheme.onPrimary,
                 ),
               ),
               const SizedBox(height: 48),
-              const CircularProgressIndicator(color: Colors.white),
+              CircularProgressIndicator(
+                color: Theme.of(context).colorScheme.onPrimary,
+              ),
             ],
           ),
         ),
