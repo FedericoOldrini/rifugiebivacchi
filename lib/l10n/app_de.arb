@@ -280,5 +280,18 @@
   "filterAnimali": "Haustiere",
   "filterBedsTitle": "Mindestschlafplätze",
   "filterBedsAny": "Alle",
-  "noResultsWithFilters": "Versuche die Filter anzupassen, um Ergebnisse zu finden"
+  "noResultsWithFilters": "Versuche die Filter anzupassen, um Ergebnisse zu finden",
+
+  "appearance": "Erscheinungsbild",
+  "seasonTheme": "Jahreszeitenthema",
+  "seasonAuto": "Automatisch",
+  "seasonAutoDesc": "Folgt der aktuellen Jahreszeit",
+  "seasonSpring": "Frühling",
+  "seasonSummer": "Sommer",
+  "seasonAutumn": "Herbst",
+  "seasonWinter": "Winter",
+  "themeMode": "Themenmodus",
+  "themeModeSystem": "System",
+  "themeModeLight": "Hell",
+  "themeModeDark": "Dunkel"
 }

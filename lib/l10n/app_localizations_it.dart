@@ -952,4 +952,40 @@ class AppLocalizationsIt extends AppLocalizations {
   @override
   String get noResultsWithFilters =>
       'Prova a modificare i filtri per trovare risultati';
+
+  @override
+  String get appearance => 'Aspetto';
+
+  @override
+  String get seasonTheme => 'Tema stagionale';
+
+  @override
+  String get seasonAuto => 'Automatico';
+
+  @override
+  String get seasonAutoDesc => 'Segue la stagione corrente';
+
+  @override
+  String get seasonSpring => 'Primavera';
+
+  @override
+  String get seasonSummer => 'Estate';
+
+  @override
+  String get seasonAutumn => 'Autunno';
+
+  @override
+  String get seasonWinter => 'Inverno';
+
+  @override
+  String get themeMode => 'Modalità tema';
+
+  @override
+  String get themeModeSystem => 'Sistema';
+
+  @override
+  String get themeModeLight => 'Chiaro';
+
+  @override
+  String get themeModeDark => 'Scuro';
 }

@@ -14,6 +14,9 @@ class FiltroProvider with ChangeNotifier {
   // ── Regione ──
   Set<String> _selectedRegions = {};
 
+  // ── Paese (codice ISO 3166-1 alpha-2) ──
+  Set<String> _selectedCountries = {};
+
   // ── Altitudine ──
   double? _altMin;
   double? _altMax;
@@ -45,6 +48,7 @@ class FiltroProvider with ChangeNotifier {
 
   Set<String> get selectedTypes => _selectedTypes;
   Set<String> get selectedRegions => _selectedRegions;
+  Set<String> get selectedCountries => _selectedCountries;
 
   double? get altMin => _altMin;
   double? get altMax => _altMax;
@@ -71,6 +75,7 @@ class FiltroProvider with ChangeNotifier {
       _soloPreferiti ||
       _selectedTypes.isNotEmpty ||
       _selectedRegions.isNotEmpty ||
+      _selectedCountries.isNotEmpty ||
       _altMin != null ||
       _altMax != null ||
       _filterWifi ||
@@ -92,6 +97,7 @@ class FiltroProvider with ChangeNotifier {
     if (_soloPreferiti) count++;
     if (_selectedTypes.isNotEmpty) count++;
     if (_selectedRegions.isNotEmpty) count++;
+    if (_selectedCountries.isNotEmpty) count++;
     if (_altMin != null || _altMax != null) count++;
     if (_filterWifi) count++;
     if (_filterRistorante) count++;
@@ -142,6 +148,22 @@ class FiltroProvider with ChangeNotifier {
       _selectedRegions.remove(region);
     } else {
       _selectedRegions.add(region);
+    }
+    _persist();
+    notifyListeners();
+  }
+
+  void setSelectedCountries(Set<String> countries) {
+    _selectedCountries = countries;
+    _persist();
+    notifyListeners();
+  }
+
+  void toggleCountry(String country) {
+    if (_selectedCountries.contains(country)) {
+      _selectedCountries.remove(country);
+    } else {
+      _selectedCountries.add(country);
     }
     _persist();
     notifyListeners();
@@ -238,6 +260,7 @@ class FiltroProvider with ChangeNotifier {
     _soloPreferiti = false;
     _selectedTypes = {};
     _selectedRegions = {};
+    _selectedCountries = {};
     _altMin = null;
     _altMax = null;
     _filterWifi = false;
@@ -262,6 +285,7 @@ class FiltroProvider with ChangeNotifier {
     _soloPreferiti = false;
     _selectedTypes = {};
     _selectedRegions = {};
+    _selectedCountries = {};
     _altMin = null;
     _altMax = null;
     _filterWifi = false;
@@ -284,6 +308,7 @@ class FiltroProvider with ChangeNotifier {
 
   static const _kTypes = 'filtro_types';
   static const _kRegions = 'filtro_regions';
+  static const _kCountries = 'filtro_countries';
   static const _kAltMin = 'filtro_alt_min';
   static const _kAltMax = 'filtro_alt_max';
   static const _kWifi = 'filtro_wifi';
@@ -309,6 +334,9 @@ class FiltroProvider with ChangeNotifier {
 
     final regions = prefs.getStringList(_kRegions);
     if (regions != null) _selectedRegions = regions.toSet();
+
+    final countries = prefs.getStringList(_kCountries);
+    if (countries != null) _selectedCountries = countries.toSet();
 
     _altMin = prefs.getDouble(_kAltMin);
     _altMax = prefs.getDouble(_kAltMax);
@@ -342,6 +370,7 @@ class FiltroProvider with ChangeNotifier {
 
     await prefs.setStringList(_kTypes, _selectedTypes.toList());
     await prefs.setStringList(_kRegions, _selectedRegions.toList());
+    await prefs.setStringList(_kCountries, _selectedCountries.toList());
 
     if (_altMin != null) {
       await prefs.setDouble(_kAltMin, _altMin!);

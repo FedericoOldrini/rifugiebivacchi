@@ -1,0 +1,48 @@
+{
+  "sources": {
+    "rifugi.cai": {
+      "input": 756,
+      "duplicates": 0,
+      "new": 0,
+      "enrichments": 0
+    },
+    "openstreetmap": {
+      "input": 5929,
+      "duplicates": 249,
+      "new": 4723,
+      "enrichments": 17
+    },
+    "refuges.info": {
+      "input": 668,
+      "duplicates": 178,
+      "new": 458,
+      "enrichments": 162
+    },
+    "wikidata": {
+      "input": 7024,
+      "duplicates": 1586,
+      "new": 4118,
+      "enrichments": 713
+    },
+    "capanneti.ch": {
+      "input": 87,
+      "duplicates": 57,
+      "new": 30,
+      "enrichments": 770
+    },
+    "opendata_regional": {
+      "input": 103,
+      "duplicates": 81,
+      "new": 0,
+      "enrichments": 67
+    }
+  },
+  "total_input": 14567,
+  "total_output": 10085,
+  "duplicates_found": 2070,
+  "enrichments": 837,
+  "new_added": 9329,
+  "conflicts_resolved": 103,
+  "skipped_non_italy": 2309,
+  "skipped_quality": 0
+}

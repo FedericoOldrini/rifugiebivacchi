@@ -280,5 +280,18 @@
   "filterAnimali": "Pets",
   "filterBedsTitle": "Minimum beds",
   "filterBedsAny": "Any",
-  "noResultsWithFilters": "Try adjusting your filters to find results"
+  "noResultsWithFilters": "Try adjusting your filters to find results",
+
+  "appearance": "Appearance",
+  "seasonTheme": "Seasonal theme",
+  "seasonAuto": "Automatic",
+  "seasonAutoDesc": "Follows the current season",
+  "seasonSpring": "Spring",
+  "seasonSummer": "Summer",
+  "seasonAutumn": "Autumn",
+  "seasonWinter": "Winter",
+  "themeMode": "Theme mode",
+  "themeModeSystem": "System",
+  "themeModeLight": "Light",
+  "themeModeDark": "Dark"
 }

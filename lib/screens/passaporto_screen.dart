@@ -214,15 +214,20 @@ class PassaportoScreen extends StatelessWidget {
         height: 100,
       );
 
-      await Share.shareXFiles(
-        [XFile(imagePath)],
-        text:
-            l10n.checkInShareText(latestCheckIn.rifugioNome, checkIns.length) +
-            (latestCheckIn.altitudine != null
-                ? '\n${l10n.shareAltitude(latestCheckIn.altitudine!.toInt())}'
-                : '') +
-            '\n${l10n.shareHashtags}',
-        sharePositionOrigin: shareRect,
+      await SharePlus.instance.share(
+        ShareParams(
+          files: [XFile(imagePath)],
+          text:
+              l10n.checkInShareText(
+                latestCheckIn.rifugioNome,
+                checkIns.length,
+              ) +
+              (latestCheckIn.altitudine != null
+                  ? '\n${l10n.shareAltitude(latestCheckIn.altitudine!.toInt())}'
+                  : '') +
+              '\n${l10n.shareHashtags}',
+          sharePositionOrigin: shareRect,
+        ),
       );
     } catch (e) {
       if (context.mounted) {
@@ -275,10 +280,12 @@ class PassaportoScreen extends StatelessWidget {
         height: 10,
       );
 
-      await Share.shareXFiles(
-        [XFile(imagePath)],
-        text: l10n.sharePassaportoText(rifugiUnici),
-        sharePositionOrigin: shareRect,
+      await SharePlus.instance.share(
+        ShareParams(
+          files: [XFile(imagePath)],
+          text: l10n.sharePassaportoText(rifugiUnici),
+          sharePositionOrigin: shareRect,
+        ),
       );
     } catch (e) {
       if (context.mounted) {

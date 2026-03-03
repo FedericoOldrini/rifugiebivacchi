@@ -26,7 +26,7 @@ except ImportError:
 def initialize_firebase():
     """Inizializza Firebase Admin SDK."""
     service_account_path = Path("serviceAccountKey.json")
-    
+
     if not service_account_path.exists():
         print("❌ Errore: serviceAccountKey.json non trovato")
         print("\nPer ottenerlo:")
@@ -34,7 +34,7 @@ def initialize_firebase():
         print("2. Clicca 'Generate new private key'")
         print("3. Salva il file come 'serviceAccountKey.json' in questa directory")
         sys.exit(1)
-    
+
     cred = credentials.Certificate(str(service_account_path))
     firebase_admin.initialize_app(cred)
     return firestore.client()
@@ -43,12 +43,12 @@ def initialize_firebase():
 def load_rifugi_data():
     """Carica i dati dei rifugi dal file JSON."""
     json_path = Path("cai_app_data.json")
-    
+
     if not json_path.exists():
         print(f"❌ Errore: {json_path} non trovato")
         sys.exit(1)
-    
-    with open(json_path, 'r', encoding='utf-8') as f:
+
+    with open(json_path, "r", encoding="utf-8") as f:
         return json.load(f)
 
 
@@ -56,73 +56,87 @@ def clean_rifugio_data(rifugio):
     """Pulisce e prepara i dati del rifugio per Firestore."""
     # Firestore non supporta valori undefined/null in alcuni campi
     # Converte anche i numeri da stringhe se necessario
-    
+
     cleaned = rifugio.copy()
-    
+
     # Converti altitude da stringa a numero se presente
-    if 'geo' in cleaned and 'altitude' in cleaned['geo']:
+    if "geo" in cleaned and "altitude" in cleaned["geo"]:
         try:
-            if isinstance(cleaned['geo']['altitude'], str):
-                cleaned['geo']['altitude'] = int(cleaned['geo']['altitude'])
+            if isinstance(cleaned["geo"]["altitude"], str):
+                cleaned["geo"]["altitude"] = int(cleaned["geo"]["altitude"])
         except (ValueError, TypeError):
-            cleaned['geo']['altitude'] = 0
-    
+            cleaned["geo"]["altitude"] = 0
+
+    # Imposta il paese di default per i dati CAI (tutti italiani)
+    if "country" not in cleaned:
+        cleaned["country"] = "IT"
+
     # Aggiungi timestamp di creazione
-    cleaned['createdAt'] = firestore.SERVER_TIMESTAMP
-    cleaned['updatedAt'] = firestore.SERVER_TIMESTAMP
-    
+    cleaned["createdAt"] = firestore.SERVER_TIMESTAMP
+    cleaned["updatedAt"] = firestore.SERVER_TIMESTAMP
+
     return cleaned
 
 
 def upload_rifugi(db, rifugi_data, batch_size=500):
     """
     Carica i rifugi su Firestore.
-    
+
     Args:
         db: Client Firestore
         rifugi_data: Lista di rifugi da caricare
         batch_size: Numero di documenti per batch (max 500 per Firestore)
     """
-    collection_ref = db.collection('rifugi')
+    collection_ref = db.collection("rifugi")
     total = len(rifugi_data)
     uploaded = 0
     errors = 0
-    
+
     print(f"\n📤 Inizio caricamento di {total} rifugi su Firestore...")
     print(f"   Collection: rifugi")
-    print(f"   Batch size: {batch_size}\n")
-    
+    print(f"   Batch size: {batch_size}")
+    print(f"   Batch totali: {(total + batch_size - 1) // batch_size}\n")
+
     # Processa in batch per efficienza
     for i in range(0, total, batch_size):
         batch = db.batch()
-        batch_data = rifugi_data[i:i + batch_size]
-        
+        batch_data = rifugi_data[i : i + batch_size]
+        batch_errors = 0
+
         for rifugio in batch_data:
             try:
                 # Usa sourceId come document ID per evitare duplicati
-                doc_id = rifugio.get('sourceId', None)
-                
+                doc_id = rifugio.get("sourceId", None)
+
                 if not doc_id:
-                    print(f"⚠️  Saltato rifugio senza sourceId: {rifugio.get('name', 'Unknown')}")
-                    errors += 1
+                    print(
+                        f"⚠️  Saltato rifugio senza sourceId: {rifugio.get('name', 'Unknown')}"
+                    )
+                    batch_errors += 1
                     continue
-                
+
                 doc_ref = collection_ref.document(doc_id)
                 cleaned_data = clean_rifugio_data(rifugio)
                 batch.set(doc_ref, cleaned_data, merge=True)
-                
+
             except Exception as e:
                 print(f"❌ Errore nel preparare {rifugio.get('name', 'Unknown')}: {e}")
-                errors += 1
-        
+                batch_errors += 1
+
         try:
             batch.commit()
-            uploaded += len(batch_data) - errors
-            print(f"✅ Caricati {uploaded}/{total} rifugi...")
+            batch_uploaded = len(batch_data) - batch_errors
+            uploaded += batch_uploaded
+            errors += batch_errors
+            batch_num = (i // batch_size) + 1
+            total_batches = (total + batch_size - 1) // batch_size
+            print(
+                f"✅ Batch {batch_num}/{total_batches} — {uploaded}/{total} caricati ({errors} errori)"
+            )
         except Exception as e:
             print(f"❌ Errore nel commit del batch: {e}")
             errors += len(batch_data)
-    
+
     return uploaded, errors
 
 
@@ -134,7 +148,9 @@ def create_indexes_info():
     print("      Fields: geo.region (Ascending), name (Ascending)")
     print("   2. Collection: rifugi")
     print("      Fields: geo.province (Ascending), name (Ascending)")
-    print("\n   Gli indici si possono creare automaticamente quando l'app fa la prima query,")
+    print(
+        "\n   Gli indici si possono creare automaticamente quando l'app fa la prima query,"
+    )
     print("   oppure manualmente dalla Firebase Console > Firestore > Indexes")
 
 
@@ -143,7 +159,7 @@ def main():
     print("=" * 60)
     print("🏔️  Upload Rifugi to Firestore")
     print("=" * 60)
-    
+
     # Inizializza Firebase
     print("\n🔧 Inizializzazione Firebase...")
     try:
@@ -152,7 +168,7 @@ def main():
     except Exception as e:
         print(f"❌ Errore nell'inizializzazione Firebase: {e}")
         sys.exit(1)
-    
+
     # Carica i dati
     print("\n📖 Caricamento dati da cai_app_data.json...")
     try:
@@ -161,32 +177,32 @@ def main():
     except Exception as e:
         print(f"❌ Errore nel caricamento del file JSON: {e}")
         sys.exit(1)
-    
+
     # Conferma prima di procedere
     print(f"\n⚠️  Stai per caricare {len(rifugi_data)} rifugi su Firestore.")
     print("   Questa operazione sovrascriverà i dati esistenti (merge mode).")
     response = input("\n   Continuare? (s/n): ")
-    
-    if response.lower() not in ['s', 'si', 'y', 'yes']:
+
+    if response.lower() not in ["s", "si", "y", "yes"]:
         print("\n❌ Operazione annullata dall'utente")
         sys.exit(0)
-    
+
     # Upload
     try:
         uploaded, errors = upload_rifugi(db, rifugi_data)
-        
+
         print("\n" + "=" * 60)
         print("📊 Riepilogo:")
         print(f"   ✅ Caricati con successo: {uploaded}")
         print(f"   ❌ Errori: {errors}")
         print(f"   📦 Totale: {len(rifugi_data)}")
         print("=" * 60)
-        
+
         if uploaded > 0:
             create_indexes_info()
             print("\n✨ Upload completato!")
             print(f"   Verifica i dati su: https://console.firebase.google.com")
-        
+
     except Exception as e:
         print(f"\n❌ Errore durante l'upload: {e}")
         sys.exit(1)

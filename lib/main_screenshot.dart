@@ -16,6 +16,7 @@ import 'package:provider/provider.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:rifugi_bivacchi/l10n/app_localizations.dart';
 import 'theme/app_theme.dart';
+import 'providers/theme_provider.dart';
 import 'providers/rifugi_provider.dart';
 import 'providers/auth_provider.dart';
 import 'providers/passaporto_provider.dart';
@@ -75,8 +76,8 @@ class ScreenshotApp extends StatelessWidget {
         ],
         supportedLocales: AppLocalizations.supportedLocales,
         locale: const Locale('it'),
-        theme: AppTheme.lightTheme,
-        darkTheme: AppTheme.darkTheme,
+        theme: AppTheme.lightTheme(AppSeason.summer),
+        darkTheme: AppTheme.darkTheme(AppSeason.summer),
         themeMode: ThemeMode.light, // Forza light per screenshot
         home: const HomeScreen(),
         routes: {'/donations': (context) => const DonationsScreen()},

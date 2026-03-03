@@ -17,7 +17,8 @@ class RifugiService {
   static final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   static const String _tableName = 'rifugi';
   static const String _dbName = 'rifugi.db';
-  static const int _dbVersion = 3; // Incrementato per schema completo
+  static const int _dbVersion =
+      6; // v6: Pass 4 dedup — extended threshold 500m, generic junk removal, 5656 records
 
   /// Ottiene l'istanza del database SQLite
   static Future<Database> get database async {
@@ -61,6 +62,7 @@ class RifugiService {
         operatore TEXT,
         immagini TEXT,
         source TEXT,
+        country TEXT NOT NULL DEFAULT 'IT',
         locality TEXT,
         siteDescription TEXT,
         owner TEXT,
@@ -97,6 +99,7 @@ class RifugiService {
     await db.execute('CREATE INDEX idx_regione ON $_tableName(regione)');
     await db.execute('CREATE INDEX idx_provincia ON $_tableName(provincia)');
     await db.execute('CREATE INDEX idx_nome ON $_tableName(nome)');
+    await db.execute('CREATE INDEX idx_country ON $_tableName(country)');
   }
 
   static Future<void> _onUpgrade(
@@ -106,6 +109,27 @@ class RifugiService {
   ) async {
     if (oldVersion < 3) {
       // Aggiorna schema: ricostruisci con tutti i campi del modello
+      await db.execute('DROP TABLE IF EXISTS $_tableName');
+      await _onCreate(db, newVersion);
+    } else if (oldVersion < 4) {
+      // v3 → v4: aggiunta colonna country con default 'IT'
+      await db.execute(
+        "ALTER TABLE $_tableName ADD COLUMN country TEXT NOT NULL DEFAULT 'IT'",
+      );
+      await db.execute(
+        'CREATE INDEX IF NOT EXISTS idx_country ON $_tableName(country)',
+      );
+      // Fall through to v5 upgrade
+      await db.execute('DROP TABLE IF EXISTS $_tableName');
+      await _onCreate(db, newVersion);
+    } else if (oldVersion < 5) {
+      // v4 → v5: dataset enriched con 10K+ strutture multi-source.
+      // Drop e ricrea la tabella per forzare re-import dal nuovo JSON.
+      await db.execute('DROP TABLE IF EXISTS $_tableName');
+      await _onCreate(db, newVersion);
+    } else if (oldVersion < 6) {
+      // v5 → v6: Pass 4 dedup — extended threshold 500m, generic junk removal.
+      // Drop e ricrea la tabella per forzare re-import dal dataset deduplicated.
       await db.execute('DROP TABLE IF EXISTS $_tableName');
       await _onCreate(db, newVersion);
     }
@@ -269,6 +293,16 @@ class RifugiService {
     return maps.map((map) => map['tipo'] as String).toList();
   }
 
+  /// Ottiene tutti i paesi distinti presenti nel database
+  static Future<List<String>> getCountries() async {
+    final db = await database;
+    final List<Map<String, dynamic>> maps = await db.rawQuery(
+      'SELECT DISTINCT country FROM $_tableName WHERE country IS NOT NULL ORDER BY country',
+    );
+
+    return maps.map((map) => map['country'] as String).toList();
+  }
+
   /// Converte un Rifugio in Map per SQLite
   static Map<String, dynamic> _rifugioToMap(Rifugio rifugio) {
     return {
@@ -290,6 +324,7 @@ class RifugiService {
       'operatore': rifugio.operatore,
       'immagini': json.encode(rifugio.imageUrls ?? []),
       'source': rifugio.source,
+      'country': rifugio.country,
       'locality': rifugio.locality,
       'siteDescription': rifugio.siteDescription,
       'owner': rifugio.owner,
@@ -385,6 +420,7 @@ class RifugiService {
       immagine: immagini.isNotEmpty ? immagini.first : null,
       imageUrls: immagini,
       source: map['source'] as String?,
+      country: map['country'] as String? ?? 'IT',
       locality: map['locality'] as String?,
       siteDescription: map['siteDescription'] as String?,
       owner: map['owner'] as String?,

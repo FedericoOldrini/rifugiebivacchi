@@ -4,9 +4,9 @@ import 'package:flutter_map_tile_caching/flutter_map_tile_caching.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:provider/provider.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:rifugi_bivacchi/l10n/app_localizations.dart';
 import '../providers/rifugi_provider.dart';
 import '../screens/dettaglio_rifugio_screen.dart';
+import '../widgets/map_legend.dart';
 
 /// Mappa offline basata su OpenStreetMap con caching dei tile
 class OfflineMapScreen extends StatefulWidget {
@@ -33,8 +33,6 @@ class _OfflineMapScreenState extends State<OfflineMapScreen> {
   Future<void> _initFMTC() async {
     try {
       await FMTCObjectBoxBackend().initialise();
-
-      // Crea store per i tile se non esiste
       final store = FMTCStore('osmTiles');
       await store.manage.create();
     } catch (_) {
@@ -73,28 +71,6 @@ class _OfflineMapScreenState extends State<OfflineMapScreen> {
       _mapController.move(LatLng(position.latitude, position.longitude), 10);
     } catch (_) {
       setState(() => _isLoading = false);
-    }
-  }
-
-  Color _getMarkerColor(String tipo) {
-    switch (tipo) {
-      case 'rifugio':
-        return Colors.blue[600]!;
-      case 'bivacco':
-        return Colors.orange[700]!;
-      default:
-        return Colors.green[700]!;
-    }
-  }
-
-  IconData _getMarkerIcon(String tipo) {
-    switch (tipo) {
-      case 'bivacco':
-        return Icons.cabin;
-      case 'malga':
-        return Icons.cottage;
-      default:
-        return Icons.home;
     }
   }
 
@@ -143,27 +119,28 @@ class _OfflineMapScreenState extends State<OfflineMapScreen> {
                 ),
                 MarkerLayer(
                   markers: [
-                    // User position marker
+                    // Marker posizione utente
                     if (userPos != null)
                       Marker(
                         point: LatLng(userPos.latitude, userPos.longitude),
-                        width: 24,
-                        height: 24,
+                        width: 20,
+                        height: 20,
                         child: Container(
                           decoration: BoxDecoration(
-                            color: Colors.blue,
+                            color: const Color(0xFF3B82F6),
                             shape: BoxShape.circle,
-                            border: Border.all(color: Colors.white, width: 3),
+                            border: Border.all(color: Colors.white, width: 2.5),
                             boxShadow: [
                               BoxShadow(
-                                color: Colors.black.withValues(alpha: 0.3),
+                                color: Colors.black.withValues(alpha: 0.25),
                                 blurRadius: 4,
+                                offset: const Offset(0, 1),
                               ),
                             ],
                           ),
                         ),
                       ),
-                    // Rifugi markers
+                    // Marker rifugi
                     ...rifugi.map(
                       (rifugio) => Marker(
                         point: LatLng(rifugio.latitudine, rifugio.longitudine),
@@ -181,20 +158,21 @@ class _OfflineMapScreenState extends State<OfflineMapScreen> {
                           },
                           child: Container(
                             decoration: BoxDecoration(
-                              color: _getMarkerColor(rifugio.tipo),
+                              color: MapMarkerStyle.colorForTipo(rifugio.tipo),
                               shape: BoxShape.circle,
                               border: Border.all(color: Colors.white, width: 2),
                               boxShadow: [
                                 BoxShadow(
-                                  color: Colors.black.withValues(alpha: 0.3),
+                                  color: Colors.black.withValues(alpha: 0.2),
                                   blurRadius: 4,
+                                  offset: const Offset(0, 1),
                                 ),
                               ],
                             ),
                             child: Icon(
-                              _getMarkerIcon(rifugio.tipo),
+                              MapMarkerStyle.iconForTipo(rifugio.tipo),
                               color: Colors.white,
-                              size: 18,
+                              size: 17,
                             ),
                           ),
                         ),
@@ -204,6 +182,8 @@ class _OfflineMapScreenState extends State<OfflineMapScreen> {
                 ),
               ],
             ),
+
+            // Loading overlay
             if (_isLoading)
               Container(
                 color: Theme.of(
@@ -211,36 +191,15 @@ class _OfflineMapScreenState extends State<OfflineMapScreen> {
                 ).colorScheme.surface.withValues(alpha: 0.7),
                 child: const Center(child: CircularProgressIndicator()),
               ),
-            // Legenda
-            Positioned(
-              top: 16,
-              left: 16,
-              right: 16,
-              child: Card(
-                child: Padding(
-                  padding: const EdgeInsets.all(12.0),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      _LegendItem(
-                        color: Colors.blue[600]!,
-                        label: AppLocalizations.of(context)!.legendRifugi,
-                      ),
-                      const SizedBox(width: 12),
-                      _LegendItem(
-                        color: Colors.orange[700]!,
-                        label: AppLocalizations.of(context)!.legendBivacchi,
-                      ),
-                      const SizedBox(width: 12),
-                      _LegendItem(
-                        color: Colors.green[700]!,
-                        label: AppLocalizations.of(context)!.legendMalghe,
-                      ),
-                    ],
-                  ),
-                ),
-              ),
+
+            // Legenda compatta centrata in alto
+            const Positioned(
+              top: 12,
+              left: 0,
+              right: 0,
+              child: Center(child: MapLegend()),
             ),
+
             // Pulsante posizione
             Positioned(
               bottom: 16,
@@ -261,25 +220,6 @@ class _OfflineMapScreenState extends State<OfflineMapScreen> {
           ],
         );
       },
-    );
-  }
-}
-
-class _LegendItem extends StatelessWidget {
-  final Color color;
-  final String label;
-
-  const _LegendItem({required this.color, required this.label});
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Icon(Icons.location_on, color: color, size: 20),
-        const SizedBox(width: 4),
-        Text(label, style: const TextStyle(fontSize: 12)),
-      ],
     );
   }
 }

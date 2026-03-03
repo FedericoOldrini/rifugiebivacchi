@@ -1763,6 +1763,78 @@ abstract class AppLocalizations {
   /// In it, this message translates to:
   /// **'Prova a modificare i filtri per trovare risultati'**
   String get noResultsWithFilters;
+
+  /// No description provided for @appearance.
+  ///
+  /// In it, this message translates to:
+  /// **'Aspetto'**
+  String get appearance;
+
+  /// No description provided for @seasonTheme.
+  ///
+  /// In it, this message translates to:
+  /// **'Tema stagionale'**
+  String get seasonTheme;
+
+  /// No description provided for @seasonAuto.
+  ///
+  /// In it, this message translates to:
+  /// **'Automatico'**
+  String get seasonAuto;
+
+  /// No description provided for @seasonAutoDesc.
+  ///
+  /// In it, this message translates to:
+  /// **'Segue la stagione corrente'**
+  String get seasonAutoDesc;
+
+  /// No description provided for @seasonSpring.
+  ///
+  /// In it, this message translates to:
+  /// **'Primavera'**
+  String get seasonSpring;
+
+  /// No description provided for @seasonSummer.
+  ///
+  /// In it, this message translates to:
+  /// **'Estate'**
+  String get seasonSummer;
+
+  /// No description provided for @seasonAutumn.
+  ///
+  /// In it, this message translates to:
+  /// **'Autunno'**
+  String get seasonAutumn;
+
+  /// No description provided for @seasonWinter.
+  ///
+  /// In it, this message translates to:
+  /// **'Inverno'**
+  String get seasonWinter;
+
+  /// No description provided for @themeMode.
+  ///
+  /// In it, this message translates to:
+  /// **'Modalità tema'**
+  String get themeMode;
+
+  /// No description provided for @themeModeSystem.
+  ///
+  /// In it, this message translates to:
+  /// **'Sistema'**
+  String get themeModeSystem;
+
+  /// No description provided for @themeModeLight.
+  ///
+  /// In it, this message translates to:
+  /// **'Chiaro'**
+  String get themeModeLight;
+
+  /// No description provided for @themeModeDark.
+  ///
+  /// In it, this message translates to:
+  /// **'Scuro'**
+  String get themeModeDark;
 }
 
 class _AppLocalizationsDelegate

@@ -12,6 +12,9 @@ class Rifugio {
   final String? sitoWeb;
   final String? immagine;
 
+  // Paese (codice ISO 3166-1 alpha-2, es. 'IT', 'CH', 'AT')
+  final String country;
+
   // Nuovi campi dal file CAI
   final String? source;
   final String? locality;
@@ -63,6 +66,7 @@ class Rifugio {
     required this.longitudine,
     this.altitudine,
     this.tipo = 'rifugio',
+    this.country = 'IT',
     this.operatore,
     this.telefono,
     this.email,
@@ -156,6 +160,7 @@ class Rifugio {
       longitudine: (geo?['lng'] ?? 0.0).toDouble(),
       altitudine: altitude,
       tipo: tipo,
+      country: json['country'] ?? 'IT',
       operatore: property?['name'],
       telefono: contacts?['mainPhone'],
       email: contacts?['email'],
@@ -246,6 +251,7 @@ class Rifugio {
         'email': emailProperty,
       },
       'type': tipo,
+      'country': country,
       'owner': owner,
       'status': status,
       'regionalType': regionalType,

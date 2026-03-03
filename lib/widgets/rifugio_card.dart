@@ -51,10 +51,10 @@ class RifugioCard extends StatelessWidget {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                if (rifugio.immagine != null &&
-                    rifugio.immagine!.isNotEmpty) ...[
-                  Stack(
-                    children: [
+                Stack(
+                  children: [
+                    if (rifugio.immagine != null &&
+                        rifugio.immagine!.isNotEmpty)
                       ClipRRect(
                         borderRadius: BorderRadius.circular(8),
                         child: RifugioImage(
@@ -100,59 +100,74 @@ class RifugioCard extends StatelessWidget {
                             );
                           },
                         ),
+                      )
+                    else
+                      Container(
+                        width: 80,
+                        height: 80,
+                        decoration: BoxDecoration(
+                          color: Theme.of(
+                            context,
+                          ).colorScheme.surfaceContainerHighest,
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Icon(
+                          _getIconForType(rifugio.tipo),
+                          color: Theme.of(context).colorScheme.primary,
+                          size: 32,
+                        ),
                       ),
-                      // Badge "Visitato" se è stato fatto check-in
-                      if (isVisited)
-                        Positioned(
-                          top: 0,
-                          right: 0,
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 6,
-                              vertical: 4,
+                    // Badge "Visitato" se è stato fatto check-in
+                    if (isVisited)
+                      Positioned(
+                        top: 0,
+                        right: 0,
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 6,
+                            vertical: 4,
+                          ),
+                          decoration: BoxDecoration(
+                            color: Theme.of(context).colorScheme.primary,
+                            borderRadius: const BorderRadius.only(
+                              topRight: Radius.circular(8),
+                              bottomLeft: Radius.circular(8),
                             ),
-                            decoration: BoxDecoration(
-                              color: Theme.of(context).colorScheme.primary,
-                              borderRadius: const BorderRadius.only(
-                                topRight: Radius.circular(8),
-                                bottomLeft: Radius.circular(8),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Theme.of(context).colorScheme.shadow
+                                    .withAlpha((0.2 * 255).toInt()),
+                                blurRadius: 4,
+                                offset: const Offset(0, 2),
                               ),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Theme.of(context).colorScheme.shadow
-                                      .withAlpha((0.2 * 255).toInt()),
-                                  blurRadius: 4,
-                                  offset: const Offset(0, 2),
-                                ),
-                              ],
-                            ),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                const Icon(
-                                  Icons.check_circle,
-                                  color: Colors.white,
-                                  size: 16,
-                                ),
-                                if (visitCount > 1) ...[
-                                  const SizedBox(width: 2),
-                                  Text(
-                                    '$visitCount',
-                                    style: const TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.bold,
-                                    ),
+                            ],
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              const Icon(
+                                Icons.check_circle,
+                                color: Colors.white,
+                                size: 16,
+                              ),
+                              if (visitCount > 1) ...[
+                                const SizedBox(width: 2),
+                                Text(
+                                  '$visitCount',
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.bold,
                                   ),
-                                ],
+                                ),
                               ],
-                            ),
+                            ],
                           ),
                         ),
-                    ],
-                  ),
-                  const SizedBox(width: 12),
-                ],
+                      ),
+                  ],
+                ),
+                const SizedBox(width: 12),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -169,49 +184,6 @@ class RifugioCard extends StatelessWidget {
                                 size: 20,
                               ),
                             ),
-                          if (rifugio.immagine == null)
-                            Icon(
-                              _getIconForType(rifugio.tipo),
-                              color: Theme.of(context).colorScheme.primary,
-                              size: 28,
-                            ),
-                          if (rifugio.immagine == null)
-                            const SizedBox(width: 12),
-                          // Badge "Visitato" per rifugi senza immagine
-                          if (isVisited && rifugio.immagine == null)
-                            Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 6,
-                                vertical: 2,
-                              ),
-                              decoration: BoxDecoration(
-                                color: Theme.of(context).colorScheme.primary,
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  const Icon(
-                                    Icons.check_circle,
-                                    color: Colors.white,
-                                    size: 12,
-                                  ),
-                                  if (visitCount > 1) ...[
-                                    const SizedBox(width: 2),
-                                    Text(
-                                      '$visitCount',
-                                      style: const TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 10,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  ],
-                                ],
-                              ),
-                            ),
-                          if (isVisited && rifugio.immagine == null)
-                            const SizedBox(width: 8),
                           Expanded(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,

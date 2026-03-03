@@ -944,4 +944,40 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get noResultsWithFilters =>
       'Try adjusting your filters to find results';
+
+  @override
+  String get appearance => 'Appearance';
+
+  @override
+  String get seasonTheme => 'Seasonal theme';
+
+  @override
+  String get seasonAuto => 'Automatic';
+
+  @override
+  String get seasonAutoDesc => 'Follows the current season';
+
+  @override
+  String get seasonSpring => 'Spring';
+
+  @override
+  String get seasonSummer => 'Summer';
+
+  @override
+  String get seasonAutumn => 'Autumn';
+
+  @override
+  String get seasonWinter => 'Winter';
+
+  @override
+  String get themeMode => 'Theme mode';
+
+  @override
+  String get themeModeSystem => 'System';
+
+  @override
+  String get themeModeLight => 'Light';
+
+  @override
+  String get themeModeDark => 'Dark';
 }

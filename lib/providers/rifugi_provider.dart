@@ -232,6 +232,13 @@ class RifugiProvider extends ChangeNotifier {
           .toList();
     }
 
+    // ── Paese ──
+    if (filtro.selectedCountries.isNotEmpty) {
+      result = result
+          .where((r) => filtro.selectedCountries.contains(r.country))
+          .toList();
+    }
+
     // ── Altitudine ──
     if (filtro.altMin != null) {
       result = result

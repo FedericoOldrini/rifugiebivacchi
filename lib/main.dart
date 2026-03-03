@@ -8,12 +8,12 @@ import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:rifugi_bivacchi/l10n/app_localizations.dart';
 import 'firebase_options.dart';
-import 'theme/app_theme.dart';
 import 'providers/rifugi_provider.dart';
 import 'providers/auth_provider.dart';
 import 'providers/passaporto_provider.dart';
 import 'providers/preferiti_provider.dart';
 import 'providers/filtro_provider.dart';
+import 'providers/theme_provider.dart';
 import 'screens/home_screen.dart';
 import 'screens/onboarding_screen.dart';
 import 'screens/donations_screen.dart';
@@ -65,29 +65,35 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
+        ChangeNotifierProvider(create: (_) => ThemeProvider()),
         ChangeNotifierProvider(create: (_) => RifugiProvider()),
         ChangeNotifierProvider(create: (_) => AuthProvider()),
         ChangeNotifierProvider(create: (_) => PassaportoProvider()),
         ChangeNotifierProvider(create: (_) => PreferitiProvider()),
         ChangeNotifierProvider(create: (_) => FiltroProvider()),
       ],
-      child: MaterialApp(
-        onGenerateTitle: (context) => AppLocalizations.of(context)!.appTitle,
-        debugShowCheckedModeBanner: false,
-        // Localization
-        localizationsDelegates: const [
-          AppLocalizations.delegate,
-          GlobalMaterialLocalizations.delegate,
-          GlobalWidgetsLocalizations.delegate,
-          GlobalCupertinoLocalizations.delegate,
-        ],
-        supportedLocales: AppLocalizations.supportedLocales,
-        theme: AppTheme.lightTheme,
-        darkTheme: AppTheme.darkTheme,
-        themeMode: ThemeMode.system,
-        navigatorObservers: [AnalyticsService.instance.observer],
-        home: const AppInitializer(),
-        routes: {'/donations': (context) => const DonationsScreen()},
+      child: Consumer<ThemeProvider>(
+        builder: (context, themeProvider, _) {
+          return MaterialApp(
+            onGenerateTitle: (context) =>
+                AppLocalizations.of(context)!.appTitle,
+            debugShowCheckedModeBanner: false,
+            // Localization
+            localizationsDelegates: const [
+              AppLocalizations.delegate,
+              GlobalMaterialLocalizations.delegate,
+              GlobalWidgetsLocalizations.delegate,
+              GlobalCupertinoLocalizations.delegate,
+            ],
+            supportedLocales: AppLocalizations.supportedLocales,
+            theme: themeProvider.lightTheme,
+            darkTheme: themeProvider.darkTheme,
+            themeMode: themeProvider.themeMode,
+            navigatorObservers: [AnalyticsService.instance.observer],
+            home: const AppInitializer(),
+            routes: {'/donations': (context) => const DonationsScreen()},
+          );
+        },
       ),
     );
   }
@@ -113,6 +119,11 @@ class _AppInitializerState extends State<AppInitializer> {
 
   Future<void> _checkOnboarding() async {
     final shouldShow = await OnboardingService.shouldShowOnboarding();
+
+    // Carica le preferenze del tema
+    if (mounted) {
+      await Provider.of<ThemeProvider>(context, listen: false).loadFromPrefs();
+    }
 
     // Carica i filtri persistiti
     if (mounted) {

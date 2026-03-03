@@ -195,10 +195,12 @@ class _DettaglioRifugioScreenState extends State<DettaglioRifugioScreen> {
         100,
       );
 
-      await Share.shareXFiles(
-        [XFile(imagePath)],
-        text: shareText,
-        sharePositionOrigin: sharePositionOrigin,
+      await SharePlus.instance.share(
+        ShareParams(
+          files: [XFile(imagePath)],
+          text: shareText,
+          sharePositionOrigin: sharePositionOrigin,
+        ),
       );
     } catch (e) {
       if (mounted) {

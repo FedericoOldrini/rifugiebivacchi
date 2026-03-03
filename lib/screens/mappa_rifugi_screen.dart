@@ -8,6 +8,7 @@ import '../models/rifugio.dart';
 import '../services/clustering_service.dart';
 import '../screens/dettaglio_rifugio_screen.dart';
 import '../screens/offline_map_screen.dart';
+import '../widgets/map_legend.dart';
 import 'dart:ui' as ui;
 
 class MappaRifugiScreen extends StatefulWidget {
@@ -25,8 +26,10 @@ class _MappaRifugiScreenState extends State<MappaRifugiScreen> {
   bool _isLoading = true;
   double _currentZoom = 10.0;
 
-  // Centro Italia come posizione di default (se non si riesce a ottenere la posizione)
-  static const LatLng _defaultCenter = LatLng(45.4642, 9.1900); // Milano
+  // Cache dei BitmapDescriptor per marker singoli (evita ricrearli ogni volta)
+  final Map<String, BitmapDescriptor> _markerIconCache = {};
+
+  static const LatLng _defaultCenter = LatLng(45.4642, 9.1900);
 
   @override
   void initState() {
@@ -44,9 +47,7 @@ class _MappaRifugiScreenState extends State<MappaRifugiScreen> {
     try {
       bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
       if (!serviceEnabled) {
-        setState(() {
-          _isLoading = false;
-        });
+        setState(() => _isLoading = false);
         return;
       }
 
@@ -54,17 +55,13 @@ class _MappaRifugiScreenState extends State<MappaRifugiScreen> {
       if (permission == LocationPermission.denied) {
         permission = await Geolocator.requestPermission();
         if (permission == LocationPermission.denied) {
-          setState(() {
-            _isLoading = false;
-          });
+          setState(() => _isLoading = false);
           return;
         }
       }
 
       if (permission == LocationPermission.deniedForever) {
-        setState(() {
-          _isLoading = false;
-        });
+        setState(() => _isLoading = false);
         return;
       }
 
@@ -74,7 +71,6 @@ class _MappaRifugiScreenState extends State<MappaRifugiScreen> {
         _isLoading = false;
       });
 
-      // Muovi la camera alla posizione corrente
       _mapController?.animateCamera(
         CameraUpdate.newLatLngZoom(
           LatLng(position.latitude, position.longitude),
@@ -82,115 +78,65 @@ class _MappaRifugiScreenState extends State<MappaRifugiScreen> {
         ),
       );
     } catch (e) {
-      setState(() {
-        _isLoading = false;
-      });
+      setState(() => _isLoading = false);
     }
   }
 
-  Future<void> _createMarkersWithClustering(List<Rifugio> rifugi) async {
-    final clusters = ClusteringService.clusterRifugi(rifugi, _currentZoom);
-    final Set<Marker> markers = {};
+  // ──────────────────────────────────────────────
+  // Marker singoli personalizzati (con icona)
+  // ──────────────────────────────────────────────
 
-    for (final cluster in clusters) {
-      if (cluster.isMultiple) {
-        // Crea marker cluster
-        final icon = await _getClusterBitmap(cluster.count);
-        markers.add(
-          Marker(
-            markerId: MarkerId('cluster_${cluster.center.latitude}_${cluster.center.longitude}'),
-            position: cluster.center,
-            icon: icon,
-            onTap: () {
-              // Zoom per espandere il cluster
-              _mapController?.animateCamera(
-                CameraUpdate.newLatLngZoom(
-                  cluster.center,
-                  _currentZoom + 2,
-                ),
-              );
-            },
-            infoWindow: InfoWindow(
-              title: '${cluster.count} ${AppLocalizations.of(context)!.nRifugiInAreaCount(cluster.count)}',
-              snippet: AppLocalizations.of(context)!.tapToExpand,
-            ),
-          ),
-        );
-      } else {
-        // Marker singolo
-        final rifugio = cluster.singleRifugio;
-        final hue = _getMarkerHue(rifugio.tipo);
-        
-        markers.add(
-          Marker(
-            markerId: MarkerId(rifugio.id),
-            position: LatLng(rifugio.latitudine, rifugio.longitudine),
-            icon: BitmapDescriptor.defaultMarkerWithHue(hue),
-            infoWindow: InfoWindow(
-              title: rifugio.nome,
-              snippet: _buildMarkerSnippet(rifugio),
-            ),
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => DettaglioRifugioScreen(rifugio: rifugio),
-                ),
-              );
-            },
-          ),
-        );
-      }
+  Future<BitmapDescriptor> _getCustomMarkerIcon(String tipo) async {
+    if (_markerIconCache.containsKey(tipo)) {
+      return _markerIconCache[tipo]!;
     }
 
-    setState(() {
-      _markers = markers;
-    });
-  }
+    const double size = 44;
+    const double iconSize = 20;
+    final color = MapMarkerStyle.colorForTipo(tipo);
+    final iconData = MapMarkerStyle.iconForTipo(tipo);
 
-  double _getMarkerHue(String tipo) {
-    switch (tipo) {
-      case 'rifugio':
-        return BitmapDescriptor.hueAzure; // Blu per rifugi
-      case 'bivacco':
-        return BitmapDescriptor.hueOrange; // Arancione per bivacchi
-      default:
-        return BitmapDescriptor.hueGreen; // Verde per malghe
-    }
-  }
-
-  Future<BitmapDescriptor> _getClusterBitmap(int count) async {
-    final size = count < 10 ? 90 : count < 100 ? 100 : 110;
     final pictureRecorder = ui.PictureRecorder();
     final canvas = Canvas(pictureRecorder);
-    final paint = Paint()..color = Theme.of(context).primaryColor;
 
-    // Disegna cerchio
+    // Ombra
+    final shadowPaint = Paint()
+      ..color = Colors.black.withValues(alpha: 0.2)
+      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 3);
     canvas.drawCircle(
-      Offset(size / 2, size / 2),
-      size / 2,
-      paint,
+      const Offset(size / 2, size / 2 + 1.5),
+      size / 2 - 3,
+      shadowPaint,
     );
 
-    // Disegna bordo bianco
-    paint
+    // Cerchio pieno colorato
+    final fillPaint = Paint()..color = color;
+    canvas.drawCircle(
+      const Offset(size / 2, size / 2),
+      size / 2 - 3,
+      fillPaint,
+    );
+
+    // Bordo bianco sottile
+    final borderPaint = Paint()
       ..color = Colors.white
-      ..strokeWidth = 3
+      ..strokeWidth = 2
       ..style = PaintingStyle.stroke;
     canvas.drawCircle(
-      Offset(size / 2, size / 2),
-      size / 2 - 2,
-      paint,
+      const Offset(size / 2, size / 2),
+      size / 2 - 3.5,
+      borderPaint,
     );
 
-    // Disegna testo
+    // Icona al centro
     final textPainter = TextPainter(
       text: TextSpan(
-        text: count.toString(),
+        text: String.fromCharCode(iconData.codePoint),
         style: TextStyle(
+          fontSize: iconSize,
+          fontFamily: iconData.fontFamily,
+          package: iconData.fontPackage,
           color: Colors.white,
-          fontSize: count < 10 ? 32 : count < 100 ? 28 : 24,
-          fontWeight: FontWeight.bold,
         ),
       ),
       textDirection: TextDirection.ltr,
@@ -198,10 +144,74 @@ class _MappaRifugiScreenState extends State<MappaRifugiScreen> {
     textPainter.layout();
     textPainter.paint(
       canvas,
-      Offset(
-        (size - textPainter.width) / 2,
-        (size - textPainter.height) / 2,
+      Offset((size - textPainter.width) / 2, (size - textPainter.height) / 2),
+    );
+
+    final picture = pictureRecorder.endRecording();
+    final image = await picture.toImage(size.toInt(), size.toInt());
+    final bytes = await image.toByteData(format: ui.ImageByteFormat.png);
+    final descriptor = BitmapDescriptor.bytes(bytes!.buffer.asUint8List());
+
+    _markerIconCache[tipo] = descriptor;
+    return descriptor;
+  }
+
+  // ──────────────────────────────────────────────
+  // Marker cluster (compatti e moderni)
+  // ──────────────────────────────────────────────
+
+  Future<BitmapDescriptor> _getClusterBitmap(int count) async {
+    // Dimensioni più piccole e proporzionate
+    final double size = count < 10
+        ? 48
+        : count < 50
+        ? 54
+        : 60;
+    final color = MapMarkerStyle.clusterColor(count);
+
+    final pictureRecorder = ui.PictureRecorder();
+    final canvas = Canvas(pictureRecorder);
+    final center = Offset(size / 2, size / 2);
+    final radius = size / 2 - 2;
+
+    // Anello esterno semi-trasparente (alone)
+    final haloPaint = Paint()..color = color.withValues(alpha: 0.2);
+    canvas.drawCircle(center, radius, haloPaint);
+
+    // Cerchio interno pieno
+    final innerRadius = radius - 5;
+    final fillPaint = Paint()..color = color;
+    canvas.drawCircle(center, innerRadius, fillPaint);
+
+    // Bordo bianco sottile
+    final borderPaint = Paint()
+      ..color = Colors.white.withValues(alpha: 0.9)
+      ..strokeWidth = 1.8
+      ..style = PaintingStyle.stroke;
+    canvas.drawCircle(center, innerRadius, borderPaint);
+
+    // Testo numerico
+    final fontSize = count < 10
+        ? 16.0
+        : count < 100
+        ? 14.0
+        : 12.0;
+    final textPainter = TextPainter(
+      text: TextSpan(
+        text: count.toString(),
+        style: TextStyle(
+          color: Colors.white,
+          fontSize: fontSize,
+          fontWeight: FontWeight.w700,
+          letterSpacing: -0.3,
+        ),
       ),
+      textDirection: TextDirection.ltr,
+    );
+    textPainter.layout();
+    textPainter.paint(
+      canvas,
+      Offset((size - textPainter.width) / 2, (size - textPainter.height) / 2),
     );
 
     final picture = pictureRecorder.endRecording();
@@ -211,10 +221,78 @@ class _MappaRifugiScreenState extends State<MappaRifugiScreen> {
     return BitmapDescriptor.bytes(bytes!.buffer.asUint8List());
   }
 
+  // ──────────────────────────────────────────────
+  // Creazione marker con clustering
+  // ──────────────────────────────────────────────
+
+  Future<void> _createMarkersWithClustering(List<Rifugio> rifugi) async {
+    final clusters = ClusteringService.clusterRifugi(rifugi, _currentZoom);
+    final Set<Marker> markers = {};
+
+    // Cattura le stringhe localizzate prima delle operazioni async
+    final l10n = AppLocalizations.of(context)!;
+
+    for (final cluster in clusters) {
+      if (cluster.isMultiple) {
+        final icon = await _getClusterBitmap(cluster.count);
+        markers.add(
+          Marker(
+            markerId: MarkerId(
+              'cluster_${cluster.center.latitude}_${cluster.center.longitude}',
+            ),
+            position: cluster.center,
+            icon: icon,
+            anchor: const Offset(0.5, 0.5),
+            onTap: () {
+              _mapController?.animateCamera(
+                CameraUpdate.newLatLngZoom(cluster.center, _currentZoom + 2),
+              );
+            },
+            infoWindow: InfoWindow(
+              title:
+                  '${cluster.count} ${l10n.nRifugiInAreaCount(cluster.count)}',
+              snippet: l10n.tapToExpand,
+            ),
+          ),
+        );
+      } else {
+        final rifugio = cluster.singleRifugio;
+        final icon = await _getCustomMarkerIcon(rifugio.tipo);
+
+        markers.add(
+          Marker(
+            markerId: MarkerId(rifugio.id),
+            position: LatLng(rifugio.latitudine, rifugio.longitudine),
+            icon: icon,
+            anchor: const Offset(0.5, 0.5),
+            infoWindow: InfoWindow(
+              title: rifugio.nome,
+              snippet: _buildMarkerSnippet(rifugio),
+            ),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) =>
+                      DettaglioRifugioScreen(rifugio: rifugio),
+                ),
+              );
+            },
+          ),
+        );
+      }
+    }
+
+    if (mounted) {
+      setState(() {
+        _markers = markers;
+      });
+    }
+  }
+
   String _buildMarkerSnippet(Rifugio rifugio) {
     final parts = <String>[];
 
-    // Tipo
     final tipo = rifugio.tipo == 'rifugio'
         ? AppLocalizations.of(context)!.rifugio
         : rifugio.tipo == 'bivacco'
@@ -222,18 +300,20 @@ class _MappaRifugiScreenState extends State<MappaRifugiScreen> {
         : AppLocalizations.of(context)!.malga;
     parts.add(tipo);
 
-    // Altitudine
     if (rifugio.altitudine != null) {
       parts.add('${rifugio.altitudine!.toInt()} m');
     }
 
-    // Posti letto
     if (rifugio.postiLetto != null && rifugio.postiLetto! > 0) {
       parts.add('🛏️ ${rifugio.postiLetto}');
     }
 
-    return parts.join(' • ');
+    return parts.join(' · ');
   }
+
+  // ──────────────────────────────────────────────
+  // Build
+  // ──────────────────────────────────────────────
 
   @override
   Widget build(BuildContext context) {
@@ -241,7 +321,6 @@ class _MappaRifugiScreenState extends State<MappaRifugiScreen> {
       return Stack(
         children: [
           const OfflineMapScreen(),
-          // Toggle button
           Positioned(
             bottom: 16,
             left: 16,
@@ -249,7 +328,7 @@ class _MappaRifugiScreenState extends State<MappaRifugiScreen> {
               heroTag: 'toggleMap',
               onPressed: () => setState(() => _useOfflineMap = false),
               tooltip: AppLocalizations.of(context)!.mapGoogle,
-              child: const Icon(Icons.map),
+              child: const Icon(Icons.map_outlined),
             ),
           ),
         ],
@@ -258,7 +337,6 @@ class _MappaRifugiScreenState extends State<MappaRifugiScreen> {
 
     return Consumer<RifugiProvider>(
       builder: (context, provider, child) {
-        // Usa la posizione del provider se disponibile
         final userPos = provider.userPosition ?? _currentPosition;
 
         // Filtra rifugi vicini se abbiamo la posizione (entro 50km)
@@ -278,6 +356,7 @@ class _MappaRifugiScreenState extends State<MappaRifugiScreen> {
 
         return Stack(
           children: [
+            // Mappa
             GoogleMap(
               initialCameraPosition: CameraPosition(
                 target: userPos != null
@@ -287,9 +366,11 @@ class _MappaRifugiScreenState extends State<MappaRifugiScreen> {
               ),
               markers: _markers,
               myLocationEnabled: true,
-              myLocationButtonEnabled: true,
+              myLocationButtonEnabled: false,
               zoomControlsEnabled: false,
+              mapToolbarEnabled: false,
               mapType: MapType.terrain,
+              padding: const EdgeInsets.only(top: 48),
               onMapCreated: (controller) {
                 _mapController = controller;
                 _createMarkersWithClustering(rifugi);
@@ -301,36 +382,45 @@ class _MappaRifugiScreenState extends State<MappaRifugiScreen> {
                 _createMarkersWithClustering(rifugi);
               },
             ),
+
+            // Loading overlay
             if (_isLoading)
               Container(
-                color: Colors.white.withValues(alpha: 0.7),
+                color: Theme.of(
+                  context,
+                ).colorScheme.surface.withValues(alpha: 0.7),
                 child: const Center(child: CircularProgressIndicator()),
               ),
-            // Legenda
+
+            // Legenda compatta centrata in alto
+            const Positioned(
+              top: 12,
+              left: 0,
+              right: 0,
+              child: Center(child: MapLegend()),
+            ),
+
+            // Pulsante "la mia posizione"
             Positioned(
-              top: 16,
-              left: 16,
+              bottom: 16,
               right: 16,
-              child: Card(
-                child: Padding(
-                  padding: const EdgeInsets.all(12.0),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      _LegendItem(color: Colors.blue[600]!, label: AppLocalizations.of(context)!.legendRifugi),
-                      const SizedBox(width: 12),
-                      _LegendItem(
-                        color: Colors.orange[700]!,
-                        label: AppLocalizations.of(context)!.legendBivacchi,
+              child: FloatingActionButton.small(
+                heroTag: 'locateMe',
+                onPressed: () {
+                  if (userPos != null) {
+                    _mapController?.animateCamera(
+                      CameraUpdate.newLatLngZoom(
+                        LatLng(userPos.latitude, userPos.longitude),
+                        13,
                       ),
-                      const SizedBox(width: 12),
-                      _LegendItem(color: Colors.green[700]!, label: AppLocalizations.of(context)!.legendMalghe),
-                    ],
-                  ),
-                ),
+                    );
+                  }
+                },
+                child: const Icon(Icons.my_location),
               ),
             ),
-            // Toggle to offline map
+
+            // Toggle mappa offline
             Positioned(
               bottom: 16,
               left: 16,
@@ -338,31 +428,12 @@ class _MappaRifugiScreenState extends State<MappaRifugiScreen> {
                 heroTag: 'toggleMap',
                 onPressed: () => setState(() => _useOfflineMap = true),
                 tooltip: AppLocalizations.of(context)!.mapOffline,
-                child: const Icon(Icons.download),
+                child: const Icon(Icons.download_outlined),
               ),
             ),
           ],
         );
       },
-    );
-  }
-}
-
-class _LegendItem extends StatelessWidget {
-  final Color color;
-  final String label;
-
-  const _LegendItem({required this.color, required this.label});
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Icon(Icons.location_on, color: color, size: 20),
-        const SizedBox(width: 4),
-        Text(label, style: const TextStyle(fontSize: 12)),
-      ],
     );
   }
 }

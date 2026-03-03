@@ -1,0 +1,2130 @@
+{
+  "timestamp": "2026-03-03T23:57:46.810480",
+  "input_file": "cai_app_data_enriched.json",
+  "input_count": 10085,
+  "threshold_m": 500.0,
+  "dry_run": false,
+  "phase1": {
+    "wikidata_total": 4118,
+    "wikidata_shelters_kept": 486,
+    "wikidata_junk_removed": 3632,
+    "records_after_filter": 6453,
+    "junk_examples": [
+      {
+        "name": "Casa Sassina",
+        "sourceId": "Q134457263",
+        "country": "IT"
+      },
+      {
+        "name": "Crott del Meo",
+        "sourceId": "Q134525182",
+        "country": "IT"
+      },
+      {
+        "name": "Alpine pasture Tsaté",
+        "sourceId": "Q29892035",
+        "country": "CH"
+      },
+      {
+        "name": "Müllerboden alp",
+        "sourceId": "Q29786165",
+        "country": "CH"
+      },
+      {
+        "name": "Casel del \"3000\"",
+        "sourceId": "Q111903042",
+        "country": "IT"
+      },
+      {
+        "name": "Tierwis",
+        "sourceId": "Q55852386",
+        "country": "CH"
+      },
+      {
+        "name": "Casa Alpina La Montanina",
+        "sourceId": "Q115682410",
+        "country": "IT"
+      },
+      {
+        "name": "Casa Carbuneè",
+        "sourceId": "Q131036544",
+        "country": "IT"
+      },
+      {
+        "name": "parco naturale del Colle del Lys",
+        "sourceId": "Q3895417",
+        "country": "IT"
+      },
+      {
+        "name": "parco Alcide Cervi",
+        "sourceId": "Q3895360",
+        "country": "IT"
+      },
+      {
+        "name": "Arte Sella",
+        "sourceId": "Q3624083",
+        "country": "IT"
+      },
+      {
+        "name": "parco delle Rocce",
+        "sourceId": "Q3895560",
+        "country": "IT"
+      },
+      {
+        "name": "parco del Neto",
+        "sourceId": "Q3895494",
+        "country": "IT"
+      },
+      {
+        "name": "Giardino della Montagnola",
+        "sourceId": "Q3763919",
+        "country": "IT"
+      },
+      {
+        "name": "Campo Marzo",
+        "sourceId": "Q3654606",
+        "country": "IT"
+      },
+      {
+        "name": "parco del Roccolo",
+        "sourceId": "Q3895503",
+        "country": "IT"
+      },
+      {
+        "name": "Giardino del gigante",
+        "sourceId": "Q3794123",
+        "country": "IT"
+      },
+      {
+        "name": "Parco La Fontanella",
+        "sourceId": "Q3895409",
+        "country": "IT"
+      },
+      {
+        "name": "parco della Rimembranza",
+        "sourceId": "Q3895541",
+        "country": "IT"
+      },
+      {
+        "name": "giardino zoologico di Pistoia",
+        "sourceId": "Q3763933",
+        "country": "IT"
+      }
+    ]
+  },
+  "phase1_5": {
+    "generic_junk_removed": 20,
+    "records_after_filter": 6433,
+    "removed": [
+      {
+        "name": "Berghaus",
+        "source": "openstreetmap",
+        "sourceId": "node/9038500465"
+      },
+      {
+        "name": "Rifugio",
+        "source": "openstreetmap",
+        "sourceId": "node/9209267900"
+      },
+      {
+        "name": "Capanna",
+        "source": "openstreetmap",
+        "sourceId": "node/11940013191"
+      },
+      {
+        "name": "Refuge",
+        "source": "openstreetmap",
+        "sourceId": "node/12955341201"
+      },
+      {
+        "name": "Refuge",
+        "source": "openstreetmap",
+        "sourceId": "node/12955341301"
+      },
+      {
+        "name": "Rifugio",
+        "source": "openstreetmap",
+        "sourceId": "way/177541213"
+      },
+      {
+        "name": "Rifugio",
+        "source": "openstreetmap",
+        "sourceId": "way/259319817"
+      },
+      {
+        "name": "Rifugio",
+        "source": "openstreetmap",
+        "sourceId": "way/329630988"
+      },
+      {
+        "name": "Rifugio",
+        "source": "openstreetmap",
+        "sourceId": "way/439128218"
+      },
+      {
+        "name": "Rifugio",
+        "source": "openstreetmap",
+        "sourceId": "way/482443560"
+      },
+      {
+        "name": "Rifugio",
+        "source": "openstreetmap",
+        "sourceId": "way/482443562"
+      },
+      {
+        "name": "Rifugio",
+        "source": "openstreetmap",
+        "sourceId": "way/482443564"
+      },
+      {
+        "name": "Rifugio",
+        "source": "openstreetmap",
+        "sourceId": "way/482444348"
+      },
+      {
+        "name": "Rifugio",
+        "source": "openstreetmap",
+        "sourceId": "way/482444349"
+      },
+      {
+        "name": "Rifugio",
+        "source": "openstreetmap",
+        "sourceId": "way/482460510"
+      },
+      {
+        "name": "Rifugio",
+        "source": "openstreetmap",
+        "sourceId": "way/482479664"
+      },
+      {
+        "name": "Rifugio",
+        "source": "openstreetmap",
+        "sourceId": "way/482480053"
+      },
+      {
+        "name": "Rifugio",
+        "source": "openstreetmap",
+        "sourceId": "way/563600714"
+      },
+      {
+        "name": "Rifugio",
+        "source": "openstreetmap",
+        "sourceId": "way/975118099"
+      },
+      {
+        "name": "Refuge",
+        "source": "openstreetmap",
+        "sourceId": "way/1202919393"
+      }
+    ]
+  },
+  "phase2": {
+    "clusters_found": 684,
+    "records_in_clusters": 1475,
+    "duplicates_removed": 777,
+    "records_after_dedup": 5656,
+    "source_distribution": {
+      "rifugi.cai": 755,
+      "openstreetmap": 4352,
+      "refuges.info": 290,
+      "wikidata": 229,
+      "capanneti.ch": 30
+    },
+    "merge_actions_count": 684,
+    "merge_actions_extended": [
+      {
+        "winner": {
+          "name": "Capanna Sella",
+          "source": "rifugi.cai",
+          "sourceId": "921200103",
+          "trust": 80,
+          "richness": 50
+        },
+        "losers": [
+          {
+            "name": "Bivouac Quintino Sella aux Rochers",
+            "source": "refuges.info",
+            "sourceId": "4033",
+            "trust": 35,
+            "richness": 6,
+            "distance_m": 8.9
+          },
+          {
+            "name": "rifugio Quintino Sella",
+            "source": "wikidata",
+            "sourceId": "Q3423117",
+            "trust": 20,
+            "richness": 3,
+            "distance_m": 129.2
+          }
+        ],
+        "cluster_size": 3,
+        "sub_groups_in_cluster": 1
+      },
+      {
+        "winner": {
+          "name": "Bivacco Città di Mariano",
+          "source": "rifugi.cai",
+          "sourceId": "921607701",
+          "trust": 80,
+          "richness": 58
+        },
+        "losers": [
+          {
+            "name": "Bivacco Città di Mariano Comense",
+            "source": "refuges.info",
+            "sourceId": "4419",
+            "trust": 35,
+            "richness": 6,
+            "distance_m": 0.7
+          },
+          {
+            "name": "Source bivouac Citta di Mariano",
+            "source": "refuges.info",
+            "sourceId": "5952",
+            "trust": 35,
+            "richness": 6,
+            "distance_m": 132.7
+          }
+        ],
+        "cluster_size": 3,
+        "sub_groups_in_cluster": 1
+      },
+      {
+        "winner": {
+          "name": "Capanna Carmagnola",
+          "source": "rifugi.cai",
+          "sourceId": "921208201",
+          "trust": 80,
+          "richness": 51
+        },
+        "losers": [
+          {
+            "name": "capanna sociale Carmagnola",
+            "source": "wikidata",
+            "sourceId": "Q3656746",
+            "trust": 20,
+            "richness": 3,
+            "distance_m": 157.2
+          }
+        ],
+        "cluster_size": 2,
+        "sub_groups_in_cluster": 1
+      },
+      {
+        "winner": {
+          "name": "Rifugio Tosa Pedrotti",
+          "source": "rifugi.cai",
+          "sourceId": "921800112",
+          "trust": 80,
+          "richness": 55
+        },
+        "losers": [
+          {
+            "name": "Rifugio Tommaso Pedrotti",
+            "source": "openstreetmap",
+            "sourceId": "way/183878988",
+            "trust": 40,
+            "richness": 9,
+            "distance_m": 3.7
+          },
+          {
+            "name": "rifugio Tosa",
+            "source": "wikidata",
+            "sourceId": "Q137686538",
+            "trust": 20,
+            "richness": 5,
+            "distance_m": 169.4
+          }
+        ],
+        "cluster_size": 3,
+        "sub_groups_in_cluster": 1
+      },
+      {
+        "winner": {
+          "name": "Bivacco Revelli",
+          "source": "rifugi.cai",
+          "sourceId": "921200119",
+          "trust": 80,
+          "richness": 53
+        },
+        "losers": [
+          {
+            "name": "Bivouac Luigi Revelli",
+            "source": "refuges.info",
+            "sourceId": "6422",
+            "trust": 35,
+            "richness": 6,
+            "distance_m": 20.0
+          },
+          {
+            "name": "Source Bivouac Luigi Revelli",
+            "source": "refuges.info",
+            "sourceId": "6423",
+            "trust": 35,
+            "richness": 6,
+            "distance_m": 391.4
+          }
+        ],
+        "cluster_size": 3,
+        "sub_groups_in_cluster": 1
+      },
+      {
+        "winner": {
+          "name": "Rifugio Bozano",
+          "source": "rifugi.cai",
+          "sourceId": "921000103",
+          "trust": 80,
+          "richness": 57
+        },
+        "losers": [
+          {
+            "name": "Locale invernale",
+            "source": "openstreetmap",
+            "sourceId": "way/152010652",
+            "trust": 40,
+            "richness": 5,
+            "distance_m": 20.8
+          },
+          {
+            "name": "rifugio Lorenzo Bozano",
+            "source": "wikidata",
+            "sourceId": "Q3935536",
+            "trust": 20,
+            "richness": 6,
+            "distance_m": 126.3
+          }
+        ],
+        "cluster_size": 3,
+        "sub_groups_in_cluster": 1
+      },
+      {
+        "winner": {
+          "name": "Rifugio Fraccaroli",
+          "source": "rifugi.cai",
+          "sourceId": "922006201",
+          "trust": 80,
+          "richness": 58
+        },
+        "losers": [
+          {
+            "name": "Rifugio Mario Fraccaroli",
+            "source": "openstreetmap",
+            "sourceId": "way/87793181",
+            "trust": 40,
+            "richness": 4,
+            "distance_m": 0.4
+          },
+          {
+            "name": "rifugio Mario Fraccaroli",
+            "source": "wikidata",
+            "sourceId": "Q1980292",
+            "trust": 20,
+            "richness": 6,
+            "distance_m": 471.6
+          }
+        ],
+        "cluster_size": 3,
+        "sub_groups_in_cluster": 1
+      },
+      {
+        "winner": {
+          "name": "Rifugio Caprari",
+          "source": "rifugi.cai",
+          "sourceId": "921600112",
+          "trust": 80,
+          "richness": 44
+        },
+        "losers": [
+          {
+            "name": "Locale d'emergenza del Rifugio Caprari",
+            "source": "openstreetmap",
+            "sourceId": "node/1643559288",
+            "trust": 40,
+            "richness": 4,
+            "distance_m": 106.6
+          }
+        ],
+        "cluster_size": 2,
+        "sub_groups_in_cluster": 1
+      },
+      {
+        "winner": {
+          "name": "Rifugio Falck",
+          "source": "rifugi.cai",
+          "sourceId": "921605302",
+          "trust": 80,
+          "richness": 43
+        },
+        "losers": [
+          {
+            "name": "Rifugio Enrico Falck",
+            "source": "refuges.info",
+            "sourceId": "4138",
+            "trust": 35,
+            "richness": 8,
+            "distance_m": 122.7
+          }
+        ],
+        "cluster_size": 2,
+        "sub_groups_in_cluster": 1
+      },
+      {
+        "winner": {
+          "name": "Bivacco Fanton",
+          "source": "rifugi.cai",
+          "sourceId": "922000203",
+          "trust": 80,
+          "richness": 55
+        },
+        "losers": [
+          {
+            "name": "Bivacco Fratelli Fanton",
+            "source": "openstreetmap",
+            "sourceId": "node/9486198662",
+            "trust": 40,
+            "richness": 4,
+            "distance_m": 131.3
+          }
+        ],
+        "cluster_size": 2,
+        "sub_groups_in_cluster": 1
+      },
+      {
+        "winner": {
+          "name": "Rifugio Fonte Vetica",
+          "source": "rifugi.cai",
+          "sourceId": "923400601",
+          "trust": 80,
+          "richness": 40
+        },
+        "losers": [
+          {
+            "name": "Rifugio Fonte Vetica",
+            "source": "openstreetmap",
+            "sourceId": "node/1327859731",
+            "trust": 40,
+            "richness": 4,
+            "distance_m": 210.2
+          }
+        ],
+        "cluster_size": 2,
+        "sub_groups_in_cluster": 1
+      },
+      {
+        "winner": {
+          "name": "Baita Cassinelli",
+          "source": "rifugi.cai",
+          "sourceId": "921613204",
+          "trust": 80,
+          "richness": 43
+        },
+        "losers": [
+          {
+            "name": "Rifugio Carlo Medici ai Cassinelli",
+            "source": "openstreetmap",
+            "sourceId": "way/120595368",
+            "trust": 40,
+            "richness": 8,
+            "distance_m": 111.2
+          }
+        ],
+        "cluster_size": 3,
+        "sub_groups_in_cluster": 2
+      },
+      {
+        "winner": {
+          "name": "Rifugio Jean Barmasse",
+          "source": "openstreetmap",
+          "sourceId": "node/353049817",
+          "trust": 40,
+          "richness": 8
+        },
+        "losers": [
+          {
+            "name": "rifugio Barmasse",
+            "source": "wikidata",
+            "sourceId": "Q537363",
+            "trust": 20,
+            "richness": 5,
+            "distance_m": 235.3
+          }
+        ],
+        "cluster_size": 2,
+        "sub_groups_in_cluster": 1
+      },
+      {
+        "winner": {
+          "name": "Dötra",
+          "source": "capanneti.ch",
+          "sourceId": "doetra",
+          "trust": 55,
+          "richness": 9
+        },
+        "losers": [
+          {
+            "name": "Capanna Dötra",
+            "source": "openstreetmap",
+            "sourceId": "node/456418356",
+            "trust": 40,
+            "richness": 10,
+            "distance_m": 203.1
+          }
+        ],
+        "cluster_size": 2,
+        "sub_groups_in_cluster": 1
+      },
+      {
+        "winner": {
+          "name": "Albagno",
+          "source": "capanneti.ch",
+          "sourceId": "albagno",
+          "trust": 55,
+          "richness": 8
+        },
+        "losers": [
+          {
+            "name": "Capanna Albagno",
+            "source": "openstreetmap",
+            "sourceId": "node/1444601155",
+            "trust": 40,
+            "richness": 12,
+            "distance_m": 328.8
+          }
+        ],
+        "cluster_size": 2,
+        "sub_groups_in_cluster": 1
+      },
+      {
+        "winner": {
+          "name": "Fora (Alp di)",
+          "source": "capanneti.ch",
+          "sourceId": "fora-alp-di",
+          "trust": 55,
+          "richness": 8
+        },
+        "losers": [
+          {
+            "name": "Alp di Fora",
+            "source": "openstreetmap",
+            "sourceId": "node/1455771718",
+            "trust": 40,
+            "richness": 8,
+            "distance_m": 282.8
+          }
+        ],
+        "cluster_size": 2,
+        "sub_groups_in_cluster": 1
+      },
+      {
+        "winner": {
+          "name": "Monte Rosa Hütte",
+          "source": "openstreetmap",
+          "sourceId": "node/11063882922",
+          "trust": 40,
+          "richness": 9
+        },
+        "losers": [
+          {
+            "name": "Monte Rosa Hütte (Cabane Bétemps)",
+            "source": "refuges.info",
+            "sourceId": "2432",
+            "trust": 35,
+            "richness": 6,
+            "distance_m": 6.2
+          },
+          {
+            "name": "Monte Rosa Hütte",
+            "source": "wikidata",
+            "sourceId": "Q672412",
+            "trust": 20,
+            "richness": 6,
+            "distance_m": 201.2
+          }
+        ],
+        "cluster_size": 3,
+        "sub_groups_in_cluster": 1
+      },
+      {
+        "winner": {
+          "name": "Rifugio Guide del Cervino",
+          "source": "openstreetmap",
+          "sourceId": "way/60356684",
+          "trust": 40,
+          "richness": 8
+        },
+        "losers": [
+          {
+            "name": "Refuge de la Testa Grigia (Guide del Cervino)",
+            "source": "refuges.info",
+            "sourceId": "2336",
+            "trust": 35,
+            "richness": 6,
+            "distance_m": 171.1
+          }
+        ],
+        "cluster_size": 2,
+        "sub_groups_in_cluster": 1
+      },
+      {
+        "winner": {
+          "name": "Rifugio Monte Curcio",
+          "source": "openstreetmap",
+          "sourceId": "way/120955220",
+          "trust": 40,
+          "richness": 2
+        },
+        "losers": [
+          {
+            "name": "Rifugio Monte Curcio",
+            "source": "openstreetmap",
+            "sourceId": "way/848219667",
+            "trust": 40,
+            "richness": 2,
+            "distance_m": 221.2
+          }
+        ],
+        "cluster_size": 2,
+        "sub_groups_in_cluster": 1
+      },
+      {
+        "winner": {
+          "name": "Rifugio Passo Principe - Grasleitenpasshütte",
+          "source": "openstreetmap",
+          "sourceId": "way/152250683",
+          "trust": 40,
+          "richness": 5
+        },
+        "losers": [
+          {
+            "name": "rifugio Passo Principe",
+            "source": "wikidata",
+            "sourceId": "Q201709",
+            "trust": 20,
+            "richness": 6,
+            "distance_m": 392.6
+          }
+        ],
+        "cluster_size": 2,
+        "sub_groups_in_cluster": 1
+      },
+      {
+        "winner": {
+          "name": "Rifugio Pontese",
+          "source": "openstreetmap",
+          "sourceId": "way/201625351",
+          "trust": 40,
+          "richness": 9
+        },
+        "losers": [
+          {
+            "name": "rifugio Pontese",
+            "source": "wikidata",
+            "sourceId": "Q3935605",
+            "trust": 20,
+            "richness": 5,
+            "distance_m": 248.3
+          }
+        ],
+        "cluster_size": 2,
+        "sub_groups_in_cluster": 1
+      },
+      {
+        "winner": {
+          "name": "Alp Bommen",
+          "source": "openstreetmap",
+          "sourceId": "way/239743010",
+          "trust": 40,
+          "richness": 8
+        },
+        "losers": [
+          {
+            "name": "Obere Bommen Alpine Hut",
+            "source": "wikidata",
+            "sourceId": "Q137132965",
+            "trust": 20,
+            "richness": 3,
+            "distance_m": 238.8
+          }
+        ],
+        "cluster_size": 2,
+        "sub_groups_in_cluster": 1
+      },
+      {
+        "winner": {
+          "name": "Rifugio Avanzà",
+          "source": "openstreetmap",
+          "sourceId": "way/253661874",
+          "trust": 40,
+          "richness": 5
+        },
+        "losers": [
+          {
+            "name": "rifugio Avanzà",
+            "source": "wikidata",
+            "sourceId": "Q3935411",
+            "trust": 20,
+            "richness": 6,
+            "distance_m": 215.2
+          }
+        ],
+        "cluster_size": 2,
+        "sub_groups_in_cluster": 1
+      },
+      {
+        "winner": {
+          "name": "Berggasthaus Dürrboden",
+          "source": "openstreetmap",
+          "sourceId": "way/257816771",
+          "trust": 40,
+          "richness": 6
+        },
+        "losers": [
+          {
+            "name": "Dürrboden",
+            "source": "wikidata",
+            "sourceId": "Q1272134",
+            "trust": 20,
+            "richness": 5,
+            "distance_m": 167.7
+          }
+        ],
+        "cluster_size": 2,
+        "sub_groups_in_cluster": 1
+      },
+      {
+        "winner": {
+          "name": "Bivacco Alpe Agario",
+          "source": "openstreetmap",
+          "sourceId": "way/293315840",
+          "trust": 40,
+          "richness": 5
+        },
+        "losers": [
+          {
+            "name": "Rifugio Agario",
+            "source": "wikidata",
+            "sourceId": "Q3935387",
+            "trust": 20,
+            "richness": 3,
+            "distance_m": 288.3
+          }
+        ],
+        "cluster_size": 2,
+        "sub_groups_in_cluster": 1
+      },
+      {
+        "winner": {
+          "name": "Europahütte",
+          "source": "openstreetmap",
+          "sourceId": "way/296802400",
+          "trust": 40,
+          "richness": 6
+        },
+        "losers": [
+          {
+            "name": "Europahütte",
+            "source": "wikidata",
+            "sourceId": "Q677583",
+            "trust": 20,
+            "richness": 6,
+            "distance_m": 233.8
+          }
+        ],
+        "cluster_size": 2,
+        "sub_groups_in_cluster": 1
+      },
+      {
+        "winner": {
+          "name": "Lago (Alpe di)",
+          "source": "capanneti.ch",
+          "sourceId": "lago-alpe-di",
+          "trust": 55,
+          "richness": 8
+        },
+        "losers": [
+          {
+            "name": "Rifugio Alpe di Lago",
+            "source": "openstreetmap",
+            "sourceId": "way/409506658",
+            "trust": 40,
+            "richness": 3,
+            "distance_m": 338.6
+          }
+        ],
+        "cluster_size": 2,
+        "sub_groups_in_cluster": 1
+      },
+      {
+        "winner": {
+          "name": "Neige et Merveilles",
+          "source": "openstreetmap",
+          "sourceId": "way/702454878",
+          "trust": 40,
+          "richness": 4
+        },
+        "losers": [
+          {
+            "name": "Gites Neige et Merveilles",
+            "source": "refuges.info",
+            "sourceId": "1206",
+            "trust": 35,
+            "richness": 5,
+            "distance_m": 182.3
+          }
+        ],
+        "cluster_size": 2,
+        "sub_groups_in_cluster": 1
+      },
+      {
+        "winner": {
+          "name": "Bivacco Paoluccio",
+          "source": "refuges.info",
+          "sourceId": "7237",
+          "trust": 35,
+          "richness": 5
+        },
+        "losers": [
+          {
+            "name": "bivacco Paoluccio",
+            "source": "wikidata",
+            "sourceId": "Q3640564",
+            "trust": 20,
+            "richness": 3,
+            "distance_m": 404.8
+          }
+        ],
+        "cluster_size": 2,
+        "sub_groups_in_cluster": 1
+      }
+    ],
+    "merge_actions_sample": [
+      {
+        "winner": {
+          "name": "Rifugio Teodulo",
+          "source": "rifugi.cai",
+          "sourceId": "921200104",
+          "trust": 80,
+          "richness": 57
+        },
+        "losers": [
+          {
+            "name": "Refuge du Théodule (Teodulo - Theodulhütte)",
+            "source": "refuges.info",
+            "sourceId": "2335",
+            "trust": 35,
+            "richness": 6,
+            "distance_m": 1.6
+          }
+        ],
+        "cluster_size": 2,
+        "sub_groups_in_cluster": 1
+      },
+      {
+        "winner": {
+          "name": "Bivacco Giordano",
+          "source": "rifugi.cai",
+          "sourceId": "921200201",
+          "trust": 80,
+          "richness": 56
+        },
+        "losers": [
+          {
+            "name": "Bivacco Felice Giordano",
+            "source": "openstreetmap",
+            "sourceId": "node/13100829532",
+            "trust": 40,
+            "richness": 6,
+            "distance_m": 2.1
+          },
+          {
+            "name": "Refuge-bivouac Giordano",
+            "source": "refuges.info",
+            "sourceId": "2068",
+            "trust": 35,
+            "richness": 6,
+            "distance_m": 6.9
+          }
+        ],
+        "cluster_size": 3,
+        "sub_groups_in_cluster": 1
+      },
+      {
+        "winner": {
+          "name": "Capanna Gnifetti",
+          "source": "rifugi.cai",
+          "sourceId": "921200203",
+          "trust": 80,
+          "richness": 57
+        },
+        "losers": [
+          {
+            "name": "Rifugio Capanna Giovanni Gnifetti",
+            "source": "openstreetmap",
+            "sourceId": "way/149862628",
+            "trust": 40,
+            "richness": 10,
+            "distance_m": 12.9
+          }
+        ],
+        "cluster_size": 2,
+        "sub_groups_in_cluster": 1
+      },
+      {
+        "winner": {
+          "name": "Bivacco Segalla",
+          "source": "rifugi.cai",
+          "sourceId": "921800104",
+          "trust": 80,
+          "richness": 52
+        },
+        "losers": [
+          {
+            "name": "Bivacco Eugenio Segalla",
+            "source": "openstreetmap",
+            "sourceId": "way/442474994",
+            "trust": 40,
+            "richness": 6,
+            "distance_m": 1.3
+          }
+        ],
+        "cluster_size": 2,
+        "sub_groups_in_cluster": 1
+      },
+      {
+        "winner": {
+          "name": "Rifugio Torino",
+          "source": "rifugi.cai",
+          "sourceId": "921200102",
+          "trust": 80,
+          "richness": 57
+        },
+        "losers": [
+          {
+            "name": "Rifugio Torino nuovo",
+            "source": "openstreetmap",
+            "sourceId": "way/148212583",
+            "trust": 40,
+            "richness": 4,
+            "distance_m": 0.6
+          },
+          {
+            "name": "Refuge Torino (nouveau)",
+            "source": "refuges.info",
+            "sourceId": "376",
+            "trust": 35,
+            "richness": 6,
+            "distance_m": 5.4
+          },
+          {
+            "name": "Refuge Torino (ancien)",
+            "source": "refuges.info",
+            "sourceId": "10577",
+            "trust": 35,
+            "richness": 5,
+            "distance_m": 84.8
+          }
+        ],
+        "cluster_size": 5,
+        "sub_groups_in_cluster": 2
+      },
+      {
+        "winner": {
+          "name": "Capanna Resegotti",
+          "source": "rifugi.cai",
+          "sourceId": "921200202",
+          "trust": 80,
+          "richness": 54
+        },
+        "losers": [
+          {
+            "name": "Capanna Luigina Resegotti",
+            "source": "openstreetmap",
+            "sourceId": "node/13100829531",
+            "trust": 40,
+            "richness": 6,
+            "distance_m": 1.4
+          }
+        ],
+        "cluster_size": 2,
+        "sub_groups_in_cluster": 1
+      },
+      {
+        "winner": {
+          "name": "Bivacco Parravicini",
+          "source": "rifugi.cai",
+          "sourceId": "921600103",
+          "trust": 80,
+          "richness": 49
+        },
+        "losers": [
+          {
+            "name": "Bivacco Agostino Parravicini",
+            "source": "openstreetmap",
+            "sourceId": "node/2388866816",
+            "trust": 40,
+            "richness": 5,
+            "distance_m": 0.0
+          }
+        ],
+        "cluster_size": 2,
+        "sub_groups_in_cluster": 1
+      },
+      {
+        "winner": {
+          "name": "Rifugio Vioz",
+          "source": "rifugi.cai",
+          "sourceId": "921800101",
+          "trust": 80,
+          "richness": 57
+        },
+        "losers": [
+          {
+            "name": "Rifugio Mantova al Vioz",
+            "source": "openstreetmap",
+            "sourceId": "way/76139910",
+            "trust": 40,
+            "richness": 8,
+            "distance_m": 1.6
+          }
+        ],
+        "cluster_size": 2,
+        "sub_groups_in_cluster": 1
+      },
+      {
+        "winner": {
+          "name": "Bivacco Bossi",
+          "source": "rifugi.cai",
+          "sourceId": "921601502",
+          "trust": 80,
+          "richness": 43
+        },
+        "losers": [
+          {
+            "name": "Refuge-bivouac Oreste Bossi",
+            "source": "refuges.info",
+            "sourceId": "4156",
+            "trust": 35,
+            "richness": 5,
+            "distance_m": 14.2
+          },
+          {
+            "name": "bivacco Oreste Bossi",
+            "source": "wikidata",
+            "sourceId": "Q3640562",
+            "trust": 20,
+            "richness": 5,
+            "distance_m": 23.5
+          }
+        ],
+        "cluster_size": 3,
+        "sub_groups_in_cluster": 1
+      },
+      {
+        "winner": {
+          "name": "Bivacco Balzola",
+          "source": "rifugi.cai",
+          "sourceId": "921200101",
+          "trust": 80,
+          "richness": 54
+        },
+        "losers": [
+          {
+            "name": "Bivouac Mario Balzola",
+            "source": "refuges.info",
+            "sourceId": "6722",
+            "trust": 35,
+            "richness": 5,
+            "distance_m": 7.1
+          }
+        ],
+        "cluster_size": 2,
+        "sub_groups_in_cluster": 1
+      },
+      {
+        "winner": {
+          "name": "Bivacco Città di Luino",
+          "source": "rifugi.cai",
+          "sourceId": "921606401",
+          "trust": 80,
+          "richness": 55
+        },
+        "losers": [
+          {
+            "name": "Refuge-bivouac Schwarzberg-Weisstor (Città di Luino)",
+            "source": "refuges.info",
+            "sourceId": "2598",
+            "trust": 35,
+            "richness": 5,
+            "distance_m": 11.8
+          }
+        ],
+        "cluster_size": 2,
+        "sub_groups_in_cluster": 1
+      },
+      {
+        "winner": {
+          "name": "Bivacco Lateltin",
+          "source": "rifugi.cai",
+          "sourceId": "921400201",
+          "trust": 80,
+          "richness": 50
+        },
+        "losers": [
+          {
+            "name": "Bivacco Ulrich Lateltin",
+            "source": "openstreetmap",
+            "sourceId": "way/296036027",
+            "trust": 40,
+            "richness": 7,
+            "distance_m": 8.1
+          },
+          {
+            "name": "Refuge-bivouac Ulrich Lateltin",
+            "source": "refuges.info",
+            "sourceId": "2337",
+            "trust": 35,
+            "richness": 5,
+            "distance_m": 3.9
+          }
+        ],
+        "cluster_size": 3,
+        "sub_groups_in_cluster": 1
+      },
+      {
+        "winner": {
+          "name": "Capanna Sella",
+          "source": "rifugi.cai",
+          "sourceId": "921200103",
+          "trust": 80,
+          "richness": 50
+        },
+        "losers": [
+          {
+            "name": "Bivouac Quintino Sella aux Rochers",
+            "source": "refuges.info",
+            "sourceId": "4033",
+            "trust": 35,
+            "richness": 6,
+            "distance_m": 8.9
+          },
+          {
+            "name": "rifugio Quintino Sella",
+            "source": "wikidata",
+            "sourceId": "Q3423117",
+            "trust": 20,
+            "richness": 3,
+            "distance_m": 129.2
+          }
+        ],
+        "cluster_size": 3,
+        "sub_groups_in_cluster": 1
+      },
+      {
+        "winner": {
+          "name": "Bivacco Rossi e Volante",
+          "source": "rifugi.cai",
+          "sourceId": "921201901",
+          "trust": 80,
+          "richness": 56
+        },
+        "losers": [
+          {
+            "name": "Refuge bivouac Rossi Volante (ou Cesare e Giorgio)",
+            "source": "refuges.info",
+            "sourceId": "2362",
+            "trust": 35,
+            "richness": 5,
+            "distance_m": 2.1
+          }
+        ],
+        "cluster_size": 2,
+        "sub_groups_in_cluster": 1
+      },
+      {
+        "winner": {
+          "name": "Bivacco Musso",
+          "source": "rifugi.cai",
+          "sourceId": "921201301",
+          "trust": 80,
+          "richness": 57
+        },
+        "losers": [
+          {
+            "name": "Refuge-bivouac de l'épaule Isler (Biagio Musso)",
+            "source": "refuges.info",
+            "sourceId": "1715",
+            "trust": 35,
+            "richness": 5,
+            "distance_m": 12.8
+          }
+        ],
+        "cluster_size": 2,
+        "sub_groups_in_cluster": 1
+      },
+      {
+        "winner": {
+          "name": "Bivacco Del Piero",
+          "source": "rifugi.cai",
+          "sourceId": "921609401",
+          "trust": 80,
+          "richness": 39
+        },
+        "losers": [
+          {
+            "name": "Bivacco Gianpaolo Del Piero",
+            "source": "wikidata",
+            "sourceId": "Q89297761",
+            "trust": 20,
+            "richness": 5,
+            "distance_m": 2.5
+          }
+        ],
+        "cluster_size": 2,
+        "sub_groups_in_cluster": 1
+      },
+      {
+        "winner": {
+          "name": "Capanna Marinelli",
+          "source": "rifugi.cai",
+          "sourceId": "921600315",
+          "trust": 80,
+          "richness": 45
+        },
+        "losers": [
+          {
+            "name": "Capanna Damiano Marinelli",
+            "source": "openstreetmap",
+            "sourceId": "node/4747654476",
+            "trust": 40,
+            "richness": 4,
+            "distance_m": 18.7
+          },
+          {
+            "name": "Refuge-bivouac (Capanna) Damiano Marinelli",
+            "source": "refuges.info",
+            "sourceId": "2599",
+            "trust": 35,
+            "richness": 5,
+            "distance_m": 19.9
+          }
+        ],
+        "cluster_size": 3,
+        "sub_groups_in_cluster": 1
+      },
+      {
+        "winner": {
+          "name": "Bivacco Giannantonj",
+          "source": "rifugi.cai",
+          "sourceId": "921600502",
+          "trust": 80,
+          "richness": 50
+        },
+        "losers": [
+          {
+            "name": "Bivacco Arrigo Giannantonj",
+            "source": "openstreetmap",
+            "sourceId": "way/264894248",
+            "trust": 40,
+            "richness": 5,
+            "distance_m": 12.7
+          }
+        ],
+        "cluster_size": 2,
+        "sub_groups_in_cluster": 1
+      },
+      {
+        "winner": {
+          "name": "Bivacco Giuliani",
+          "source": "rifugi.cai",
+          "sourceId": "921900201",
+          "trust": 80,
+          "richness": 50
+        },
+        "losers": [
+          {
+            "name": "Bivacco Reginaldo Giuliani al Sassolungo",
+            "source": "openstreetmap",
+            "sourceId": "node/4831216732",
+            "trust": 40,
+            "richness": 5,
+            "distance_m": 0.2
+          }
+        ],
+        "cluster_size": 2,
+        "sub_groups_in_cluster": 1
+      },
+      {
+        "winner": {
+          "name": "Bivacco Canzio",
+          "source": "rifugi.cai",
+          "sourceId": "920000102",
+          "trust": 80,
+          "richness": 55
+        },
+        "losers": [
+          {
+            "name": "Bivouac E. Canzio",
+            "source": "refuges.info",
+            "sourceId": "373",
+            "trust": 35,
+            "richness": 5,
+            "distance_m": 15.0
+          },
+          {
+            "name": "bivacco Ettore Canzio",
+            "source": "wikidata",
+            "sourceId": "Q2904977",
+            "trust": 20,
+            "richness": 5,
+            "distance_m": 0.0
+          }
+        ],
+        "cluster_size": 3,
+        "sub_groups_in_cluster": 1
+      },
+      {
+        "winner": {
+          "name": "Bivacco Balestreri",
+          "source": "rifugi.cai",
+          "sourceId": "920000106",
+          "trust": 80,
+          "richness": 57
+        },
+        "losers": [
+          {
+            "name": "bivacco Umberto Balestreri",
+            "source": "wikidata",
+            "sourceId": "Q3640576",
+            "trust": 20,
+            "richness": 3,
+            "distance_m": 6.4
+          }
+        ],
+        "cluster_size": 2,
+        "sub_groups_in_cluster": 1
+      },
+      {
+        "winner": {
+          "name": "Bivacco Tete de Roeses",
+          "source": "rifugi.cai",
+          "sourceId": "920000105",
+          "trust": 80,
+          "richness": 55
+        },
+        "losers": [
+          {
+            "name": "Refuge-bivouac Tête des Roèses",
+            "source": "refuges.info",
+            "sourceId": "2497",
+            "trust": 35,
+            "richness": 5,
+            "distance_m": 27.3
+          }
+        ],
+        "cluster_size": 2,
+        "sub_groups_in_cluster": 1
+      },
+      {
+        "winner": {
+          "name": "Bivacco della Brenva",
+          "source": "rifugi.cai",
+          "sourceId": "920000107",
+          "trust": 80,
+          "richness": 57
+        },
+        "losers": [
+          {
+            "name": "Bivouac de la Brenva",
+            "source": "refuges.info",
+            "sourceId": "382",
+            "trust": 35,
+            "richness": 6,
+            "distance_m": 19.5
+          }
+        ],
+        "cluster_size": 2,
+        "sub_groups_in_cluster": 1
+      },
+      {
+        "winner": {
+          "name": "Bivacco Craveri",
+          "source": "rifugi.cai",
+          "sourceId": "920000104",
+          "trust": 80,
+          "richness": 55
+        },
+        "losers": [
+          {
+            "name": "Bivouac Piero Craveri",
+            "source": "refuges.info",
+            "sourceId": "379",
+            "trust": 35,
+            "richness": 5,
+            "distance_m": 10.4
+          },
+          {
+            "name": "bivacco Piero Craveri",
+            "source": "wikidata",
+            "sourceId": "Q2904980",
+            "trust": 20,
+            "richness": 3,
+            "distance_m": 98.0
+          }
+        ],
+        "cluster_size": 3,
+        "sub_groups_in_cluster": 1
+      },
+      {
+        "winner": {
+          "name": "Bivacco Lampugnani - Grassi",
+          "source": "rifugi.cai",
+          "sourceId": "920000101",
+          "trust": 80,
+          "richness": 59
+        },
+        "losers": [
+          {
+            "name": "Bivouac Giuseppe Lampugnani",
+            "source": "refuges.info",
+            "sourceId": "6453",
+            "trust": 35,
+            "richness": 5,
+            "distance_m": 0.7
+          }
+        ],
+        "cluster_size": 3,
+        "sub_groups_in_cluster": 2
+      },
+      {
+        "winner": {
+          "name": "Capanna Margherita",
+          "source": "rifugi.cai",
+          "sourceId": "930010001",
+          "trust": 80,
+          "richness": 52
+        },
+        "losers": [
+          {
+            "name": "Rifugio Capanna Regina Margherita",
+            "source": "openstreetmap",
+            "sourceId": "way/149862629",
+            "trust": 40,
+            "richness": 9,
+            "distance_m": 0.4
+          },
+          {
+            "name": "Refuge Margherita / Signalkuppe",
+            "source": "refuges.info",
+            "sourceId": "1489",
+            "trust": 35,
+            "richness": 6,
+            "distance_m": 15.3
+          }
+        ],
+        "cluster_size": 3,
+        "sub_groups_in_cluster": 1
+      },
+      {
+        "winner": {
+          "name": "Bivacco Laeng",
+          "source": "rifugi.cai",
+          "sourceId": "921600501",
+          "trust": 80,
+          "richness": 48
+        },
+        "losers": [
+          {
+            "name": "Bivacco G. Laeng",
+            "source": "openstreetmap",
+            "sourceId": "way/334299055",
+            "trust": 40,
+            "richness": 5,
+            "distance_m": 14.6
+          }
+        ],
+        "cluster_size": 2,
+        "sub_groups_in_cluster": 1
+      },
+      {
+        "winner": {
+          "name": "Bivacco Città di Gallarate",
+          "source": "rifugi.cai",
+          "sourceId": "921601501",
+          "trust": 80,
+          "richness": 43
+        },
+        "losers": [
+          {
+            "name": "Abri-bivouac Città di Gallarate",
+            "source": "refuges.info",
+            "sourceId": "6554",
+            "trust": 35,
+            "richness": 6,
+            "distance_m": 1.7
+          }
+        ],
+        "cluster_size": 2,
+        "sub_groups_in_cluster": 1
+      },
+      {
+        "winner": {
+          "name": "Rifugio Oberto-Maroli",
+          "source": "rifugi.cai",
+          "sourceId": "921205001",
+          "trust": 80,
+          "richness": 58
+        },
+        "losers": [
+          {
+            "name": "Rifugio Gaspare Oberto e Paolo Maroli",
+            "source": "openstreetmap",
+            "sourceId": "node/9427942453",
+            "trust": 40,
+            "richness": 7,
+            "distance_m": 3.5
+          }
+        ],
+        "cluster_size": 2,
+        "sub_groups_in_cluster": 1
+      },
+      {
+        "winner": {
+          "name": "Bivacco Dal Bianco",
+          "source": "rifugi.cai",
+          "sourceId": "920000115",
+          "trust": 80,
+          "richness": 53
+        },
+        "losers": [
+          {
+            "name": "Bivacco Marco Dal Bianco",
+            "source": "openstreetmap",
+            "sourceId": "way/199505920",
+            "trust": 40,
+            "richness": 4,
+            "distance_m": 13.1
+          }
+        ],
+        "cluster_size": 2,
+        "sub_groups_in_cluster": 1
+      },
+      {
+        "winner": {
+          "name": "Rifugio Pizzini",
+          "source": "rifugi.cai",
+          "sourceId": "921600313",
+          "trust": 80,
+          "richness": 56
+        },
+        "losers": [
+          {
+            "name": "Rifugio Pizzini-Frattola",
+            "source": "openstreetmap",
+            "sourceId": "way/151748682",
+            "trust": 40,
+            "richness": 9,
+            "distance_m": 16.1
+          }
+        ],
+        "cluster_size": 2,
+        "sub_groups_in_cluster": 1
+      },
+      {
+        "winner": {
+          "name": "Rifugio Coldai",
+          "source": "rifugi.cai",
+          "sourceId": "922000504",
+          "trust": 80,
+          "richness": 52
+        },
+        "losers": [
+          {
+            "name": "Rifugio Adolfo Sonino al Coldai",
+            "source": "openstreetmap",
+            "sourceId": "way/200218638",
+            "trust": 40,
+            "richness": 7,
+            "distance_m": 1.2
+          },
+          {
+            "name": "rifugio Sonino al Coldai",
+            "source": "wikidata",
+            "sourceId": "Q3935637",
+            "trust": 20,
+            "richness": 5,
+            "distance_m": 7.3
+          }
+        ],
+        "cluster_size": 3,
+        "sub_groups_in_cluster": 1
+      },
+      {
+        "winner": {
+          "name": "Bivacco Money",
+          "source": "rifugi.cai",
+          "sourceId": "922400701",
+          "trust": 80,
+          "richness": 55
+        },
+        "losers": [
+          {
+            "name": "Bivouac Fisso \"Money\"",
+            "source": "refuges.info",
+            "sourceId": "7100",
+            "trust": 35,
+            "richness": 6,
+            "distance_m": 11.2
+          }
+        ],
+        "cluster_size": 2,
+        "sub_groups_in_cluster": 1
+      },
+      {
+        "winner": {
+          "name": "Bivacco Fiorio",
+          "source": "rifugi.cai",
+          "sourceId": "920000113",
+          "trust": 80,
+          "richness": 55
+        },
+        "losers": [
+          {
+            "name": "Bivacco Fiorio",
+            "source": "rifugi.cai",
+            "sourceId": "920000114",
+            "trust": 80,
+            "richness": 52,
+            "distance_m": 45.6
+          },
+          {
+            "name": "Bivouac Cesare Fiorio (ancien)",
+            "source": "refuges.info",
+            "sourceId": "10676",
+            "trust": 35,
+            "richness": 5,
+            "distance_m": 46.4
+          },
+          {
+            "name": "Bivouac Cesare Fiorio (nouveau)",
+            "source": "refuges.info",
+            "sourceId": "385",
+            "trust": 35,
+            "richness": 5,
+            "distance_m": 6.7
+          },
+          {
+            "name": "bivacco Cesare Fiorio",
+            "source": "wikidata",
+            "sourceId": "Q3640534",
+            "trust": 20,
+            "richness": 5,
+            "distance_m": 9.7
+          }
+        ],
+        "cluster_size": 5,
+        "sub_groups_in_cluster": 1
+      },
+      {
+        "winner": {
+          "name": "Bivacco Hess",
+          "source": "rifugi.cai",
+          "sourceId": "920000110",
+          "trust": 80,
+          "richness": 53
+        },
+        "losers": [
+          {
+            "name": "Bivouac d'Estelette (Adolfo Hess)",
+            "source": "refuges.info",
+            "sourceId": "383",
+            "trust": 35,
+            "richness": 5,
+            "distance_m": 2.0
+          },
+          {
+            "name": "bivacco Adolfo Hess",
+            "source": "wikidata",
+            "sourceId": "Q3640520",
+            "trust": 20,
+            "richness": 3,
+            "distance_m": 4.2
+          }
+        ],
+        "cluster_size": 3,
+        "sub_groups_in_cluster": 1
+      },
+      {
+        "winner": {
+          "name": "Bivacco delle Guide Farello",
+          "source": "rifugi.cai",
+          "sourceId": "921205501",
+          "trust": 80,
+          "richness": 52
+        },
+        "losers": [
+          {
+            "name": "Nuovo Bivacco delle Guide “Beniamino Farello\"",
+            "source": "openstreetmap",
+            "sourceId": "way/926256868",
+            "trust": 40,
+            "richness": 5,
+            "distance_m": 19.5
+          },
+          {
+            "name": "Bivacco Beniamino Farello",
+            "source": "refuges.info",
+            "sourceId": "9216",
+            "trust": 35,
+            "richness": 5,
+            "distance_m": 22.0
+          }
+        ],
+        "cluster_size": 3,
+        "sub_groups_in_cluster": 1
+      },
+      {
+        "winner": {
+          "name": "Rifugio Torrani",
+          "source": "rifugi.cai",
+          "sourceId": "922001801",
+          "trust": 80,
+          "richness": 55
+        },
+        "losers": [
+          {
+            "name": "Rifugio Maria Vittoria Torrani",
+            "source": "openstreetmap",
+            "sourceId": "way/183196061",
+            "trust": 40,
+            "richness": 3,
+            "distance_m": 1.1
+          }
+        ],
+        "cluster_size": 2,
+        "sub_groups_in_cluster": 1
+      },
+      {
+        "winner": {
+          "name": "Capanna Dosdè",
+          "source": "rifugi.cai",
+          "sourceId": "921609402",
+          "trust": 80,
+          "richness": 40
+        },
+        "losers": [
+          {
+            "name": "Refuge-bivouac Capanna Dosdè",
+            "source": "refuges.info",
+            "sourceId": "3865",
+            "trust": 35,
+            "richness": 5,
+            "distance_m": 13.4
+          }
+        ],
+        "cluster_size": 2,
+        "sub_groups_in_cluster": 1
+      },
+      {
+        "winner": {
+          "name": "Bivacco Federigo Zullo",
+          "source": "rifugi.cai",
+          "sourceId": "921400101",
+          "trust": 80,
+          "richness": 51
+        },
+        "losers": [
+          {
+            "name": "Abri-bivouac Federigo (Zullo)",
+            "source": "refuges.info",
+            "sourceId": "5612",
+            "trust": 35,
+            "richness": 5,
+            "distance_m": 11.5
+          }
+        ],
+        "cluster_size": 2,
+        "sub_groups_in_cluster": 1
+      },
+      {
+        "winner": {
+          "name": "Bivacco Città di Mariano",
+          "source": "rifugi.cai",
+          "sourceId": "921607701",
+          "trust": 80,
+          "richness": 58
+        },
+        "losers": [
+          {
+            "name": "Bivacco Città di Mariano Comense",
+            "source": "refuges.info",
+            "sourceId": "4419",
+            "trust": 35,
+            "richness": 6,
+            "distance_m": 0.7
+          },
+          {
+            "name": "Source bivouac Citta di Mariano",
+            "source": "refuges.info",
+            "sourceId": "5952",
+            "trust": 35,
+            "richness": 6,
+            "distance_m": 132.7
+          }
+        ],
+        "cluster_size": 3,
+        "sub_groups_in_cluster": 1
+      },
+      {
+        "winner": {
+          "name": "Bivacco Manenti",
+          "source": "rifugi.cai",
+          "sourceId": "921200111",
+          "trust": 80,
+          "richness": 53
+        },
+        "losers": [
+          {
+            "name": "Bivacco Duccio Manenti",
+            "source": "openstreetmap",
+            "sourceId": "way/125530393",
+            "trust": 40,
+            "richness": 6,
+            "distance_m": 3.1
+          },
+          {
+            "name": "Refuge-bivouac lac de Balanselme (Manenti)",
+            "source": "refuges.info",
+            "sourceId": "2503",
+            "trust": 35,
+            "richness": 6,
+            "distance_m": 2.6
+          }
+        ],
+        "cluster_size": 3,
+        "sub_groups_in_cluster": 1
+      },
+      {
+        "winner": {
+          "name": "Bivacco Nebbia",
+          "source": "rifugi.cai",
+          "sourceId": "921200113",
+          "trust": 80,
+          "richness": 57
+        },
+        "losers": [
+          {
+            "name": "Bivouac Nebbia",
+            "source": "refuges.info",
+            "sourceId": "5611",
+            "trust": 35,
+            "richness": 5,
+            "distance_m": 2.0
+          }
+        ],
+        "cluster_size": 2,
+        "sub_groups_in_cluster": 1
+      },
+      {
+        "winner": {
+          "name": "Rifugio Leonesi",
+          "source": "rifugi.cai",
+          "sourceId": "921200107",
+          "trust": 80,
+          "richness": 54
+        },
+        "losers": [
+          {
+            "name": "rifugio Vittorio Raffaele Leonesi",
+            "source": "wikidata",
+            "sourceId": "Q3935675",
+            "trust": 20,
+            "richness": 3,
+            "distance_m": 15.3
+          }
+        ],
+        "cluster_size": 2,
+        "sub_groups_in_cluster": 1
+      },
+      {
+        "winner": {
+          "name": "Bivacco Borghi",
+          "source": "rifugi.cai",
+          "sourceId": "921600802",
+          "trust": 80,
+          "richness": 53
+        },
+        "losers": [
+          {
+            "name": "Bivouac Stefano Borghi",
+            "source": "refuges.info",
+            "sourceId": "6725",
+            "trust": 35,
+            "richness": 6,
+            "distance_m": 20.0
+          }
+        ],
+        "cluster_size": 2,
+        "sub_groups_in_cluster": 1
+      },
+      {
+        "winner": {
+          "name": "Rifugio Nacamuli",
+          "source": "rifugi.cai",
+          "sourceId": "921200109",
+          "trust": 80,
+          "richness": 56
+        },
+        "losers": [
+          {
+            "name": "Rifugio Nacamuli al col Collon",
+            "source": "openstreetmap",
+            "sourceId": "node/353049828",
+            "trust": 40,
+            "richness": 10,
+            "distance_m": 1.4
+          },
+          {
+            "name": "Refuge du Col Collon (Nacamuli)",
+            "source": "refuges.info",
+            "sourceId": "1595",
+            "trust": 35,
+            "richness": 6,
+            "distance_m": 3.3
+          },
+          {
+            "name": "Rifugio du Col Collon",
+            "source": "wikidata",
+            "sourceId": "Q116599560",
+            "trust": 20,
+            "richness": 3,
+            "distance_m": 3.3
+          }
+        ],
+        "cluster_size": 4,
+        "sub_groups_in_cluster": 1
+      },
+      {
+        "winner": {
+          "name": "Bivacco F.lli Leonessa",
+          "source": "rifugi.cai",
+          "sourceId": "921200108",
+          "trust": 80,
+          "richness": 55
+        },
+        "losers": [
+          {
+            "name": "Bivouac Fratelli Leonessa",
+            "source": "refuges.info",
+            "sourceId": "6723",
+            "trust": 35,
+            "richness": 5,
+            "distance_m": 1.5
+          }
+        ],
+        "cluster_size": 2,
+        "sub_groups_in_cluster": 1
+      },
+      {
+        "winner": {
+          "name": "Rifugio Boccalatte",
+          "source": "rifugi.cai",
+          "sourceId": "921200110",
+          "trust": 80,
+          "richness": 50
+        },
+        "losers": [
+          {
+            "name": "Rifugio Gabriele Boccalatte e Mario Piolti",
+            "source": "openstreetmap",
+            "sourceId": "node/353084580",
+            "trust": 40,
+            "richness": 9,
+            "distance_m": 4.2
+          }
+        ],
+        "cluster_size": 2,
+        "sub_groups_in_cluster": 1
+      },
+      {
+        "winner": {
+          "name": "Rifugio Chiarella",
+          "source": "rifugi.cai",
+          "sourceId": "921200106",
+          "trust": 80,
+          "richness": 54
+        },
+        "losers": [
+          {
+            "name": "Rifugio Franco Chiarella all'Amianthe",
+            "source": "openstreetmap",
+            "sourceId": "node/353049840",
+            "trust": 40,
+            "richness": 9,
+            "distance_m": 0.0
+          },
+          {
+            "name": "Refuge Amianthé (Chiarella)",
+            "source": "refuges.info",
+            "sourceId": "2339",
+            "trust": 35,
+            "richness": 5,
+            "distance_m": 10.7
+          }
+        ],
+        "cluster_size": 3,
+        "sub_groups_in_cluster": 1
+      },
+      {
+        "winner": {
+          "name": "Rifugio Gonella",
+          "source": "rifugi.cai",
+          "sourceId": "921200129",
+          "trust": 80,
+          "richness": 55
+        },
+        "losers": [
+          {
+            "name": "Rifugio Francesco Gonella",
+            "source": "openstreetmap",
+            "sourceId": "way/77455428",
+            "trust": 40,
+            "richness": 10,
+            "distance_m": 2.5
+          }
+        ],
+        "cluster_size": 2,
+        "sub_groups_in_cluster": 1
+      },
+      {
+        "winner": {
+          "name": "Bivacco Leoni",
+          "source": "rifugi.cai",
+          "sourceId": "921200301",
+          "trust": 80,
+          "richness": 51
+        },
+        "losers": [
+          {
+            "name": "Bivacco Giovanni Leoni",
+            "source": "openstreetmap",
+            "sourceId": "way/233518547",
+            "trust": 40,
+            "richness": 3,
+            "distance_m": 12.1
+          }
+        ],
+        "cluster_size": 2,
+        "sub_groups_in_cluster": 1
+      }
+    ]
+  },
+  "summary": {
+    "input_count": 10085,
+    "wikidata_junk_removed": 3632,
+    "generic_junk_removed": 20,
+    "coord_duplicates_removed": 777,
+    "total_removed": 4429,
+    "output_count": 5656
+  }
+}

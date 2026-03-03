@@ -461,5 +461,18 @@
   "filterAnimali": "Animali",
   "filterBedsTitle": "Posti letto minimi",
   "filterBedsAny": "Tutti",
-  "noResultsWithFilters": "Prova a modificare i filtri per trovare risultati"
+  "noResultsWithFilters": "Prova a modificare i filtri per trovare risultati",
+
+  "appearance": "Aspetto",
+  "seasonTheme": "Tema stagionale",
+  "seasonAuto": "Automatico",
+  "seasonAutoDesc": "Segue la stagione corrente",
+  "seasonSpring": "Primavera",
+  "seasonSummer": "Estate",
+  "seasonAutumn": "Autunno",
+  "seasonWinter": "Inverno",
+  "themeMode": "Modalità tema",
+  "themeModeSystem": "Sistema",
+  "themeModeLight": "Chiaro",
+  "themeModeDark": "Scuro"
 }
