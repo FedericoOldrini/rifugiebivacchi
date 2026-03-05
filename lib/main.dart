@@ -89,7 +89,10 @@ class MyApp extends StatelessWidget {
             theme: themeProvider.lightTheme,
             darkTheme: themeProvider.darkTheme,
             themeMode: themeProvider.themeMode,
-            navigatorObservers: [AnalyticsService.instance.observer],
+            navigatorObservers: [
+              if (AnalyticsService.instance.observer != null)
+                AnalyticsService.instance.observer!,
+            ],
             home: const AppInitializer(),
             routes: {'/donations': (context) => const DonationsScreen()},
           );

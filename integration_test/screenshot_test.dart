@@ -24,26 +24,27 @@ import 'package:rifugi_bivacchi/main_screenshot.dart';
 /// nel framework prima della cattura dello screenshot.
 Future<void> waitForImages(
   WidgetTester tester, {
-  Duration timeout = const Duration(seconds: 15),
+  Duration timeout = const Duration(seconds: 30),
 }) async {
   // 1. Pre-carica tutte le immagini asset visibili nel widget tree.
   //    Cerchiamo tutti i widget Image che usano AssetImage e li
   //    pre-decodifichiamo nella cache del framework.
   final context = tester.element(find.byType(MaterialApp));
   final imageFinder = find.byType(Image);
+  final precacheFutures = <Future>[];
   for (final element in imageFinder.evaluate()) {
     final imageWidget = element.widget as Image;
     final provider = imageWidget.image;
     // Pre-carica l'immagine nella cache per forzarne la decodifica
-    try {
-      await precacheImage(provider, context);
-    } catch (_) {
-      // Ignora errori (immagine non trovata, ecc.) — lo screenshot
-      // mostrerà l'errorWidget se presente.
-    }
+    precacheFutures.add(precacheImage(provider, context).catchError((_) {}));
   }
+  // Attende che TUTTE le immagini siano decodificate in parallelo.
+  await Future.wait(precacheFutures);
 
-  // 2. Attendi che eventuali spinner di rete spariscano (per CachedNetworkImage).
+  // 2. Pump per renderizzare le immagini appena decodificate.
+  await tester.pump(const Duration(milliseconds: 500));
+
+  // 3. Attendi che eventuali spinner di rete spariscano (per CachedNetworkImage).
   final stopwatch = Stopwatch()..start();
   while (stopwatch.elapsed < timeout) {
     await tester.pump(const Duration(milliseconds: 500));
@@ -51,9 +52,20 @@ Future<void> waitForImages(
     if (spinners.evaluate().isEmpty) break;
   }
 
-  // 3. Pump aggiuntivi per garantire che il framework abbia renderizzato
+  // 4. Secondo giro di precache — nuove immagini potrebbero essere
+  //    apparse dopo che gli spinner sono spariti (es. lazy loaded).
+  final secondPassFutures = <Future>[];
+  for (final element in find.byType(Image).evaluate()) {
+    final imageWidget = element.widget as Image;
+    secondPassFutures.add(
+      precacheImage(imageWidget.image, context).catchError((_) {}),
+    );
+  }
+  await Future.wait(secondPassFutures);
+
+  // 5. Pump generosi per garantire che il framework abbia renderizzato
   //    tutte le immagini decodificate nel frame corrente.
-  for (var i = 0; i < 5; i++) {
+  for (var i = 0; i < 10; i++) {
     await tester.pump(const Duration(milliseconds: 200));
   }
   await tester.pumpAndSettle();
@@ -71,8 +83,12 @@ void main() {
       // Verifica che la lista sia visibile
       expect(find.text('Rifugio Auronzo'), findsOneWidget);
 
-      // Attendi che le thumbnail delle card siano caricate
+      // Attendi che tutte le thumbnail delle card siano completamente caricate
       await waitForImages(tester);
+
+      // Pump extra per assicurare che le immagini siano renderizzate
+      await tester.pump(const Duration(seconds: 2));
+      await tester.pumpAndSettle();
 
       await binding.convertFlutterSurfaceToImage();
       await tester.pumpAndSettle();
@@ -115,7 +131,11 @@ void main() {
       // Il titolo nell'AppBar del dettaglio contiene il nome
       expect(find.text('Ai piedi delle Tre Cime di Lavaredo'), findsOneWidget);
 
-      // Attendi che la hero image e la galleria siano caricate
+      // Attendi che la hero image, la galleria e tutte le foto siano caricate
+      await waitForImages(tester);
+
+      // Attesa extra per le immagini grandi (hero image + galleria)
+      await tester.pump(const Duration(seconds: 3));
       await waitForImages(tester);
 
       await binding.convertFlutterSurfaceToImage();
