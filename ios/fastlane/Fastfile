@@ -6,7 +6,7 @@
 #
 #   bundle exec fastlane beta              # Build + upload su TestFlight
 #   bundle exec fastlane release           # Build + upload per App Store review
-#   bundle exec fastlane screenshots       # Cattura + overlay + resize screenshot
+#   bundle exec fastlane screenshots       # Golden tests + overlay + resize
 #   bundle exec fastlane upload_screenshots # Upload screenshot su App Store Connect
 #   bundle exec fastlane full_release      # Screenshot + build + upload + git tag
 #   bundle exec fastlane bump_version      # Incrementa version/build number
@@ -23,13 +23,23 @@ PUBSPEC_PATH = File.join(PROJECT_ROOT, "pubspec.yaml")
 SCREENSHOTS_RAW_DIR = File.join(PROJECT_ROOT, "screenshots", "raw")
 SCREENSHOTS_FINAL_DIR = File.join(PROJECT_ROOT, "screenshots", "final")
 
+# Golden test output directory
+GOLDEN_OUTPUT_DIR = File.join(PROJECT_ROOT, "test", "screenshots", "goldens", "screenshots")
+
 # App Store Connect API Key
 ASC_KEY_ID = "M6WVD946N7"
 ASC_ISSUER_ID = "d2d23ddf-c15d-44d4-9a56-705cbab0f2dc"
 ASC_KEY_PATH = File.expand_path("~/private_keys/AuthKey_M6WVD946N7.p8")
 
-# Simulatore di default per screenshot
-DEFAULT_SIMULATOR = "iPhone 17 Pro Max"
+# Device sizes generati dai golden tests (deve matchare _devices nel test Dart)
+GOLDEN_DEVICE_NAMES = [
+  "iPhone_6_9",
+  "iPhone_6_7",
+  "iPhone_6_5",
+  "iPhone_5_5",
+  "iPad_Pro_13",
+  "iPad_Pro_12_9",
+]
 
 # ── Helper Methods ────────────────────────────────────────────────────────────
 
@@ -80,26 +90,52 @@ def flutter_build_ipa
   IPA_PATH
 end
 
-def find_simulator_udid(device_name)
-  output = `xcrun simctl list devices available --json`
-  data = JSON.parse(output)
-  data["devices"].each do |_runtime, devices|
-    devices.each do |device|
-      return device["udid"] if device["name"] == device_name
-    end
+# Riorganizza l'output dei golden tests nella struttura attesa da generate_screenshots.py
+#
+# Golden test output: test/screenshots/goldens/screenshots/<screen>.<device>.png
+# Struttura attesa:   screenshots/raw/<device>/<screen>.png
+#
+def organize_golden_screenshots
+  unless Dir.exist?(GOLDEN_OUTPUT_DIR)
+    UI.user_error!("Directory golden output non trovata: #{GOLDEN_OUTPUT_DIR}")
   end
-  nil
-end
 
-def get_booted_simulator_udid
-  output = `xcrun simctl list devices booted --json`
-  data = JSON.parse(output)
-  data["devices"].each do |_runtime, devices|
-    devices.each do |device|
-      return device["udid"] if device["state"] == "Booted"
+  # Pulisci raw dir precedente
+  FileUtils.rm_rf(SCREENSHOTS_RAW_DIR)
+
+  copied = 0
+  Dir.glob(File.join(GOLDEN_OUTPUT_DIR, "*.png")).each do |file|
+    basename = File.basename(file, ".png")
+
+    # Il filename ha formato: <screen_name>.<device_name>
+    # Es: "01_lista_rifugi.iPhone_6_9"
+    # Splitta sull'ultimo punto per separare screen_name e device_name
+    last_dot = basename.rindex(".")
+    next unless last_dot
+
+    screen_name = basename[0...last_dot]
+    device_name = basename[(last_dot + 1)..]
+
+    # Verifica che il device sia tra quelli attesi
+    next unless GOLDEN_DEVICE_NAMES.include?(device_name)
+
+    # Copia nella struttura per-device
+    dest_dir = File.join(SCREENSHOTS_RAW_DIR, device_name)
+    FileUtils.mkdir_p(dest_dir)
+    FileUtils.cp(file, File.join(dest_dir, "#{screen_name}.png"))
+    copied += 1
+  end
+
+  UI.success("#{copied} screenshot organizzati da golden tests -> raw/per-device")
+
+  # Mostra riepilogo
+  GOLDEN_DEVICE_NAMES.each do |device|
+    device_dir = File.join(SCREENSHOTS_RAW_DIR, device)
+    if Dir.exist?(device_dir)
+      count = Dir.glob(File.join(device_dir, "*.png")).length
+      UI.message("  #{device}/: #{count} screenshot")
     end
   end
-  nil
 end
 
 # ── Platform ──────────────────────────────────────────────────────────────────
@@ -216,51 +252,39 @@ platform :ios do
     end
   end
 
-  # ── Screenshots ───────────────────────────────────────────────────────────
+  # ── Screenshots (Golden Tests) ───────────────────────────────────────────
 
-  desc "Cattura screenshot, applica overlay e ridimensiona"
-  desc "Uso: fastlane screenshots [device:'iPhone 17 Pro Max'] [skip_capture:true]"
+  desc "Genera screenshot con golden tests, applica overlay e ridimensiona"
+  desc "Uso: fastlane screenshots [skip_capture:true] [skip_overlay:true]"
   lane :screenshots do |options|
-    device_name = options[:device] || DEFAULT_SIMULATOR
-
     unless options[:skip_capture]
-      UI.header("Cattura Screenshot")
+      UI.header("Generazione Screenshot (Golden Tests)")
 
-      # Trova o avvia simulatore
-      udid = get_booted_simulator_udid
-      if udid
-        UI.message("Simulatore già avviato (UDID: #{udid[0..7]}...)")
-      else
-        udid = find_simulator_udid(device_name)
-        UI.user_error!("Simulatore '#{device_name}' non trovato") unless udid
-        UI.message("Avvio simulatore #{device_name}...")
-        sh("xcrun", "simctl", "boot", udid)
-        sh("open", "-a", "Simulator")
-        sleep(5)
-      end
-
-      # Crea directory raw
-      FileUtils.mkdir_p(SCREENSHOTS_RAW_DIR)
-
-      # Esegui integration test
-      UI.message("Esecuzione integration test per cattura screenshot...")
+      # Esegui golden tests — genera 30 PNG individuali (5 schermate x 6 device)
+      # Nessun simulatore necessario: i widget vengono renderizzati direttamente nel processo di test
       Dir.chdir(PROJECT_ROOT) do
-        sh(
-          "flutter", "drive",
-          "--driver=test_driver/integration_driver.dart",
-          "--target=integration_test/screenshot_test.dart",
-          "-d", udid,
-          "--no-pub"
-        )
+        sh("flutter", "test", "--update-goldens", "--tags=screenshots", "test/screenshots/")
       end
 
-      UI.success("Screenshot catturati!")
+      # Verifica output
+      golden_count = Dir.glob(File.join(GOLDEN_OUTPUT_DIR, "*.png")).length
+      UI.success("#{golden_count} golden screenshot generati!")
+
+      if golden_count == 0
+        UI.user_error!("Nessun golden screenshot trovato in #{GOLDEN_OUTPUT_DIR}")
+      end
     end
 
+    # Riorganizza golden output nella struttura per-device attesa da generate_screenshots.py
+    UI.header("Organizzazione Screenshot")
+    organize_golden_screenshots
+
     # Applica overlay e ridimensiona
-    UI.header("Overlay e Ridimensionamento")
-    Dir.chdir(PROJECT_ROOT) do
-      sh("python3", "tools/generate_screenshots.py", "--skip-test")
+    unless options[:skip_overlay]
+      UI.header("Overlay e Ridimensionamento")
+      Dir.chdir(PROJECT_ROOT) do
+        sh("python3", "tools/generate_screenshots.py", "--skip-test")
+      end
     end
 
     # Conta risultati
@@ -360,7 +384,8 @@ platform :ios do
     checks = {
       "pubspec.yaml" => File.exist?(PUBSPEC_PATH),
       "API Key P8" => File.exist?(ASC_KEY_PATH),
-      "Screenshot raw" => Dir.exist?(SCREENSHOTS_RAW_DIR) && !Dir.glob(File.join(SCREENSHOTS_RAW_DIR, "*.png")).empty?,
+      "Golden tests" => Dir.exist?(File.join(PROJECT_ROOT, "test", "screenshots")),
+      "Screenshot raw" => Dir.exist?(SCREENSHOTS_RAW_DIR) && !Dir.glob(File.join(SCREENSHOTS_RAW_DIR, "**", "*.png")).empty?,
       "Screenshot final" => Dir.exist?(SCREENSHOTS_FINAL_DIR) && !Dir.glob(File.join(SCREENSHOTS_FINAL_DIR, "**", "*.png")).empty?,
     }
 
