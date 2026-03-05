@@ -145,9 +145,7 @@ wheels/
 
 # Screenshot generation (generati automaticamente, non committare)
 screenshots/raw/
-screenshots/with_overlay/
 screenshots/final/
-test_driver/screenshots/
 test/screenshots/goldens/
 
 # Fastlane

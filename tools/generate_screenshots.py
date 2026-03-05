@@ -1,38 +1,30 @@
 #!/usr/bin/env python3
 """
-Screenshot Generator per App Store - Rifugi e Bivacchi
+Screenshot Overlay & Resize — Rifugi e Bivacchi
 
-Automatizza la creazione di screenshot per App Store:
-1. Avvia simulatori iOS (uno alla volta)
-2. Esegue integration_test per catturare screenshot su ogni device
-3. Aggiunge overlay con titoli e sottotitoli
-4. Ridimensiona per tutte le dimensioni App Store richieste
+Applica overlay (titolo + sottotitolo) agli screenshot raw generati dai golden tests
+e ridimensiona alle dimensioni esatte richieste dall'App Store.
 
-Supporta due modalità:
-- Multi-device (default): cattura da tutti i simulatori configurati
-  per massima qualità nativa, poi genera le dimensioni legacy via resize
-- Single-device: cattura da un solo simulatore e ridimensiona per tutti
+Questo script viene invocato da Fastlane con:
+    python3 tools/generate_screenshots.py --skip-test
+
+I raw screenshot devono già essere presenti in screenshots/raw/<device_name>/.
+Vengono generati dai golden tests (test/screenshots/screenshot_golden_test.dart)
+e organizzati dal Fastfile (helper organize_golden_screenshots).
 
 Requisiti:
 - Python 3.7+
 - Pillow (PIL): pip3 install Pillow
-- Xcode e simulatori iOS installati
-- Flutter SDK
 
 Uso:
-    python3 tools/generate_screenshots.py                    # Multi-device capture
-    python3 tools/generate_screenshots.py --device "iPhone 17 Pro Max"  # Single-device
-    python3 tools/generate_screenshots.py --skip-test        # Solo overlay su screenshot esistenti
-    python3 tools/generate_screenshots.py --no-overlay       # Solo cattura, senza overlay
+    python3 tools/generate_screenshots.py --skip-test        # Overlay + resize su raw esistenti
+    python3 tools/generate_screenshots.py --skip-test --no-resize  # Solo overlay, senza resize
 """
 
-import subprocess
-import time
 import sys
 import argparse
-import json
 from pathlib import Path
-from typing import List, Optional, Tuple
+from typing import Optional, Tuple
 
 try:
     from PIL import Image, ImageDraw, ImageFont
@@ -44,19 +36,6 @@ except ImportError:
 PROJECT_ROOT = Path(__file__).parent.parent
 RAW_DIR = PROJECT_ROOT / "screenshots" / "raw"
 FINAL_DIR = PROJECT_ROOT / "screenshots" / "final"
-BUNDLE_ID = "it.federicooldrini.rifugiebivacchi"
-
-# Simulatori iOS supportati per ogni dimensione App Store
-# Questi device producono screenshot a risoluzione nativa
-SIMULATORS = {
-    "iPhone_6_9": "iPhone 17 Pro Max",
-    "iPhone_6_7": "iPhone 17 Pro",
-    "iPhone_6_5": "iPhone Air",
-    "iPad_Pro_13": "iPad Pro 13-inch (M5)",
-}
-
-# Device di default per la cattura single-device (poi si ridimensiona per gli altri)
-DEFAULT_DEVICE = "iPhone 17 Pro Max"
 
 # Dimensioni App Store richieste
 APP_STORE_SIZES = {
@@ -69,14 +48,14 @@ APP_STORE_SIZES = {
 }
 
 # Mapping per le dimensioni legacy: quale device nativo usare come source per il resize
-# Queste dimensioni NON hanno un simulatore dedicato, quindi vengono ricavate
+# Queste dimensioni NON hanno un golden test dedicato, quindi vengono ricavate
 # ridimensionando lo screenshot del device nativo più simile
 LEGACY_SIZE_SOURCE = {
-    "iPhone_5_5": "iPhone_6_5",  # iPhone 5.5" ← resize da iPhone 6.5" (Air)
+    "iPhone_5_5": "iPhone_6_5",  # iPhone 5.5" ← resize da iPhone 6.5"
     "iPad_Pro_12_9": "iPad_Pro_13",  # iPad Pro 12.9" ← resize da iPad Pro 13"
 }
 
-# Configurazione screenshot (deve matchare i nomi in integration_test/screenshot_test.dart)
+# Configurazione screenshot (deve matchare i nomi nel golden test)
 SCREENSHOTS_CONFIG = {
     "01_lista_rifugi": {
         "title": "Scopri oltre 1000 rifugi",
@@ -111,238 +90,6 @@ def print_header(text: str):
     print(f"\n{'=' * 70}")
     print(f"🏔️  {text}")
     print(f"{'=' * 70}\n")
-
-
-def print_step(step: int, total: int, text: str):
-    """Stampa step corrente"""
-    print(f"\n📍 [{step}/{total}] {text}")
-
-
-def run_command(
-    cmd: List[str], capture_output: bool = True, cwd: Optional[Path] = None
-) -> subprocess.CompletedProcess:
-    """Esegue comando shell"""
-    try:
-        result = subprocess.run(
-            cmd, capture_output=capture_output, text=True, check=False, cwd=cwd
-        )
-        return result
-    except Exception as e:
-        print(f"❌ Errore eseguendo comando: {' '.join(cmd)}")
-        print(f"   {e}")
-        sys.exit(1)
-
-
-def get_booted_simulator_udid() -> Optional[str]:
-    """Restituisce l'UDID del simulatore già avviato, se presente"""
-    result = run_command(["xcrun", "simctl", "list", "devices", "booted", "--json"])
-    if result.returncode != 0:
-        return None
-    try:
-        data = json.loads(result.stdout)
-        for runtime, devices in data.get("devices", {}).items():
-            for device in devices:
-                if device.get("state") == "Booted":
-                    return device["udid"]
-    except (json.JSONDecodeError, KeyError):
-        pass
-    return None
-
-
-def find_simulator_udid(device_name: str) -> Optional[str]:
-    """Trova l'UDID di un simulatore dato il nome"""
-    result = run_command(["xcrun", "simctl", "list", "devices", "--json"])
-    if result.returncode != 0:
-        return None
-    try:
-        data = json.loads(result.stdout)
-        for runtime, devices in data.get("devices", {}).items():
-            for device in devices:
-                if device.get("name") == device_name and device.get(
-                    "isAvailable", False
-                ):
-                    return device["udid"]
-    except (json.JSONDecodeError, KeyError):
-        pass
-    return None
-
-
-def boot_simulator(device_name: str) -> Optional[str]:
-    """Avvia simulatore e restituisce UDID"""
-    print(f"   Cerco simulatore: {device_name}...")
-
-    udid = find_simulator_udid(device_name)
-    if not udid:
-        print(f"   ❌ Simulatore '{device_name}' non trovato")
-        print(f"   Simulatori disponibili:")
-        result = run_command(["xcrun", "simctl", "list", "devices", "available"])
-        for line in result.stdout.split("\n"):
-            if "iPhone" in line or "iPad" in line:
-                print(f"      {line.strip()}")
-        return None
-
-    # Verifica se già avviato
-    booted = get_booted_simulator_udid()
-    if booted == udid:
-        print(f"   ✅ Simulatore già avviato (UDID: {udid[:8]}...)")
-        return udid
-
-    # Spegni eventuali altri simulatori avviati
-    if booted:
-        print(f"   Spengo simulatore precedente...")
-        run_command(["xcrun", "simctl", "shutdown", booted])
-        time.sleep(2)
-
-    # Avvia simulatore
-    print(f"   Avvio simulatore (UDID: {udid[:8]}...)...")
-    run_command(["xcrun", "simctl", "boot", udid])
-    run_command(["open", "-a", "Simulator"])
-    time.sleep(5)
-
-    print(f"   ✅ Simulatore avviato")
-    return udid
-
-
-def shutdown_simulator(udid: str):
-    """Spegne un simulatore"""
-    run_command(["xcrun", "simctl", "shutdown", udid])
-    time.sleep(2)
-
-
-def run_integration_test(device_id: str, output_dir: Optional[Path] = None) -> bool:
-    """Esegue integration test per catturare screenshot.
-
-    Args:
-        device_id: UDID del simulatore
-        output_dir: Directory dove salvare i raw screenshot.
-                    Se None, usa la directory di default (screenshots/raw).
-                    Il test driver salva sempre in screenshots/raw/,
-                    quindi se output_dir è diversa, i file vengono spostati dopo il test.
-    """
-    print(f"   Esecuzione integration_test su device {device_id[:8]}...")
-    print(f"   (il primo build può richiedere qualche minuto)")
-
-    # Pulisci la directory raw di default prima del test
-    # (il test driver salva sempre qui)
-    default_raw = RAW_DIR
-    if default_raw.exists():
-        for f in default_raw.glob("*.png"):
-            f.unlink()
-
-    # Usa flutter drive con driver che salva gli screenshot su disco
-    result = run_command(
-        [
-            "flutter",
-            "drive",
-            "--driver=test_driver/integration_driver.dart",
-            "--target=integration_test/screenshot_test.dart",
-            "-d",
-            device_id,
-            "--no-pub",
-        ],
-        capture_output=False,
-        cwd=PROJECT_ROOT,
-    )
-
-    if result.returncode != 0:
-        print(f"   ❌ Integration test fallito (exit code: {result.returncode})")
-        return False
-
-    # Sposta i file nella directory di output se diversa da quella di default
-    if output_dir and output_dir != default_raw:
-        output_dir.mkdir(parents=True, exist_ok=True)
-        for src in default_raw.glob("*.png"):
-            dest = output_dir / src.name
-            src.rename(dest)
-            print(f"   📁 {src.name} → {output_dir.relative_to(PROJECT_ROOT)}/")
-
-    print(f"   ✅ Integration test completato")
-    return True
-
-
-def capture_multi_device() -> bool:
-    """Cattura screenshot da tutti i simulatori configurati.
-
-    Per ogni device in SIMULATORS:
-    1. Avvia il simulatore
-    2. Esegue il test e salva in screenshots/raw/<size_name>/
-    3. Spegne il simulatore
-
-    Returns:
-        True se almeno un device ha catturato con successo
-    """
-    print_header("Cattura Multi-Device")
-    total_devices = len(SIMULATORS)
-    success_count = 0
-
-    for idx, (size_name, device_name) in enumerate(SIMULATORS.items(), 1):
-        print(f"\n{'─' * 60}")
-        print(f"📱 Device {idx}/{total_devices}: {device_name} ({size_name})")
-        print(f"{'─' * 60}")
-
-        # Avvia simulatore
-        udid = boot_simulator(device_name)
-        if not udid:
-            print(f"   ⚠️  Simulatore '{device_name}' non disponibile, salto...")
-            continue
-
-        # Directory di output per questo device
-        device_raw_dir = RAW_DIR / size_name
-
-        # Esegui integration test
-        if run_integration_test(udid, output_dir=device_raw_dir):
-            success_count += 1
-            # Conta screenshot catturati
-            count = (
-                len(list(device_raw_dir.glob("*.png")))
-                if device_raw_dir.exists()
-                else 0
-            )
-            print(f"   📸 {count} screenshot catturati per {size_name}")
-        else:
-            print(f"   ⚠️  Cattura fallita per {device_name}")
-
-        # Spegni simulatore per liberare risorse
-        shutdown_simulator(udid)
-
-    print(f"\n✅ Cattura completata: {success_count}/{total_devices} device riusciti")
-    return success_count > 0
-
-
-def capture_single_device(device_name: str) -> bool:
-    """Cattura screenshot da un solo device (modalità legacy).
-
-    Salva direttamente in screenshots/raw/ senza sotto-directory.
-    """
-    udid = boot_simulator(device_name)
-    if not udid:
-        return False
-
-    RAW_DIR.mkdir(parents=True, exist_ok=True)
-    return run_integration_test(udid)
-
-
-def find_raw_screenshots() -> List[Path]:
-    """Trova gli screenshot raw catturati dal test"""
-    # Integration test li salva nella directory del progetto o in una directory specifica
-    # Controlliamo diverse posizioni possibili
-    search_dirs = [
-        RAW_DIR,
-        PROJECT_ROOT / "build" / "screenshots",
-        PROJECT_ROOT,
-    ]
-
-    screenshots = []
-    for search_dir in search_dirs:
-        if search_dir.exists():
-            for png in search_dir.glob("*.png"):
-                # Matcha solo i nomi degli screenshot attesi
-                for key in SCREENSHOTS_CONFIG:
-                    if key in png.stem:
-                        screenshots.append(png)
-                        break
-
-    return sorted(set(screenshots))
 
 
 def add_overlay(
@@ -428,12 +175,7 @@ def add_overlay(
 
 
 def has_multi_device_raw() -> bool:
-    """Verifica se gli screenshot raw sono organizzati per device (multi-device mode).
-
-    Returns:
-        True se esiste almeno una sotto-directory in screenshots/raw/ con
-        un nome che corrisponde a una dimensione in SIMULATORS o APP_STORE_SIZES.
-    """
+    """Verifica se gli screenshot raw sono organizzati per device (multi-device mode)."""
     if not RAW_DIR.exists():
         return False
     for subdir in RAW_DIR.iterdir():
@@ -444,11 +186,11 @@ def has_multi_device_raw() -> bool:
 
 
 def process_overlays_multi_device() -> int:
-    """Applica overlay usando screenshot raw per-device (multi-device mode).
+    """Applica overlay usando screenshot raw per-device.
 
-    Per le dimensioni native (che hanno un simulatore):
+    Per le dimensioni native (che hanno un golden test dedicato):
       Usa i raw dal device corrispondente → overlay + resize alla dimensione esatta
-    Per le dimensioni legacy (senza simulatore):
+    Per le dimensioni legacy (senza golden test dedicato):
       Usa i raw dal device source più simile → overlay + resize
     """
     processed = 0
@@ -456,12 +198,10 @@ def process_overlays_multi_device() -> int:
     for size_name, target_dims in APP_STORE_SIZES.items():
         # Determina la directory sorgente per questa dimensione
         if size_name in LEGACY_SIZE_SOURCE:
-            # Dimensione legacy: usa il device source
             source_size = LEGACY_SIZE_SOURCE[size_name]
             source_dir = RAW_DIR / source_size
             label = f"(resize da {source_size})"
         else:
-            # Dimensione nativa: usa i raw del device corrispondente
             source_dir = RAW_DIR / size_name
             label = "(nativo)"
 
@@ -474,7 +214,6 @@ def process_overlays_multi_device() -> int:
         print(f"\n   📐 {size_name} {target_dims[0]}×{target_dims[1]} {label}")
 
         for screenshot_path in sorted(source_dir.glob("*.png")):
-            # Trova configurazione overlay
             config = None
             for key, cfg in SCREENSHOTS_CONFIG.items():
                 if key in screenshot_path.stem:
@@ -499,7 +238,7 @@ def process_overlays_multi_device() -> int:
 
 
 def process_overlays_single_device(resize: bool = True) -> int:
-    """Applica overlay a screenshot raw flat (single-device / legacy mode)."""
+    """Applica overlay a screenshot raw flat (fallback se non organizzati per device)."""
     screenshots = list(RAW_DIR.glob("*.png")) if RAW_DIR.exists() else []
 
     if not screenshots:
@@ -510,7 +249,6 @@ def process_overlays_single_device(resize: bool = True) -> int:
     processed = 0
 
     for screenshot_path in sorted(screenshots):
-        # Trova configurazione
         config = None
         for key, cfg in SCREENSHOTS_CONFIG.items():
             if key in screenshot_path.stem:
@@ -522,7 +260,6 @@ def process_overlays_single_device(resize: bool = True) -> int:
             continue
 
         if resize:
-            # Genera versione per ogni dimensione App Store
             for size_name, size_dims in APP_STORE_SIZES.items():
                 output_path = FINAL_DIR / size_name / screenshot_path.name
                 if add_overlay(
@@ -535,7 +272,6 @@ def process_overlays_single_device(resize: bool = True) -> int:
                     print(f"   ✅ {size_name}/{screenshot_path.name}")
                     processed += 1
         else:
-            # Mantieni dimensione originale
             output_path = FINAL_DIR / screenshot_path.name
             if add_overlay(
                 screenshot_path, output_path, config["title"], config["subtitle"]
@@ -547,12 +283,7 @@ def process_overlays_single_device(resize: bool = True) -> int:
 
 
 def process_overlays(resize: bool = True) -> int:
-    """Applica overlay, scegliendo automaticamente tra multi-device e single-device.
-
-    Se trova screenshot organizzati per device (screenshots/raw/<size_name>/),
-    usa la modalità multi-device per massima qualità.
-    Altrimenti, usa la modalità single-device con resize.
-    """
+    """Applica overlay, scegliendo automaticamente tra multi-device e single-device."""
     if has_multi_device_raw():
         print("   📱 Modalità multi-device: screenshot nativi per ogni dimensione")
         return process_overlays_multi_device()
@@ -563,35 +294,12 @@ def process_overlays(resize: bool = True) -> int:
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Genera screenshot per App Store - Rifugi e Bivacchi"
-    )
-    parser.add_argument(
-        "--device",
-        type=str,
-        default=None,
-        help=f"Nome simulatore iOS per cattura single-device (default: {DEFAULT_DEVICE}). "
-        f"Se specificato, usa solo questo device e ridimensiona per tutti.",
-    )
-    parser.add_argument(
-        "--multi-device",
-        action="store_true",
-        default=True,
-        help="Cattura da tutti i simulatori configurati per qualità nativa (default)",
-    )
-    parser.add_argument(
-        "--single-device",
-        action="store_true",
-        help="Cattura da un solo simulatore e ridimensiona per tutti (più veloce)",
+        description="Applica overlay e ridimensiona screenshot per App Store"
     )
     parser.add_argument(
         "--skip-test",
         action="store_true",
-        help="Salta integration test, usa screenshot raw esistenti",
-    )
-    parser.add_argument(
-        "--no-overlay",
-        action="store_true",
-        help="Solo cattura screenshot, senza overlay",
+        help="Usa screenshot raw esistenti (standard per Fastlane)",
     )
     parser.add_argument(
         "--no-resize",
@@ -600,96 +308,59 @@ def main():
     )
     args = parser.parse_args()
 
-    # Se --device è specificato o --single-device è usato, forza modalità single-device
-    use_single_device = args.single_device or args.device is not None
-    device_name = args.device or DEFAULT_DEVICE
-
-    print_header("Screenshot Generator - Rifugi e Bivacchi")
+    print_header("Screenshot Overlay — Rifugi e Bivacchi")
 
     if not args.skip_test:
-        if use_single_device:
-            print(f"   Modalità: Single-device ({device_name})")
-        else:
-            print(f"   Modalità: Multi-device ({len(SIMULATORS)} simulatori)")
-    print()
+        print("❌ La cattura automatica via simulatore è stata rimossa.")
+        print("   Usa i golden tests tramite Fastlane:")
+        print("   cd ios && bundle exec fastlane screenshots")
+        print()
+        print("   Oppure usa --skip-test per applicare overlay a raw esistenti.")
+        sys.exit(1)
 
-    total_steps = 3
-    if args.skip_test:
-        total_steps = 1
-    elif args.no_overlay:
-        total_steps = 2
+    # Verifica che ci siano raw screenshot
+    if not RAW_DIR.exists():
+        print(f"❌ Directory raw non trovata: {RAW_DIR}")
+        print(f"   Esegui prima i golden tests tramite Fastlane:")
+        print(f"   cd ios && bundle exec fastlane screenshots")
+        sys.exit(1)
 
-    # Step 1: Cattura screenshot
-    if not args.skip_test:
-        print_step(1, total_steps, "Cattura screenshot")
+    # Applica overlay e ridimensionamento
+    processed = process_overlays(resize=not args.no_resize)
 
-        if use_single_device:
-            # Modalità single-device (legacy)
-            success = capture_single_device(device_name)
-            if not success:
-                print("\n❌ Cattura screenshot fallita")
-                sys.exit(1)
+    if processed == 0:
+        print("\n⚠️  Nessun screenshot processato!")
+        print(f"   Verifica che ci siano screenshot .png in {RAW_DIR}")
+        print(f"   con nomi che contengono: {', '.join(SCREENSHOTS_CONFIG.keys())}")
+        sys.exit(1)
 
-            # Cerca e sposta screenshot nella directory raw se necessario
-            found = find_raw_screenshots()
-            print(f"   Trovati {len(found)} screenshot raw")
-            for src in found:
-                if src.parent != RAW_DIR:
-                    dest = RAW_DIR / src.name
-                    src.rename(dest)
-                    print(f"   📁 Spostato: {src.name} → screenshots/raw/")
-        else:
-            # Modalità multi-device
-            if not capture_multi_device():
-                print("\n❌ Cattura multi-device fallita (nessun device riuscito)")
-                sys.exit(1)
-
-    # Step 2: Applica overlay
-    if not args.no_overlay:
-        step = 2 if not args.skip_test else 1
-        print_step(step, total_steps, "Applicazione overlay e ridimensionamento")
-
-        processed = process_overlays(resize=not args.no_resize)
-
-        if processed == 0:
-            print("\n⚠️  Nessun screenshot processato!")
-            print(f"   Verifica che ci siano screenshot .png in {RAW_DIR}")
-            print(f"   con nomi che contengono: {', '.join(SCREENSHOTS_CONFIG.keys())}")
-            sys.exit(1)
-
-        print(f"\n   ✅ {processed} screenshot finali generati")
+    print(f"\n   ✅ {processed} screenshot finali generati")
 
     # Riepilogo
     print_header("Completato!")
 
     if RAW_DIR.exists():
-        # Conta raw (sia flat che per-device)
-        raw_flat = list(RAW_DIR.glob("*.png"))
         raw_per_device = list(RAW_DIR.rglob("*.png"))
         if has_multi_device_raw():
-            print(
-                f"📁 Screenshot raw:   {RAW_DIR} ({len(raw_per_device)} file in {len(SIMULATORS)} device)"
-            )
+            print(f"📁 Screenshot raw:   {RAW_DIR} ({len(raw_per_device)} file)")
             for subdir in sorted(RAW_DIR.iterdir()):
                 if subdir.is_dir() and list(subdir.glob("*.png")):
                     count = len(list(subdir.glob("*.png")))
                     print(f"   └── {subdir.name}/ ({count} screenshot)")
         else:
+            raw_flat = list(RAW_DIR.glob("*.png"))
             print(f"📁 Screenshot raw:   {RAW_DIR} ({len(raw_flat)} file)")
 
     if FINAL_DIR.exists():
         final_count = len(list(FINAL_DIR.rglob("*.png")))
         print(f"📁 Screenshot finali: {FINAL_DIR} ({final_count} file)")
-
-        # Mostra struttura directory
         for size_dir in sorted(FINAL_DIR.iterdir()):
             if size_dir.is_dir():
                 count = len(list(size_dir.glob("*.png")))
                 print(f"   └── {size_dir.name}/ ({count} screenshot)")
 
     print(f"\n📤 Pronti per upload su App Store Connect!")
-    print(f"   Usa: python3 tools/upload_screenshots.py")
-    print(f"   Oppure: cd ios && bundle exec fastlane upload_screenshots")
+    print(f"   cd ios && bundle exec fastlane upload_screenshots")
     print(f"\n🎉 Fatto!")
 
 

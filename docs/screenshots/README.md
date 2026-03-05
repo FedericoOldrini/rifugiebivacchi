@@ -151,9 +151,7 @@ rifugibivacchi/
 │       └── goldens/
 │           └── screenshots/                       # Output: 30 PNG (screen.device.png)
 ├── tools/
-│   ├── generate_screenshots.py                    # Overlay + resize (--skip-test)
-│   ├── add_overlays.py                            # Overlay standalone
-│   └── upload_screenshots.py                      # Upload su App Store Connect
+│   └── generate_screenshots.py                    # Overlay + resize (--skip-test)
 ├── screenshots/
 │   ├── raw/                                       # Per-device raw (da golden output)
 │   │   ├── iPhone_6_9/
