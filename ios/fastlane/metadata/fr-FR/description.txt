@@ -1,0 +1,66 @@
+Planifiez vos aventures en montagne avec Refuges de Montagne, l'application complète pour découvrir les refuges alpins, bivouacs et alpages dans les Alpes italiennes.
+
+FONCTIONNALITÉS PRINCIPALES
+
+🏔️ PLUS DE 5 600 REFUGES ET BIVOUACS
+Accédez à la base de données complète des refuges du Club Alpin Italien (CAI) avec des informations toujours à jour sur les installations, services et contacts.
+
+🗺️ CARTE INTERACTIVE
+Visualisez tous les refuges sur une carte détaillée avec clustering intelligent. Naviguez facilement parmi des centaines d'établissements et trouvez les plus proches de votre position.
+
+📍 RECHERCHE GÉOLOCALISÉE
+Trouvez automatiquement les refuges les plus proches ou recherchez par nom, région, altitude et services disponibles.
+
+ℹ️ INFORMATIONS DÉTAILLÉES
+Pour chaque refuge vous trouverez :
+- Nom et localité
+- Altitude et coordonnées GPS
+- Capacité en couchages
+- Période d'ouverture
+- Contacts (téléphone, e-mail, site web)
+- Services disponibles (restaurant, douches, WiFi, etc.)
+- Temps d'accès et difficulté
+- Photos de l'établissement
+
+⭐ FAVORIS ET PASSEPORT
+- Enregistrez vos refuges préférés pour un accès rapide
+- Consignez vos visites avec le Passeport des Refuges
+- Suivez vos aventures en montagne
+
+🔍 FILTRES AVANCÉS
+Recherchez des refuges par :
+- Altitude min./max.
+- Services spécifiques (restaurant, douches, WiFi)
+- Période d'ouverture
+- Capacité en couchages
+- Temps d'accès
+
+📱 FONCTIONS INTELLIGENTES
+- Partagez les refuges avec vos amis
+- Appelez directement le refuge depuis l'application
+- Obtenez l'itinéraire en un seul geste
+- Consultez les prévisions météo et le site web
+
+🔐 CONFIDENTIALITÉ ET SÉCURITÉ
+- Vos données restent sur votre appareil
+- Accès optionnel avec compte pour la synchronisation
+- Aucun suivi non autorisé
+
+IDÉALE POUR
+- Randonneurs et alpinistes
+- Trekkeurs et passionnés de montagne
+- Familles planifiant des sorties en montagne
+- Cyclistes et traileurs
+- Tous ceux qui aiment la montagne
+
+POURQUOI CHOISIR REFUGES DE MONTAGNE
+✓ Base de données officielle CAI toujours à jour
+✓ Interface simple et intuitive
+✓ Fonctionne hors ligne (après le premier chargement des données)
+✓ Gratuite avec toutes les fonctionnalités incluses
+✓ Aucune publicité intrusive
+✓ Développée par des passionnés de montagne
+
+Que vous planifiiez un week-end dans les Dolomites, un trek au Mont Rose ou une traversée des Alpes, Refuges de Montagne est le compagnon parfait pour chaque aventure.
+
+Téléchargez maintenant et commencez à explorer les merveilles des Alpes italiennes !

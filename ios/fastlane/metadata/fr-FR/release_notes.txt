@@ -1,0 +1,8 @@
+Nouveautés de la version 1.1.0 :
+
+• Thèmes saisonniers : l'application change d'apparence avec les saisons
+• Base de données élargie à plus de 5 600 établissements provenant de sources multiples
+• Filtres avancés : type, région, altitude, services, accessibilité, couchages
+• Tri personnalisable des résultats
+• Légende de la carte pour identifier les types d'établissements
+• Améliorations des performances et de la stabilité

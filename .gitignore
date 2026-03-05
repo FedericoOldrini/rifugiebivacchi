@@ -43,6 +43,7 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+/android/build/
 
 # Android related
 **/android/**/gradle-wrapper.jar
@@ -158,3 +159,6 @@ ios/fastlane/README.md
 # Bundler
 ios/vendor/
 ios/.bundle/
+
+# Release artifacts
+releases/

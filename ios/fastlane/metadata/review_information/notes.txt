@@ -1,0 +1,15 @@
+Questa app fornisce informazioni su rifugi di montagna in Italia utilizzando dati pubblici del Club Alpino Italiano (CAI).
+
+Note importanti:
+1. La localizzazione è opzionale - l'app funziona anche senza
+2. I dati sono pubblici e non richiedono autenticazione
+3. Le donazioni in-app sono consumabili (caffè, pranzo, donazione generosa)
+4. Nessun contenuto generato dagli utenti
+
+Come testare:
+1. Aprire l'app
+2. Concedere permessi posizione (opzionale)
+3. Navigare nella lista rifugi
+4. Toccare un rifugio per vedere i dettagli
+5. Usare la mappa per visualizzazione geografica
+6. Testare ricerca e filtri

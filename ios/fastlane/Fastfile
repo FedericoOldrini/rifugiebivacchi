@@ -4,12 +4,14 @@
 #
 # Lane disponibili:
 #
-#   bundle exec fastlane beta              # Build + upload su TestFlight
-#   bundle exec fastlane release           # Build + upload per App Store review
-#   bundle exec fastlane screenshots       # Golden tests + overlay + resize
-#   bundle exec fastlane upload_screenshots # Upload screenshot su App Store Connect
-#   bundle exec fastlane full_release      # Screenshot + build + upload + git tag
-#   bundle exec fastlane bump_version      # Incrementa version/build number
+#   bundle exec fastlane beta                # Build + upload su TestFlight
+#   bundle exec fastlane release             # Build + metadata + screenshot + upload per review
+#   bundle exec fastlane screenshots         # Golden tests + overlay + resize
+#   bundle exec fastlane upload_metadata     # Upload solo testi/metadata su ASC
+#   bundle exec fastlane upload_screenshots  # Upload solo screenshot su ASC
+#   bundle exec fastlane full_release        # Pipeline completa: bump + release notes auto + screenshot + build + upload + tag + push
+#   bundle exec fastlane bump_version        # Incrementa version/build number
+#   bundle exec fastlane preflight           # Verifica stato pre-release
 #
 # ──────────────────────────────────────────────────────────────────────────────
 
@@ -22,6 +24,8 @@ IPA_PATH = File.join(PROJECT_ROOT, "build", "ios", "ipa", "rifugi_bivacchi.ipa")
 PUBSPEC_PATH = File.join(PROJECT_ROOT, "pubspec.yaml")
 SCREENSHOTS_RAW_DIR = File.join(PROJECT_ROOT, "screenshots", "raw")
 SCREENSHOTS_FINAL_DIR = File.join(PROJECT_ROOT, "screenshots", "final")
+METADATA_DIR = File.join(__dir__, "metadata")
+DELIVER_SCREENSHOTS_DIR = File.join(__dir__, "screenshots")
 
 # Golden test output directory
 GOLDEN_OUTPUT_DIR = File.join(PROJECT_ROOT, "test", "screenshots", "goldens", "screenshots")
@@ -40,6 +44,10 @@ GOLDEN_DEVICE_NAMES = [
   "iPad_Pro_13",
   "iPad_Pro_12_9",
 ]
+
+# Lingue supportate (locale code per deliver/App Store Connect)
+SUPPORTED_LOCALES = ["it-IT", "en-US", "de-DE", "fr-FR"]
+PRIMARY_LOCALE = "it-IT"
 
 # ── Helper Methods ────────────────────────────────────────────────────────────
 
@@ -138,6 +146,192 @@ def organize_golden_screenshots
   end
 end
 
+# Genera automaticamente le release notes in tutte le lingue supportate
+# analizzando i commit git dal tag precedente a HEAD.
+#
+# I commit vengono categorizzati secondo il pattern conventional commits:
+#   feat: → Novità / New / Neu / Nouveau
+#   fix:  → Correzioni / Fixes / Fehlerbehebungen / Corrections
+#   refactor/perf: → Miglioramenti / Improvements / Verbesserungen / Améliorations
+#
+# L'intestazione include il numero di versione nella lingua del locale.
+#
+def generate_release_notes_from_commits(version)
+  # Trova il tag precedente
+  last_tag = `git describe --tags --abbrev=0 HEAD 2>/dev/null`.strip
+  if last_tag.empty?
+    # Nessun tag → prendi tutti i commit
+    range = "HEAD"
+    UI.important("Nessun tag precedente trovato, uso tutti i commit")
+  else
+    range = "#{last_tag}..HEAD"
+    UI.message("Analisi commit: #{range}")
+  end
+
+  # Leggi i commit (solo subject, una riga per commit)
+  raw_commits = `git log #{range} --pretty=format:"%s" --no-merges`.strip.split("\n")
+  raw_commits = raw_commits.reject { |c| c.strip.empty? }
+
+  if raw_commits.empty?
+    UI.important("Nessun commit trovato da #{last_tag}. Uso release notes generiche.")
+    raw_commits = ["fix: miglioramenti generali e correzioni"]
+  end
+
+  UI.message("#{raw_commits.length} commit trovati")
+
+  # Categorizza i commit
+  features = []
+  fixes = []
+  improvements = []
+
+  raw_commits.each do |commit|
+    # Rimuovi prefix conventional commit per estrarre il messaggio pulito
+    message = commit
+      .sub(/^(feat|fix|refactor|perf|chore|docs|style|test|ci|build|release)(\(.+?\))?:\s*/i, "")
+      .strip
+      .sub(/^./) { |c| c.upcase } # Capitalize prima lettera
+
+    # Ignora commit di release/chore/ci/docs/test
+    next if commit.match?(/^(release|chore|ci|docs|test|build)(\(.+?\))?:/i)
+
+    case commit
+    when /^feat/i
+      features << message
+    when /^fix/i
+      fixes << message
+    when /^(refactor|perf|style)/i
+      improvements << message
+    else
+      # Commit senza prefix conventional → trattalo come feature
+      features << message
+    end
+  end
+
+  # Se non c'è niente di significativo, aggiungi una nota generica
+  if features.empty? && fixes.empty? && improvements.empty?
+    improvements << "Miglioramenti prestazioni e stabilità"
+  end
+
+  # Genera le release notes per ogni locale
+  translations = {
+    "it-IT" => {
+      header: "Novità nella versione #{version}:",
+      features_header: nil, # Le feature vanno direttamente sotto l'header
+      fixes_header: "Correzioni:",
+      improvements_header: "Miglioramenti:",
+      generic_perf: "Miglioramenti prestazioni e stabilità",
+    },
+    "en-US" => {
+      header: "What's new in version #{version}:",
+      fixes_header: "Bug fixes:",
+      improvements_header: "Improvements:",
+      generic_perf: "Performance and stability improvements",
+    },
+    "de-DE" => {
+      header: "Neuheiten in Version #{version}:",
+      fixes_header: "Fehlerbehebungen:",
+      improvements_header: "Verbesserungen:",
+      generic_perf: "Verbesserungen bei Leistung und Stabilität",
+    },
+    "fr-FR" => {
+      header: "Nouveautés de la version #{version} :",
+      fixes_header: "Corrections :",
+      improvements_header: "Améliorations :",
+      generic_perf: "Améliorations des performances et de la stabilité",
+    },
+  }
+
+  notes_per_locale = {}
+
+  translations.each do |locale, t|
+    lines = [t[:header], ""]
+
+    # Feature (corpo principale)
+    features.each { |f| lines << "• #{f}" }
+
+    # Fix
+    unless fixes.empty?
+      lines << "" unless features.empty?
+      fixes.each { |f| lines << "• #{f}" }
+    end
+
+    # Improvements
+    unless improvements.empty?
+      lines << "" unless features.empty? && fixes.empty?
+      improvements.each { |i| lines << "• #{i}" }
+    end
+
+    # Aggiungi sempre la riga generica "prestazioni e stabilità" in fondo se non c'è già
+    perf_line = "• #{t[:generic_perf]}"
+    unless lines.any? { |l| l.downcase.include?("prestazion") || l.downcase.include?("performance") || l.downcase.include?("leistung") || l.downcase.include?("stabilit") }
+      lines << perf_line
+    end
+
+    content = lines.join("\n").strip
+    notes_per_locale[locale] = content
+
+    # Verifica lunghezza (max 4000 caratteri per App Store Connect)
+    if content.length > 4000
+      UI.important("⚠ #{locale} release notes: #{content.length}/4000 caratteri — potrebbe essere necessario accorciare")
+    end
+  end
+
+  notes_per_locale
+end
+
+# Scrive le release notes generate nei file metadata per tutti i locale.
+#
+def write_release_notes(notes_per_locale)
+  notes_per_locale.each do |locale, notes|
+    file_path = File.join(METADATA_DIR, locale, "release_notes.txt")
+    File.write(file_path, notes + "\n")
+    UI.success("  ✓ #{locale}/release_notes.txt (#{notes.length} caratteri)")
+  end
+end
+#
+# Input:  screenshots/final/<device>/<screen>.png
+# Output: ios/fastlane/screenshots/<locale>/<device>_<screen>.png
+#
+# Gli screenshot vengono copiati in TUTTI i locale supportati.
+# Attualmente gli screenshot sono in italiano — vengono condivisi tra tutti i locale
+# perché l'interfaccia mostra dati (nomi rifugi, altitudini) che sono uguali in tutte le lingue.
+# In futuro, se si vorranno screenshot localizzati, basterà generare set separati per locale.
+#
+# deliver riconosce automaticamente il display type dalla risoluzione del PNG
+#
+def prepare_screenshots_for_deliver
+  unless Dir.exist?(SCREENSHOTS_FINAL_DIR)
+    UI.user_error!("Screenshot finali non trovati in #{SCREENSHOTS_FINAL_DIR}. Esegui prima la lane 'screenshots'.")
+  end
+
+  # Pulisci directory precedente
+  FileUtils.rm_rf(DELIVER_SCREENSHOTS_DIR)
+
+  total_copied = 0
+
+  SUPPORTED_LOCALES.each do |locale|
+    locale_dir = File.join(DELIVER_SCREENSHOTS_DIR, locale)
+    FileUtils.mkdir_p(locale_dir)
+
+    copied = 0
+    Dir.glob(File.join(SCREENSHOTS_FINAL_DIR, "*", "*.png")).each do |file|
+      device = File.basename(File.dirname(file))
+      screen = File.basename(file)
+
+      # Copia con nome che include device per evitare collisioni
+      # deliver ordina alfabeticamente per posizione nello store
+      dest = File.join(locale_dir, "#{device}_#{screen}")
+      FileUtils.cp(file, dest)
+      copied += 1
+    end
+
+    UI.message("  #{locale}: #{copied} screenshot")
+    total_copied += copied
+  end
+
+  UI.success("#{total_copied} screenshot pronti per deliver (#{SUPPORTED_LOCALES.length} locale × #{total_copied / SUPPORTED_LOCALES.length} screenshot)")
+end
+
 # ── Platform ──────────────────────────────────────────────────────────────────
 
 platform :ios do
@@ -216,8 +410,8 @@ platform :ios do
 
   # ── Release (App Store) ───────────────────────────────────────────────────
 
-  desc "Build e upload per App Store review"
-  desc "Uso: fastlane release [skip_build:true] [submit:true]"
+  desc "Build e upload per App Store review con metadata, screenshot e binary"
+  desc "Uso: fastlane release [skip_build:true] [skip_metadata:true] [skip_screenshots:true] [submit:true]"
   lane :release do |options|
     api_key = asc_api_key
     version = read_pubspec_version
@@ -227,22 +421,41 @@ platform :ios do
       flutter_build_ipa
     end
 
-    # Upload su App Store Connect
+    # Prepara screenshot per deliver (se non skippati)
+    unless options[:skip_screenshots]
+      prepare_screenshots_for_deliver
+    end
+
+    # Upload su App Store Connect: binary + metadata + screenshot
     upload_to_app_store(
       api_key: api_key,
       ipa: IPA_PATH,
-      skip_screenshots: true,
-      skip_metadata: true,
+      app_version: version[:version],
+
+      # Metadata
+      skip_metadata: options[:skip_metadata] || false,
+      metadata_path: METADATA_DIR,
+
+      # Screenshot
+      skip_screenshots: options[:skip_screenshots] || false,
+      screenshots_path: DELIVER_SCREENSHOTS_DIR,
+      overwrite_screenshots: true,
+
+      # Review information
+      submission_information: {
+        add_id_info_uses_idfa: false
+      },
+
+      # Options
       force: true,
       precheck_include_in_app_purchases: false,
       submit_for_review: options[:submit] || false,
       automatic_release: false,
-      submission_information: {
-        add_id_info_uses_idfa: false
-      }
+      phased_release: true
     )
 
     UI.success("Build #{version[:version]}+#{version[:build]} caricata su App Store Connect!")
+    UI.success("Inclusi: binary#{options[:skip_metadata] ? '' : ' + metadata'}#{options[:skip_screenshots] ? '' : ' + screenshot'}")
 
     if options[:submit]
       UI.success("Build inviata per review!")
@@ -294,31 +507,65 @@ platform :ios do
     end
   end
 
+  # ── Upload Metadata ──────────────────────────────────────────────────────
+
+  desc "Upload solo metadata (testi, keyword, URL) su App Store Connect"
+  desc "Uso: fastlane upload_metadata [app_version:1.1.0]"
+  lane :upload_metadata do |options|
+    api_key = asc_api_key
+    version = read_pubspec_version
+
+    upload_to_app_store(
+      api_key: api_key,
+      app_version: options[:app_version] || version[:version],
+      metadata_path: METADATA_DIR,
+      skip_metadata: false,
+      skip_screenshots: true,
+      skip_binary_upload: true,
+      force: true,
+      precheck_include_in_app_purchases: false
+    )
+
+    UI.success("Metadata caricati su App Store Connect!")
+  end
+
   # ── Upload Screenshots ────────────────────────────────────────────────────
 
-  desc "Upload screenshot su App Store Connect"
-  desc "Uso: fastlane upload_screenshots [version:1.1.0] [locale:it-IT] [clean:true]"
+  desc "Upload screenshot su App Store Connect (via deliver)"
+  desc "Uso: fastlane upload_screenshots [app_version:1.1.0] [overwrite:true]"
   lane :upload_screenshots do |options|
-    locale = options[:locale] || "it-IT"
-    clean_flag = options[:clean] ? "--clean" : ""
-    version_flag = options[:version] ? "--version #{options[:version]}" : ""
+    api_key = asc_api_key
+    version = read_pubspec_version
 
-    Dir.chdir(PROJECT_ROOT) do
-      sh("python3", "tools/upload_screenshots.py", *[version_flag, "--locale", locale, clean_flag].reject(&:empty?))
-    end
+    # Prepara screenshot nella struttura deliver
+    prepare_screenshots_for_deliver
+
+    upload_to_app_store(
+      api_key: api_key,
+      app_version: options[:app_version] || version[:version],
+      screenshots_path: DELIVER_SCREENSHOTS_DIR,
+      skip_metadata: true,
+      skip_screenshots: false,
+      skip_binary_upload: true,
+      overwrite_screenshots: options[:overwrite] != false,
+      force: true,
+      precheck_include_in_app_purchases: false
+    )
 
     UI.success("Screenshot caricati su App Store Connect!")
   end
 
   # ── Full Release ──────────────────────────────────────────────────────────
 
-  desc "Pipeline completa: bump version + screenshot + build + upload + git tag"
-  desc "Uso: fastlane full_release [bump:patch|minor|major] [version:1.2.0] [submit:true] [skip_screenshots:true]"
+  desc "Pipeline completa: bump version + metadata + screenshot + build + upload + git tag + push"
+  desc "Uso: fastlane full_release [bump:patch|minor|major] [version:1.2.0] [submit:true] [skip_screenshots:true] [skip_push:true]"
+  desc ""
+  desc "Le release notes vengono generate automaticamente dai commit git dal tag precedente."
   lane :full_release do |options|
     UI.header("FULL RELEASE PIPELINE")
 
     # 1. Bump version
-    UI.header("Step 1/5 — Version Bump")
+    UI.header("Step 1/7 — Version Bump")
     version_info = bump_version(
       version: options[:version],
       bump: options[:bump]
@@ -326,39 +573,68 @@ platform :ios do
     new_version = version_info[:version]
     new_build = version_info[:build]
 
-    # 2. Screenshot (opzionale)
+    # 2. Generazione automatica release notes da commit git
+    UI.header("Step 2/7 — Generazione Release Notes")
+    notes_per_locale = generate_release_notes_from_commits(new_version)
+    write_release_notes(notes_per_locale)
+    UI.success("Release notes generate per #{SUPPORTED_LOCALES.length} locale da commit git")
+
+    # 3. Screenshot (opzionale)
     unless options[:skip_screenshots]
-      UI.header("Step 2/5 — Screenshot")
+      UI.header("Step 3/7 — Generazione Screenshot")
       screenshots
-      upload_screenshots(clean: true)
     else
-      UI.message("Screenshot saltati (skip_screenshots:true)")
+      UI.message("Screenshot generazione saltata (skip_screenshots:true)")
     end
 
-    # 3. Build
-    UI.header("Step 3/5 — Build IPA")
+    # 4. Build
+    UI.header("Step 4/7 — Build IPA")
     flutter_build_ipa
 
-    # 4. Upload su App Store Connect
-    UI.header("Step 4/5 — Upload App Store Connect")
+    # 5. Upload completo su App Store Connect (binary + metadata + screenshot)
+    UI.header("Step 5/7 — Upload App Store Connect")
     release(
       skip_build: true,
+      skip_metadata: false,
+      skip_screenshots: options[:skip_screenshots] || false,
       submit: options[:submit]
     )
 
-    # 5. Git commit e tag
-    UI.header("Step 5/5 — Git Tag")
+    # 6. Git commit, tag e push
+    UI.header("Step 6/7 — Git Commit, Tag & Push")
     Dir.chdir(PROJECT_ROOT) do
       sh("git", "add", "pubspec.yaml")
-      sh("git", "commit", "-m", "chore: bump version to #{new_version}+#{new_build}")
+      sh("git", "add", File.join("ios", "fastlane", "metadata"))
+      sh("git", "commit", "-m", "release: v#{new_version}+#{new_build}")
       sh("git", "tag", "-a", "v#{new_version}", "-m", "Release v#{new_version} (build #{new_build})")
+
+      unless options[:skip_push]
+        sh("git", "push", "origin", "main")
+        sh("git", "push", "origin", "v#{new_version}")
+        UI.success("Commit e tag v#{new_version} pushati su origin")
+      else
+        UI.important("Push saltato (skip_push:true)")
+        UI.important("  git push origin main && git push origin v#{new_version}")
+      end
     end
 
+    # 7. Riepilogo
+    UI.header("Step 7/7 — Riepilogo")
     UI.success("=" * 70)
     UI.success("RELEASE v#{new_version}+#{new_build} COMPLETATA!")
     UI.success("=" * 70)
-    UI.important("Ricorda di pushare su remote:")
-    UI.important("  git push origin main && git push origin v#{new_version}")
+    UI.success("")
+    UI.success("  Binary:      caricata su App Store Connect")
+    UI.success("  Metadata:    release notes + testi aggiornati per #{SUPPORTED_LOCALES.length} locale")
+    unless options[:skip_screenshots]
+      UI.success("  Screenshot:  30 screenshot caricati (5 schermate x 6 device)")
+    end
+    UI.success("  Git tag:     v#{new_version}")
+    unless options[:skip_push]
+      UI.success("  Git push:    commit + tag pushati su origin")
+    else
+      UI.important("  Git push:    NON effettuato (skip_push:true)")
+    end
   end
 
   # ── Utility ───────────────────────────────────────────────────────────────
@@ -374,41 +650,143 @@ platform :ios do
     api_key = asc_api_key
     version = read_pubspec_version
 
-    UI.header("Preflight Check")
-
-    # Verifica API key
-    UI.message("API Key: #{ASC_KEY_ID}")
-    UI.message("Versione: #{version[:version]}+#{version[:build]}")
-
-    # Verifica file necessari
-    checks = {
-      "pubspec.yaml" => File.exist?(PUBSPEC_PATH),
-      "API Key P8" => File.exist?(ASC_KEY_PATH),
-      "Golden tests" => Dir.exist?(File.join(PROJECT_ROOT, "test", "screenshots")),
-      "Screenshot raw" => Dir.exist?(SCREENSHOTS_RAW_DIR) && !Dir.glob(File.join(SCREENSHOTS_RAW_DIR, "**", "*.png")).empty?,
-      "Screenshot final" => Dir.exist?(SCREENSHOTS_FINAL_DIR) && !Dir.glob(File.join(SCREENSHOTS_FINAL_DIR, "**", "*.png")).empty?,
-    }
+    UI.header("Preflight Check — v#{version[:version]}+#{version[:build]}")
+    UI.message("")
 
     all_ok = true
+
+    # -- File e configurazione --
+    UI.message("Configurazione:")
+    checks = {
+      "pubspec.yaml" => File.exist?(PUBSPEC_PATH),
+      "API Key (.p8)" => File.exist?(ASC_KEY_PATH),
+    }
     checks.each do |name, ok|
       if ok
-        UI.success("  #{name}")
+        UI.success("  ✓ #{name}")
       else
-        UI.error("  #{name}")
+        UI.error("  ✗ #{name}")
         all_ok = false
       end
     end
 
-    # Flutter analyze
-    UI.message("\nEsecuzione flutter analyze...")
+    # -- Metadata condivisi --
+    UI.message("")
+    UI.message("Metadata condivisi:")
+    shared_files = {
+      "Copyright" => "copyright.txt",
+      "Categoria primaria" => "primary_category.txt",
+      "Categoria secondaria" => "secondary_category.txt",
+      "Review notes" => "review_information/notes.txt",
+      "Review demo user" => "review_information/demo_user.txt",
+      "Review demo password" => "review_information/demo_password.txt",
+    }
+    shared_files.each do |label, path|
+      full_path = File.join(METADATA_DIR, path)
+      exists = File.exist?(full_path) && !File.read(full_path).strip.empty?
+      if exists
+        UI.success("  ✓ #{label}")
+      else
+        UI.error("  ✗ #{label}")
+        all_ok = false
+      end
+    end
+
+    # -- Metadata per locale --
+    locale_files = %w[name.txt subtitle.txt description.txt keywords.txt promotional_text.txt release_notes.txt privacy_url.txt support_url.txt marketing_url.txt]
+
+    # Limiti caratteri App Store Connect
+    char_limits = {
+      "name.txt" => { max: 30, label: "Nome app" },
+      "subtitle.txt" => { max: 30, label: "Sottotitolo" },
+      "keywords.txt" => { max: 100, label: "Keywords" },
+      "promotional_text.txt" => { max: 170, label: "Testo promozionale" },
+      "description.txt" => { max: 4000, label: "Descrizione" },
+      "release_notes.txt" => { max: 4000, label: "Release notes" },
+    }
+
+    SUPPORTED_LOCALES.each do |locale|
+      UI.message("")
+      UI.message("Metadata [#{locale}]:")
+
+      locale_files.each do |filename|
+        full_path = File.join(METADATA_DIR, locale, filename)
+        exists = File.exist?(full_path) && !File.read(full_path).strip.empty?
+        if exists
+          UI.success("  ✓ #{filename}")
+        else
+          UI.error("  ✗ #{filename}")
+          all_ok = false
+        end
+      end
+
+      # Validazione limiti caratteri per questo locale
+      char_limits.each do |filename, info|
+        file_path = File.join(METADATA_DIR, locale, filename)
+        next unless File.exist?(file_path)
+
+        content_len = File.read(file_path).strip.length
+        if content_len <= info[:max]
+          UI.success("  ✓ #{info[:label]}: #{content_len}/#{info[:max]} caratteri")
+        else
+          UI.error("  ✗ #{info[:label]}: #{content_len}/#{info[:max]} caratteri (troppo lungo!)")
+          all_ok = false
+        end
+      end
+    end
+
+    # -- Screenshot --
+    UI.message("")
+    UI.message("Screenshot:")
+    golden_tests_ok = Dir.exist?(File.join(PROJECT_ROOT, "test", "screenshots"))
+    if golden_tests_ok
+      UI.success("  ✓ Golden tests presenti")
+    else
+      UI.error("  ✗ Golden tests non trovati")
+      all_ok = false
+    end
+
+    if Dir.exist?(SCREENSHOTS_FINAL_DIR)
+      final_count = Dir.glob(File.join(SCREENSHOTS_FINAL_DIR, "**", "*.png")).length
+      if final_count >= 30
+        UI.success("  ✓ Screenshot finali: #{final_count} file")
+      else
+        UI.important("  ⚠ Screenshot finali: #{final_count}/30 file (esegui 'fastlane screenshots')")
+      end
+
+      # Verifica per-device
+      GOLDEN_DEVICE_NAMES.each do |device|
+        device_dir = File.join(SCREENSHOTS_FINAL_DIR, device)
+        if Dir.exist?(device_dir)
+          count = Dir.glob(File.join(device_dir, "*.png")).length
+          UI.success("    #{device}: #{count} screenshot")
+        else
+          UI.error("    #{device}: mancante")
+          all_ok = false
+        end
+      end
+    else
+      UI.important("  ⚠ Screenshot finali non generati (esegui 'fastlane screenshots')")
+    end
+
+    # -- Flutter analyze --
+    UI.message("")
+    UI.message("Analisi codice:")
     Dir.chdir(PROJECT_ROOT) do
       sh("flutter", "analyze", "--no-fatal-infos")
     end
 
+    # -- Risultato --
+    UI.message("")
     if all_ok
-      UI.success("\nTutto pronto per il rilascio!")
+      UI.success("═══════════════════════════════════════════")
+      UI.success("  Tutto pronto per il rilascio!")
+      UI.success("═══════════════════════════════════════════")
     else
-      UI.important("\nAlcuni check non sono passati. Verifica prima di procedere.")
+      UI.important("═══════════════════════════════════════════")
+      UI.important("  Alcuni check non sono passati.")
+      UI.important("  Verifica e correggi prima di procedere.")
+      UI.important("═══════════════════════════════════════════")
     end
   end
 

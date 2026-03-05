@@ -1,0 +1,66 @@
+Plane deine Bergabenteuer mit Berghütten, der umfassenden App zum Entdecken von Schutzhütten, Biwaks und Almhütten in den italienischen Alpen.
+
+HAUPTFUNKTIONEN
+
+🏔️ ÜBER 5.600 HÜTTEN UND BIWAKS
+Greife auf die umfangreiche Datenbank der Hütten des italienischen Alpenvereins (CAI) zu, mit stets aktuellen Informationen zu Einrichtungen, Diensten und Kontakten.
+
+🗺️ INTERAKTIVE KARTE
+Zeige alle Hütten auf einer detaillierten Karte mit intelligentem Clustering an. Navigiere einfach durch Hunderte von Einrichtungen und finde die nächstgelegenen.
+
+📍 STANDORTBASIERTE SUCHE
+Finde automatisch die nächsten Hütten oder suche nach Name, Region, Höhe und verfügbaren Diensten.
+
+ℹ️ DETAILLIERTE INFORMATIONEN
+Für jede Hütte findest du:
+- Name und Standort
+- Höhe und GPS-Koordinaten
+- Schlafplatzkapazität
+- Öffnungszeiten
+- Kontakte (Telefon, E-Mail, Website)
+- Verfügbare Dienste (Restaurant, Duschen, WLAN usw.)
+- Zugangszeit und Schwierigkeit
+- Fotos der Einrichtung
+
+⭐ FAVORITEN UND HÜTTENPASS
+- Speichere deine Lieblingshütten für schnellen Zugriff
+- Protokolliere deine Besuche mit dem Hüttenpass
+- Verfolge deine Bergabenteuer
+
+🔍 ERWEITERTE FILTER
+Suche Hütten nach:
+- Min./Max. Höhe
+- Spezifische Dienste (Restaurant, Duschen, WLAN)
+- Öffnungszeiten
+- Schlafplatzkapazität
+- Zugangszeit
+
+📱 SMARTE FUNKTIONEN
+- Teile Hütten mit Freunden
+- Rufe die Hütte direkt aus der App an
+- Erhalte Wegbeschreibungen mit einem Tipp
+- Zeige Wettervorhersage und Website an
+
+🔐 DATENSCHUTZ UND SICHERHEIT
+- Deine Daten bleiben auf deinem Gerät
+- Optionaler Account-Zugang zur Synchronisierung
+- Kein unbefugtes Tracking
+
+PERFEKT FÜR
+- Wanderer und Bergsteiger
+- Trekker und Bergbegeisterte
+- Familien, die Bergausflüge planen
+- Radfahrer und Trailrunner
+- Alle, die die Berge lieben
+
+WARUM BERGHÜTTEN WÄHLEN
+✓ Offizielle CAI-Datenbank stets aktuell
+✓ Einfache und intuitive Benutzeroberfläche
+✓ Funktioniert offline (nach erstem Datendownload)
+✓ Kostenlos mit allen Funktionen
+✓ Keine aufdringliche Werbung
+✓ Von Bergliebhabern entwickelt
+
+Ob du ein Wochenende in den Dolomiten planst, eine Trekkingtour am Monte Rosa oder eine Alpenüberquerung – Berghütten ist der perfekte Begleiter für jedes Abenteuer.
+
+Jetzt herunterladen und die Wunder der italienischen Alpen entdecken!

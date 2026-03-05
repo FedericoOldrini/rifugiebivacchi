@@ -1,0 +1,8 @@
+Neuheiten in Version 1.1.0:
+
+• Jahreszeitenthemen: Die App ändert ihr Aussehen mit den Jahreszeiten
+• Datenbank auf über 5.600 Einrichtungen aus mehreren Quellen erweitert
+• Erweiterte Filter: Typ, Region, Höhe, Dienste, Zugänglichkeit, Schlafplätze
+• Anpassbare Sortierung der Ergebnisse
+• Kartenlegende zur Identifizierung der Einrichtungstypen
+• Verbesserungen bei Leistung und Stabilität

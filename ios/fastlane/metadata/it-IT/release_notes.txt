@@ -1,0 +1,8 @@
+Novità nella versione 1.1.0:
+
+• Temi stagionali: l'app cambia aspetto con le stagioni
+• Database ampliato a oltre 5.600 strutture da fonti multiple
+• Filtri avanzati: tipo, regione, altitudine, servizi, accessibilità, posti letto
+• Ordinamento personalizzabile dei risultati
+• Legenda mappa per identificare i tipi di struttura
+• Miglioramenti prestazioni e stabilità
