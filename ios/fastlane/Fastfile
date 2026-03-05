@@ -1,0 +1,396 @@
+# ──────────────────────────────────────────────────────────────────────────────
+# Fastfile — Rifugi e Bivacchi
+# ──────────────────────────────────────────────────────────────────────────────
+#
+# Lane disponibili:
+#
+#   bundle exec fastlane beta              # Build + upload su TestFlight
+#   bundle exec fastlane release           # Build + upload per App Store review
+#   bundle exec fastlane screenshots       # Cattura + overlay + resize screenshot
+#   bundle exec fastlane upload_screenshots # Upload screenshot su App Store Connect
+#   bundle exec fastlane full_release      # Screenshot + build + upload + git tag
+#   bundle exec fastlane bump_version      # Incrementa version/build number
+#
+# ──────────────────────────────────────────────────────────────────────────────
+
+default_platform(:ios)
+
+# ── Costanti ──────────────────────────────────────────────────────────────────
+
+PROJECT_ROOT = File.expand_path("../..", __dir__)
+IPA_PATH = File.join(PROJECT_ROOT, "build", "ios", "ipa", "rifugi_bivacchi.ipa")
+PUBSPEC_PATH = File.join(PROJECT_ROOT, "pubspec.yaml")
+SCREENSHOTS_RAW_DIR = File.join(PROJECT_ROOT, "screenshots", "raw")
+SCREENSHOTS_FINAL_DIR = File.join(PROJECT_ROOT, "screenshots", "final")
+
+# App Store Connect API Key
+ASC_KEY_ID = "M6WVD946N7"
+ASC_ISSUER_ID = "d2d23ddf-c15d-44d4-9a56-705cbab0f2dc"
+ASC_KEY_PATH = File.expand_path("~/private_keys/AuthKey_M6WVD946N7.p8")
+
+# Simulatore di default per screenshot
+DEFAULT_SIMULATOR = "iPhone 17 Pro Max"
+
+# ── Helper Methods ────────────────────────────────────────────────────────────
+
+def asc_api_key
+  app_store_connect_api_key(
+    key_id: ASC_KEY_ID,
+    issuer_id: ASC_ISSUER_ID,
+    key_filepath: ASC_KEY_PATH,
+    duration: 1200,
+    in_house: false
+  )
+end
+
+def read_pubspec_version
+  content = File.read(PUBSPEC_PATH)
+  match = content.match(/^version:\s*(\d+\.\d+\.\d+)\+(\d+)/)
+  unless match
+    UI.user_error!("Impossibile leggere la versione da pubspec.yaml")
+  end
+  { version: match[1], build: match[2].to_i }
+end
+
+def write_pubspec_version(version, build)
+  content = File.read(PUBSPEC_PATH)
+  new_content = content.gsub(
+    /^version:\s*\d+\.\d+\.\d+\+\d+/,
+    "version: #{version}+#{build}"
+  )
+  File.write(PUBSPEC_PATH, new_content)
+  UI.success("pubspec.yaml aggiornato a #{version}+#{build}")
+end
+
+def flutter_build_ipa
+  UI.header("Flutter Build IPA")
+
+  # Clean + pub get
+  Dir.chdir(PROJECT_ROOT) do
+    sh("flutter", "clean")
+    sh("flutter", "pub", "get")
+    sh("flutter", "build", "ipa", "--release")
+  end
+
+  unless File.exist?(IPA_PATH)
+    UI.user_error!("IPA non trovato in #{IPA_PATH}")
+  end
+
+  UI.success("IPA generato: #{IPA_PATH}")
+  IPA_PATH
+end
+
+def find_simulator_udid(device_name)
+  output = `xcrun simctl list devices available --json`
+  data = JSON.parse(output)
+  data["devices"].each do |_runtime, devices|
+    devices.each do |device|
+      return device["udid"] if device["name"] == device_name
+    end
+  end
+  nil
+end
+
+def get_booted_simulator_udid
+  output = `xcrun simctl list devices booted --json`
+  data = JSON.parse(output)
+  data["devices"].each do |_runtime, devices|
+    devices.each do |device|
+      return device["udid"] if device["state"] == "Booted"
+    end
+  end
+  nil
+end
+
+# ── Platform ──────────────────────────────────────────────────────────────────
+
+platform :ios do
+
+  before_all do
+    setup_circle_ci if is_ci
+  end
+
+  # ── Version Bump ──────────────────────────────────────────────────────────
+
+  desc "Incrementa il build number (o la versione se specificata)"
+  desc "Uso: fastlane bump_version [version:1.2.0] [bump:patch|minor|major]"
+  lane :bump_version do |options|
+    current = read_pubspec_version
+    UI.message("Versione corrente: #{current[:version]}+#{current[:build]}")
+
+    new_version = current[:version]
+    new_build = current[:build] + 1
+
+    if options[:version]
+      new_version = options[:version]
+    elsif options[:bump]
+      parts = current[:version].split(".").map(&:to_i)
+      case options[:bump]
+      when "major"
+        parts[0] += 1
+        parts[1] = 0
+        parts[2] = 0
+      when "minor"
+        parts[1] += 1
+        parts[2] = 0
+      when "patch"
+        parts[2] += 1
+      end
+      new_version = parts.join(".")
+    end
+
+    write_pubspec_version(new_version, new_build)
+    UI.success("Nuova versione: #{new_version}+#{new_build}")
+
+    { version: new_version, build: new_build }
+  end
+
+  # ── Build ─────────────────────────────────────────────────────────────────
+
+  desc "Build IPA release (senza upload)"
+  lane :build do
+    flutter_build_ipa
+  end
+
+  # ── Beta (TestFlight) ─────────────────────────────────────────────────────
+
+  desc "Build e upload su TestFlight"
+  desc "Uso: fastlane beta [skip_build:true] [changelog:'Note di rilascio']"
+  lane :beta do |options|
+    api_key = asc_api_key
+
+    # Build
+    unless options[:skip_build]
+      flutter_build_ipa
+    end
+
+    # Upload su TestFlight
+    upload_to_testflight(
+      api_key: api_key,
+      ipa: IPA_PATH,
+      skip_waiting_for_build_processing: true,
+      distribute_external: false,
+      changelog: options[:changelog] || "Build interna di test",
+      notify_external_testers: false
+    )
+
+    version = read_pubspec_version
+    UI.success("Build #{version[:version]}+#{version[:build]} caricata su TestFlight!")
+  end
+
+  # ── Release (App Store) ───────────────────────────────────────────────────
+
+  desc "Build e upload per App Store review"
+  desc "Uso: fastlane release [skip_build:true] [submit:true]"
+  lane :release do |options|
+    api_key = asc_api_key
+    version = read_pubspec_version
+
+    # Build
+    unless options[:skip_build]
+      flutter_build_ipa
+    end
+
+    # Upload su App Store Connect
+    upload_to_app_store(
+      api_key: api_key,
+      ipa: IPA_PATH,
+      skip_screenshots: true,
+      skip_metadata: true,
+      force: true,
+      precheck_include_in_app_purchases: false,
+      submit_for_review: options[:submit] || false,
+      automatic_release: false,
+      submission_information: {
+        add_id_info_uses_idfa: false
+      }
+    )
+
+    UI.success("Build #{version[:version]}+#{version[:build]} caricata su App Store Connect!")
+
+    if options[:submit]
+      UI.success("Build inviata per review!")
+    else
+      UI.important("Build caricata ma NON inviata per review.")
+      UI.important("Usa submit:true per inviarla, oppure fallo manualmente da App Store Connect.")
+    end
+  end
+
+  # ── Screenshots ───────────────────────────────────────────────────────────
+
+  desc "Cattura screenshot, applica overlay e ridimensiona"
+  desc "Uso: fastlane screenshots [device:'iPhone 17 Pro Max'] [skip_capture:true]"
+  lane :screenshots do |options|
+    device_name = options[:device] || DEFAULT_SIMULATOR
+
+    unless options[:skip_capture]
+      UI.header("Cattura Screenshot")
+
+      # Trova o avvia simulatore
+      udid = get_booted_simulator_udid
+      if udid
+        UI.message("Simulatore già avviato (UDID: #{udid[0..7]}...)")
+      else
+        udid = find_simulator_udid(device_name)
+        UI.user_error!("Simulatore '#{device_name}' non trovato") unless udid
+        UI.message("Avvio simulatore #{device_name}...")
+        sh("xcrun", "simctl", "boot", udid)
+        sh("open", "-a", "Simulator")
+        sleep(5)
+      end
+
+      # Crea directory raw
+      FileUtils.mkdir_p(SCREENSHOTS_RAW_DIR)
+
+      # Esegui integration test
+      UI.message("Esecuzione integration test per cattura screenshot...")
+      Dir.chdir(PROJECT_ROOT) do
+        sh(
+          "flutter", "drive",
+          "--driver=test_driver/integration_driver.dart",
+          "--target=integration_test/screenshot_test.dart",
+          "-d", udid,
+          "--no-pub"
+        )
+      end
+
+      UI.success("Screenshot catturati!")
+    end
+
+    # Applica overlay e ridimensiona
+    UI.header("Overlay e Ridimensionamento")
+    Dir.chdir(PROJECT_ROOT) do
+      sh("python3", "tools/generate_screenshots.py", "--skip-test")
+    end
+
+    # Conta risultati
+    if Dir.exist?(SCREENSHOTS_FINAL_DIR)
+      count = Dir.glob(File.join(SCREENSHOTS_FINAL_DIR, "**", "*.png")).length
+      UI.success("#{count} screenshot finali generati in screenshots/final/")
+    end
+  end
+
+  # ── Upload Screenshots ────────────────────────────────────────────────────
+
+  desc "Upload screenshot su App Store Connect"
+  desc "Uso: fastlane upload_screenshots [version:1.1.0] [locale:it-IT] [clean:true]"
+  lane :upload_screenshots do |options|
+    locale = options[:locale] || "it-IT"
+    clean_flag = options[:clean] ? "--clean" : ""
+    version_flag = options[:version] ? "--version #{options[:version]}" : ""
+
+    Dir.chdir(PROJECT_ROOT) do
+      sh("python3", "tools/upload_screenshots.py", *[version_flag, "--locale", locale, clean_flag].reject(&:empty?))
+    end
+
+    UI.success("Screenshot caricati su App Store Connect!")
+  end
+
+  # ── Full Release ──────────────────────────────────────────────────────────
+
+  desc "Pipeline completa: bump version + screenshot + build + upload + git tag"
+  desc "Uso: fastlane full_release [bump:patch|minor|major] [version:1.2.0] [submit:true] [skip_screenshots:true]"
+  lane :full_release do |options|
+    UI.header("FULL RELEASE PIPELINE")
+
+    # 1. Bump version
+    UI.header("Step 1/5 — Version Bump")
+    version_info = bump_version(
+      version: options[:version],
+      bump: options[:bump]
+    )
+    new_version = version_info[:version]
+    new_build = version_info[:build]
+
+    # 2. Screenshot (opzionale)
+    unless options[:skip_screenshots]
+      UI.header("Step 2/5 — Screenshot")
+      screenshots
+      upload_screenshots(clean: true)
+    else
+      UI.message("Screenshot saltati (skip_screenshots:true)")
+    end
+
+    # 3. Build
+    UI.header("Step 3/5 — Build IPA")
+    flutter_build_ipa
+
+    # 4. Upload su App Store Connect
+    UI.header("Step 4/5 — Upload App Store Connect")
+    release(
+      skip_build: true,
+      submit: options[:submit]
+    )
+
+    # 5. Git commit e tag
+    UI.header("Step 5/5 — Git Tag")
+    Dir.chdir(PROJECT_ROOT) do
+      sh("git", "add", "pubspec.yaml")
+      sh("git", "commit", "-m", "chore: bump version to #{new_version}+#{new_build}")
+      sh("git", "tag", "-a", "v#{new_version}", "-m", "Release v#{new_version} (build #{new_build})")
+    end
+
+    UI.success("=" * 70)
+    UI.success("RELEASE v#{new_version}+#{new_build} COMPLETATA!")
+    UI.success("=" * 70)
+    UI.important("Ricorda di pushare su remote:")
+    UI.important("  git push origin main && git push origin v#{new_version}")
+  end
+
+  # ── Utility ───────────────────────────────────────────────────────────────
+
+  desc "Mostra versione corrente"
+  lane :version do
+    v = read_pubspec_version
+    UI.success("Versione: #{v[:version]}+#{v[:build]}")
+  end
+
+  desc "Verifica stato pre-release"
+  lane :preflight do
+    api_key = asc_api_key
+    version = read_pubspec_version
+
+    UI.header("Preflight Check")
+
+    # Verifica API key
+    UI.message("API Key: #{ASC_KEY_ID}")
+    UI.message("Versione: #{version[:version]}+#{version[:build]}")
+
+    # Verifica file necessari
+    checks = {
+      "pubspec.yaml" => File.exist?(PUBSPEC_PATH),
+      "API Key P8" => File.exist?(ASC_KEY_PATH),
+      "Screenshot raw" => Dir.exist?(SCREENSHOTS_RAW_DIR) && !Dir.glob(File.join(SCREENSHOTS_RAW_DIR, "*.png")).empty?,
+      "Screenshot final" => Dir.exist?(SCREENSHOTS_FINAL_DIR) && !Dir.glob(File.join(SCREENSHOTS_FINAL_DIR, "**", "*.png")).empty?,
+    }
+
+    all_ok = true
+    checks.each do |name, ok|
+      if ok
+        UI.success("  #{name}")
+      else
+        UI.error("  #{name}")
+        all_ok = false
+      end
+    end
+
+    # Flutter analyze
+    UI.message("\nEsecuzione flutter analyze...")
+    Dir.chdir(PROJECT_ROOT) do
+      sh("flutter", "analyze", "--no-fatal-infos")
+    end
+
+    if all_ok
+      UI.success("\nTutto pronto per il rilascio!")
+    else
+      UI.important("\nAlcuni check non sono passati. Verifica prima di procedere.")
+    end
+  end
+
+  # ── Error Handling ────────────────────────────────────────────────────────
+
+  error do |lane, exception|
+    UI.error("Lane '#{lane}' fallita: #{exception.message}")
+  end
+
+end

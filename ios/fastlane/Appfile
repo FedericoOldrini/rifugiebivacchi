@@ -1,0 +1,6 @@
+# App Store Connect API Key (usata al posto di username/password)
+# Key file: ~/private_keys/AuthKey_M6WVD946N7.p8
+app_identifier("it.federicooldrini.rifugiebivacchi")
+apple_id("oldrini.federico@gmail.com")
+team_id("7GU8UCZX25")
+itc_team_id("7GU8UCZX25")

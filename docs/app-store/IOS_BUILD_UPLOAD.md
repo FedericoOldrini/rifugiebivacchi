@@ -27,6 +27,20 @@ Istruzioni tecniche per compilare e caricare una nuova build iOS su App Store Co
 
 Per pubblicare una nuova build quando non ci sono modifiche strutturali:
 
+### Con Fastlane (consigliato)
+
+```bash
+cd ios
+
+# Beta su TestFlight
+bundle exec fastlane beta
+
+# Oppure: release completa (bump + build + upload App Store)
+bundle exec fastlane full_release bump:patch
+```
+
+### Manuale (alternativa)
+
 ```bash
 # 1. Incrementa il build number in pubspec.yaml
 #    Modifica la riga: version: 1.0.0+N  (incrementa N)
@@ -39,6 +53,77 @@ xcrun altool --upload-app --type ios \
   -f build/ios/ipa/rifugi_bivacchi.ipa \
   --apiKey M6WVD946N7 \
   --apiIssuer d2d23ddf-c15d-44d4-9a56-705cbab0f2dc
+```
+
+---
+
+## Fastlane
+
+Il progetto utilizza [Fastlane](https://fastlane.tools) per automatizzare build, upload e screenshot iOS. La configurazione si trova in `ios/fastlane/`.
+
+### Setup iniziale
+
+```bash
+cd ios
+bundle install    # Installa Fastlane e dipendenze Ruby
+```
+
+### Lane disponibili
+
+| Comando | Descrizione |
+|---|---|
+| `bundle exec fastlane version` | Mostra versione corrente da pubspec.yaml |
+| `bundle exec fastlane preflight` | Verifica pre-release: API key, file, flutter analyze |
+| `bundle exec fastlane bump_version` | Incrementa build number |
+| `bundle exec fastlane bump_version bump:patch` | Incrementa patch (es. 1.1.0 → 1.1.1) |
+| `bundle exec fastlane bump_version bump:minor` | Incrementa minor (es. 1.1.0 → 1.2.0) |
+| `bundle exec fastlane bump_version version:2.0.0` | Imposta versione specifica |
+| `bundle exec fastlane build` | Solo build IPA (no upload) |
+| `bundle exec fastlane beta` | Build + upload su TestFlight |
+| `bundle exec fastlane beta skip_build:true` | Solo upload (se IPA già generato) |
+| `bundle exec fastlane beta changelog:"Note release"` | Beta con changelog personalizzato |
+| `bundle exec fastlane release` | Build + upload su App Store Connect |
+| `bundle exec fastlane release submit:true` | Build + upload + invio per review |
+| `bundle exec fastlane screenshots` | Cattura screenshot + overlay |
+| `bundle exec fastlane upload_screenshots` | Upload screenshot su ASC |
+| `bundle exec fastlane full_release bump:patch` | Pipeline completa: bump → build → upload → git tag |
+| `bundle exec fastlane full_release bump:minor skip_screenshots:true` | Release senza screenshot |
+
+### Pipeline completa (`full_release`)
+
+La lane `full_release` esegue tutti gli step in sequenza:
+
+1. **Bump version** — Incrementa versione e/o build number in `pubspec.yaml`
+2. **Screenshot** — Cattura via Flutter Driver + overlay con Python (opzionale con `skip_screenshots:true`)
+3. **Build IPA** — `flutter clean` + `flutter pub get` + `flutter build ipa --release`
+4. **Upload** — Carica IPA su App Store Connect
+5. **Git tag** — Commit version bump + tag `vX.Y.Z`
+
+Dopo il `full_release`, ricorda di pushare:
+
+```bash
+git push origin main && git push origin vX.Y.Z
+```
+
+### Autenticazione
+
+L'autenticazione con App Store Connect avviene tramite API Key (non username/password):
+
+- **Key ID:** `M6WVD946N7`
+- **Issuer ID:** `d2d23ddf-c15d-44d4-9a56-705cbab0f2dc`
+- **Key file:** `~/private_keys/AuthKey_M6WVD946N7.p8`
+
+La chiave `.p8` **non è inclusa nel repository** per sicurezza. Deve essere presente nella home directory.
+
+### File Fastlane
+
+```
+ios/
+├── Gemfile              # Dipendenze Ruby (fastlane, cocoapods)
+├── Gemfile.lock         # Lock file generato
+└── fastlane/
+    ├── Appfile          # Credenziali Apple (bundle ID, team ID)
+    └── Fastfile         # Definizione di tutte le lane
 ```
 
 ---
@@ -194,5 +279,5 @@ Questi warning appaiono durante il build ma **non bloccano** la pubblicazione:
 
 ---
 
-**Ultimo aggiornamento:** 25 febbraio 2026
-**Versione:** 1.0
+**Ultimo aggiornamento:** 5 marzo 2026
+**Versione:** 2.0 (aggiunto Fastlane)

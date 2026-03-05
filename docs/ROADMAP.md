@@ -247,6 +247,27 @@ Obiettivo: rendere l'app più utile per pianificare escursioni e scoprire nuovi 
 - 🔲 Possibilità di cancellare cache per regione
 - **File coinvolti**: `offline_map_screen.dart`, nuovo `offline_maps_manager_screen.dart`
 
+### 🔴 Fastlane — Distribuzione iOS
+- 🔲 Configurare **Fastlane** per il progetto iOS (`fastlane init` nella directory `ios/`)
+- 🔲 Lane `build_and_upload`: build IPA + upload automatico su App Store Connect (sostituisce processo manuale `flutter build ipa` + `xcrun altool`)
+- 🔲 Lane `beta`: build + upload su TestFlight per distribuzione beta
+- 🔲 Configurare `Appfile` con Apple ID, team ID, bundle identifier
+- 🔲 Configurare `Matchfile` o gestione certificati/provisioning profile tramite Fastlane Match (opzionale, valutare se necessario)
+- 🔲 Gestione API Key App Store Connect via `app_store_connect_api_key` (key già disponibile: `AuthKey_M6WVD946N7.p8`)
+- 🔲 Integrazione con `flutter build` come step pre-lane
+- **File coinvolti**: `ios/Gemfile`, `ios/fastlane/Fastfile`, `ios/fastlane/Appfile`, `ios/fastlane/Matchfile` (opzionale)
+- **Riferimento**: credenziali API in `docs/app-store/IOS_BUILD_UPLOAD.md`
+
+### 🔴 Fastlane — Screenshot iOS automatici
+- 🔲 Configurare **Fastlane Snapshot** per generazione automatica screenshot su tutti i device target
+- 🔲 Lane `screenshots`: cattura screenshot su simulatori multipli (iPhone 6.9", 6.7", 6.5", 5.5", iPad Pro 13", iPad Pro 12.9")
+- 🔲 Integrazione con il test di screenshot esistente (`integration_test/screenshot_test.dart`) o creazione di UI test Xcode dedicati
+- 🔲 Configurare **Fastlane Frameit** per aggiunta automatica di device frame e testi overlay (sostituisce `tools/add_overlays.py`)
+- 🔲 Lane `upload_screenshots`: upload automatico screenshot su App Store Connect via Fastlane Deliver
+- 🔲 Valutare integrazione con `tools/generate_screenshots.py` esistente vs sostituzione completa con Fastlane
+- **File coinvolti**: `ios/fastlane/Snapfile`, `ios/fastlane/Framefile`, `ios/fastlane/screenshots/`, `ios/fastlane/metadata/`
+- **Note**: il sistema attuale (Flutter Driver + Python overlay) funziona ma richiede passaggi manuali; Fastlane automatizza l'intera pipeline da cattura a upload
+
 ---
 
 ## v1.3 — Social & Community
