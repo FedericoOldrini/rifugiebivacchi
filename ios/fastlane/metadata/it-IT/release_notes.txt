@@ -1,8 +1,14 @@
-Novità nella versione 1.1.0:
+Novità nella versione 1.1.1:
 
-• Temi stagionali: l'app cambia aspetto con le stagioni
-• Database ampliato a oltre 5.600 strutture da fonti multiple
-• Filtri avanzati: tipo, regione, altitudine, servizi, accessibilità, posti letto
-• Ordinamento personalizzabile dei risultati
-• Legenda mappa per identificare i tipi di struttura
+• Localize App Store screenshots with per-locale overlay text (4 languages × 6 devices × 5 screens = 120 screenshots)
+• Multi-device simulator screenshot capture and Fastlane integration
+• Simulator-based App Store screenshot capture pipeline
+• Add multi-locale App Store metadata and enhanced Fastlane pipeline
+• Automated App Store screenshots via golden tests and Fastlane
+• Add Fastlane setup for automated iOS build, TestFlight upload and release pipeline
+
+• Resolve RenderFlex overflow in PassaportoScreen stamp card
+• Null-safe analytics service, improved screenshot test, bump version to 1.1.0+9
+
+• Remove obsolete screenshot tools and migrate to golden test + Fastlane pipeline
 • Miglioramenti prestazioni e stabilità

@@ -1,8 +1,14 @@
-Neuheiten in Version 1.1.0:
+Neuheiten in Version 1.1.1:
 
-• Jahreszeitenthemen: Die App ändert ihr Aussehen mit den Jahreszeiten
-• Datenbank auf über 5.600 Einrichtungen aus mehreren Quellen erweitert
-• Erweiterte Filter: Typ, Region, Höhe, Dienste, Zugänglichkeit, Schlafplätze
-• Anpassbare Sortierung der Ergebnisse
-• Kartenlegende zur Identifizierung der Einrichtungstypen
+• Localize App Store screenshots with per-locale overlay text (4 languages × 6 devices × 5 screens = 120 screenshots)
+• Multi-device simulator screenshot capture and Fastlane integration
+• Simulator-based App Store screenshot capture pipeline
+• Add multi-locale App Store metadata and enhanced Fastlane pipeline
+• Automated App Store screenshots via golden tests and Fastlane
+• Add Fastlane setup for automated iOS build, TestFlight upload and release pipeline
+
+• Resolve RenderFlex overflow in PassaportoScreen stamp card
+• Null-safe analytics service, improved screenshot test, bump version to 1.1.0+9
+
+• Remove obsolete screenshot tools and migrate to golden test + Fastlane pipeline
 • Verbesserungen bei Leistung und Stabilität

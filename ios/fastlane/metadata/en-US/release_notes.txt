@@ -1,8 +1,14 @@
-What's new in version 1.1.0:
+What's new in version 1.1.1:
 
-- Seasonal themes: the app changes look with the seasons
-- Database expanded to over 5,600 facilities from multiple sources
-- Advanced filters: type, region, altitude, services, accessibility, beds
-- Customisable result sorting
-- Map legend to identify facility types
-- Performance and stability improvements
+• Localize App Store screenshots with per-locale overlay text (4 languages × 6 devices × 5 screens = 120 screenshots)
+• Multi-device simulator screenshot capture and Fastlane integration
+• Simulator-based App Store screenshot capture pipeline
+• Add multi-locale App Store metadata and enhanced Fastlane pipeline
+• Automated App Store screenshots via golden tests and Fastlane
+• Add Fastlane setup for automated iOS build, TestFlight upload and release pipeline
+
+• Resolve RenderFlex overflow in PassaportoScreen stamp card
+• Null-safe analytics service, improved screenshot test, bump version to 1.1.0+9
+
+• Remove obsolete screenshot tools and migrate to golden test + Fastlane pipeline
+• Performance and stability improvements
