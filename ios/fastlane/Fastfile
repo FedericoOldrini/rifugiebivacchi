@@ -24,7 +24,7 @@ IPA_PATH = File.join(PROJECT_ROOT, "build", "ios", "ipa", "rifugi_bivacchi.ipa")
 PUBSPEC_PATH = File.join(PROJECT_ROOT, "pubspec.yaml")
 SCREENSHOTS_RAW_DIR = File.join(PROJECT_ROOT, "screenshots", "raw")
 SCREENSHOTS_FINAL_DIR = File.join(PROJECT_ROOT, "screenshots", "final")
-METADATA_DIR = File.join(__dir__, "metadata")
+METADATA_DIR = File.expand_path(File.join(__dir__, "metadata"))
 # IMPORTANTE: usiamo File.expand_path per garantire che deliver riceva un path
 # assoluto canonico. Senza expand_path, deliver può relativizzare il path e
 # risolverlo dalla CWD (ios/) anziché dalla directory Fastlane (ios/fastlane/).

@@ -2,16 +2,16 @@ Pianifica le tue avventure in montagna con Rifugi e Bivacchi, l'app completa per
 
 CARATTERISTICHE PRINCIPALI
 
-🏔️ OLTRE 1000 RIFUGI E BIVACCHI
+OLTRE 1000 RIFUGI E BIVACCHI
 Accedi al database completo dei rifugi CAI (Club Alpino Italiano) con informazioni sempre aggiornate su strutture, servizi e contatti.
 
-🗺️ MAPPA INTERATTIVA
+MAPPA INTERATTIVA
 Visualizza tutti i rifugi su una mappa dettagliata con clustering intelligente. Naviga facilmente tra centinaia di strutture e trova quelle più vicine alla tua posizione.
 
-📍 RICERCA GEOLOCALIZZATA
+RICERCA GEOLOCALIZZATA
 Trova automaticamente i rifugi più vicini a te o cerca per nome, regione, altitudine e servizi disponibili.
 
-ℹ️ INFORMAZIONI DETTAGLIATE
+INFORMAZIONI DETTAGLIATE
 Per ogni rifugio trovi:
 - Nome e località
 - Altitudine e coordinate GPS
@@ -22,12 +22,12 @@ Per ogni rifugio trovi:
 - Tempo di accesso e difficoltà
 - Foto della struttura
 
-⭐ PREFERITI E PASSAPORTO
+PREFERITI E PASSAPORTO
 - Salva i tuoi rifugi preferiti per accesso rapido
 - Registra le tue visite con il Passaporto dei Rifugi
 - Traccia le tue avventure in montagna
 
-🔍 FILTRI AVANZATI
+FILTRI AVANZATI
 Cerca rifugi per:
 - Altitudine minima/massima
 - Servizi specifici (ristorante, docce, WiFi)
@@ -35,13 +35,13 @@ Cerca rifugi per:
 - Capacità posti letto
 - Tempo di accesso
 
-📱 FUNZIONI SMART
+FUNZIONI SMART
 - Condividi rifugi con gli amici
 - Chiama direttamente il rifugio dall'app
 - Ottieni indicazioni stradali con un tap
 - Visualizza sito web e informazioni meteo
 
-🔐 PRIVACY E SICUREZZA
+PRIVACY E SICUREZZA
 - I tuoi dati rimangono sul tuo dispositivo
 - Accesso opzionale con account per sincronizzazione
 - Nessun tracciamento non autorizzato
@@ -54,12 +54,12 @@ PERFETTA PER
 - Chiunque ami la montagna
 
 PERCHÉ SCEGLIERE RIFUGI E BIVACCHI
-✓ Database ufficiale CAI sempre aggiornato
-✓ Interfaccia semplice e intuitiva
-✓ Funziona anche offline (dopo primo caricamento dati)
-✓ Gratuita con tutte le funzionalità incluse
-✓ Nessuna pubblicità invasiva
-✓ Sviluppata da appassionati di montagna
+- Database ufficiale CAI sempre aggiornato
+- Interfaccia semplice e intuitiva
+- Funziona anche offline (dopo primo caricamento dati)
+- Gratuita con tutte le funzionalità incluse
+- Nessuna pubblicità invasiva
+- Sviluppata da appassionati di montagna
 
 Che tu stia pianificando un weekend sulle Dolomiti, un trekking sul Monte Rosa o una traversata delle Alpi, Rifugi e Bivacchi è il compagno perfetto per ogni avventura.
 

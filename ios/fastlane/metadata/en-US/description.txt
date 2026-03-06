@@ -2,16 +2,16 @@ Plan your mountain adventures with Mountain Shelters, the complete app to discov
 
 KEY FEATURES
 
-🏔️ OVER 5,600 SHELTERS AND BIVOUACS
+OVER 5,600 SHELTERS AND BIVOUACS
 Access the comprehensive database of Italian Alpine Club (CAI) shelters with always up-to-date information on facilities, services and contacts.
 
-🗺️ INTERACTIVE MAP
+INTERACTIVE MAP
 View all shelters on a detailed map with smart clustering. Easily navigate through hundreds of facilities and find the ones closest to your location.
 
-📍 GEOLOCATED SEARCH
+GEOLOCATED SEARCH
 Automatically find the shelters nearest to you or search by name, region, altitude and available services.
 
-ℹ️ DETAILED INFORMATION
+DETAILED INFORMATION
 For each shelter you'll find:
 - Name and location
 - Altitude and GPS coordinates
@@ -22,12 +22,12 @@ For each shelter you'll find:
 - Access time and difficulty
 - Photos of the facility
 
-⭐ FAVOURITES AND PASSPORT
+FAVOURITES AND PASSPORT
 - Save your favourite shelters for quick access
 - Log your visits with the Shelter Passport
 - Track your mountain adventures
 
-🔍 ADVANCED FILTERS
+ADVANCED FILTERS
 Search shelters by:
 - Min/max altitude
 - Specific services (restaurant, showers, WiFi)
@@ -35,13 +35,13 @@ Search shelters by:
 - Bed capacity
 - Access time
 
-📱 SMART FEATURES
+SMART FEATURES
 - Share shelters with friends
 - Call the shelter directly from the app
 - Get driving directions with one tap
 - View weather forecasts and website
 
-🔐 PRIVACY AND SECURITY
+PRIVACY AND SECURITY
 - Your data stays on your device
 - Optional account access for syncing
 - No unauthorised tracking
@@ -54,12 +54,12 @@ PERFECT FOR
 - Anyone who loves the mountains
 
 WHY CHOOSE MOUNTAIN SHELTERS
-✓ Official CAI database always up to date
-✓ Simple and intuitive interface
-✓ Works offline (after first data load)
-✓ Free with all features included
-✓ No intrusive advertising
-✓ Developed by mountain lovers
+- Official CAI database always up to date
+- Simple and intuitive interface
+- Works offline (after first data load)
+- Free with all features included
+- No intrusive advertising
+- Developed by mountain lovers
 
 Whether you're planning a weekend in the Dolomites, a trek on Monte Rosa or a traverse of the Alps, Mountain Shelters is the perfect companion for every adventure.
 

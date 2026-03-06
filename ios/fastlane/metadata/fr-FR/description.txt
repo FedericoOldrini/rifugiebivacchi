@@ -2,16 +2,16 @@ Planifiez vos aventures en montagne avec Refuges de Montagne, l'application comp
 
 FONCTIONNALITÉS PRINCIPALES
 
-🏔️ PLUS DE 5 600 REFUGES ET BIVOUACS
+PLUS DE 5 600 REFUGES ET BIVOUACS
 Accédez à la base de données complète des refuges du Club Alpin Italien (CAI) avec des informations toujours à jour sur les installations, services et contacts.
 
-🗺️ CARTE INTERACTIVE
+CARTE INTERACTIVE
 Visualisez tous les refuges sur une carte détaillée avec clustering intelligent. Naviguez facilement parmi des centaines d'établissements et trouvez les plus proches de votre position.
 
-📍 RECHERCHE GÉOLOCALISÉE
+RECHERCHE GÉOLOCALISÉE
 Trouvez automatiquement les refuges les plus proches ou recherchez par nom, région, altitude et services disponibles.
 
-ℹ️ INFORMATIONS DÉTAILLÉES
+INFORMATIONS DÉTAILLÉES
 Pour chaque refuge vous trouverez :
 - Nom et localité
 - Altitude et coordonnées GPS
@@ -22,12 +22,12 @@ Pour chaque refuge vous trouverez :
 - Temps d'accès et difficulté
 - Photos de l'établissement
 
-⭐ FAVORIS ET PASSEPORT
+FAVORIS ET PASSEPORT
 - Enregistrez vos refuges préférés pour un accès rapide
 - Consignez vos visites avec le Passeport des Refuges
 - Suivez vos aventures en montagne
 
-🔍 FILTRES AVANCÉS
+FILTRES AVANCÉS
 Recherchez des refuges par :
 - Altitude min./max.
 - Services spécifiques (restaurant, douches, WiFi)
@@ -35,13 +35,13 @@ Recherchez des refuges par :
 - Capacité en couchages
 - Temps d'accès
 
-📱 FONCTIONS INTELLIGENTES
+FONCTIONS INTELLIGENTES
 - Partagez les refuges avec vos amis
 - Appelez directement le refuge depuis l'application
 - Obtenez l'itinéraire en un seul geste
 - Consultez les prévisions météo et le site web
 
-🔐 CONFIDENTIALITÉ ET SÉCURITÉ
+CONFIDENTIALITÉ ET SÉCURITÉ
 - Vos données restent sur votre appareil
 - Accès optionnel avec compte pour la synchronisation
 - Aucun suivi non autorisé
@@ -54,12 +54,12 @@ IDÉALE POUR
 - Tous ceux qui aiment la montagne
 
 POURQUOI CHOISIR REFUGES DE MONTAGNE
-✓ Base de données officielle CAI toujours à jour
-✓ Interface simple et intuitive
-✓ Fonctionne hors ligne (après le premier chargement des données)
-✓ Gratuite avec toutes les fonctionnalités incluses
-✓ Aucune publicité intrusive
-✓ Développée par des passionnés de montagne
+- Base de données officielle CAI toujours à jour
+- Interface simple et intuitive
+- Fonctionne hors ligne (après le premier chargement des données)
+- Gratuite avec toutes les fonctionnalités incluses
+- Aucune publicité intrusive
+- Développée par des passionnés de montagne
 
 Que vous planifiiez un week-end dans les Dolomites, un trek au Mont Rose ou une traversée des Alpes, Refuges de Montagne est le compagnon parfait pour chaque aventure.
 
