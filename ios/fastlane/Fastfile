@@ -53,6 +53,18 @@ NATIVE_SIMULATOR_DEVICES = [
   "iPad_Pro_13",
 ]
 
+# Mappatura locale: i nostri locale (usati nella generazione screenshot e nei metadata)
+# possono differire dai codici che deliver si aspetta per gli screenshot.
+# In particolare, deliver vuole "it" per l'italiano (non "it-IT").
+# I metadata usano "it-IT" senza problemi, ma gli screenshot devono usare
+# i codici dalla lista di Apple/deliver.
+SCREENSHOT_LOCALE_MAP = {
+  "it-IT" => "it",
+  "en-US" => "en-US",
+  "de-DE" => "de-DE",
+  "fr-FR" => "fr-FR",
+}
+
 # Lingue supportate (locale code per deliver/App Store Connect)
 SUPPORTED_LOCALES = ["it-IT", "en-US", "de-DE", "fr-FR"]
 PRIMARY_LOCALE = "it-IT"
@@ -269,7 +281,10 @@ def prepare_screenshots_for_deliver
   total_copied = 0
 
   SUPPORTED_LOCALES.each do |locale|
-    deliver_locale_dir = File.join(DELIVER_SCREENSHOTS_DIR, locale)
+    # Mappa il locale al codice che deliver si aspetta per gli screenshot
+    # (es. "it-IT" → "it", "en-US" → "en-US")
+    deliver_locale = SCREENSHOT_LOCALE_MAP[locale] || locale
+    deliver_locale_dir = File.join(DELIVER_SCREENSHOTS_DIR, deliver_locale)
     FileUtils.mkdir_p(deliver_locale_dir)
 
     # Leggi da screenshots/final/<locale>/<device>/<screen>.png
@@ -291,7 +306,7 @@ def prepare_screenshots_for_deliver
       copied += 1
     end
 
-    UI.message("  #{locale}: #{copied} screenshot")
+    UI.message("  #{locale} → #{deliver_locale}: #{copied} screenshot")
     total_copied += copied
   end
 
