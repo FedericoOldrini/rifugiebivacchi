@@ -25,7 +25,10 @@ PUBSPEC_PATH = File.join(PROJECT_ROOT, "pubspec.yaml")
 SCREENSHOTS_RAW_DIR = File.join(PROJECT_ROOT, "screenshots", "raw")
 SCREENSHOTS_FINAL_DIR = File.join(PROJECT_ROOT, "screenshots", "final")
 METADATA_DIR = File.join(__dir__, "metadata")
-DELIVER_SCREENSHOTS_DIR = File.join(__dir__, "screenshots")
+# IMPORTANTE: usiamo File.expand_path per garantire che deliver riceva un path
+# assoluto canonico. Senza expand_path, deliver può relativizzare il path e
+# risolverlo dalla CWD (ios/) anziché dalla directory Fastlane (ios/fastlane/).
+DELIVER_SCREENSHOTS_DIR = File.expand_path(File.join(__dir__, "screenshots"))
 
 # Capture script per screenshot simulatore
 CAPTURE_SCRIPT = File.join(PROJECT_ROOT, "tools", "capture_screenshots.sh")
@@ -53,21 +56,22 @@ NATIVE_SIMULATOR_DEVICES = [
   "iPad_Pro_13",
 ]
 
-# Mappatura locale: i nostri locale (usati nella generazione screenshot e nei metadata)
-# possono differire dai codici che deliver si aspetta per gli screenshot.
-# In particolare, deliver vuole "it" per l'italiano (non "it-IT").
-# I metadata usano "it-IT" senza problemi, ma gli screenshot devono usare
-# i codici dalla lista di Apple/deliver.
-SCREENSHOT_LOCALE_MAP = {
-  "it-IT" => "it",
+# Lingue supportate — usiamo i codici validi per deliver/App Store Connect.
+# IMPORTANTE: deliver accetta "it" per l'italiano (NON "it-IT").
+# Vedi lista completa: https://docs.fastlane.tools/actions/deliver/#available-language-codes
+SUPPORTED_LOCALES = ["it", "en-US", "de-DE", "fr-FR"]
+PRIMARY_LOCALE = "it"
+
+# Mappatura deliver locale → locale usato da generate_screenshots.py
+# Il generatore Python (tools/generate_screenshots.py) usa "it-IT" nelle directory
+# di output (screenshots/final/it-IT/), ma deliver vuole "it".
+# Per gli altri locale il codice è identico.
+SCREENSHOT_SOURCE_LOCALE_MAP = {
+  "it" => "it-IT",
   "en-US" => "en-US",
   "de-DE" => "de-DE",
   "fr-FR" => "fr-FR",
 }
-
-# Lingue supportate (locale code per deliver/App Store Connect)
-SUPPORTED_LOCALES = ["it-IT", "en-US", "de-DE", "fr-FR"]
-PRIMARY_LOCALE = "it-IT"
 
 # ── Helper Methods ────────────────────────────────────────────────────────────
 
@@ -186,7 +190,7 @@ def generate_release_notes_from_commits(version)
 
   # Genera le release notes per ogni locale
   translations = {
-    "it-IT" => {
+    "it" => {
       header: "Novità nella versione #{version}:",
       features_header: nil, # Le feature vanno direttamente sotto l'header
       fixes_header: "Correzioni:",
@@ -281,14 +285,13 @@ def prepare_screenshots_for_deliver
   total_copied = 0
 
   SUPPORTED_LOCALES.each do |locale|
-    # Mappa il locale al codice che deliver si aspetta per gli screenshot
-    # (es. "it-IT" → "it", "en-US" → "en-US")
-    deliver_locale = SCREENSHOT_LOCALE_MAP[locale] || locale
-    deliver_locale_dir = File.join(DELIVER_SCREENSHOTS_DIR, deliver_locale)
+    deliver_locale_dir = File.join(DELIVER_SCREENSHOTS_DIR, locale)
     FileUtils.mkdir_p(deliver_locale_dir)
 
-    # Leggi da screenshots/final/<locale>/<device>/<screen>.png
-    source_locale_dir = File.join(SCREENSHOTS_FINAL_DIR, locale)
+    # Mappa il deliver locale al codice usato da generate_screenshots.py
+    # (es. "it" → "it-IT" nella directory screenshots/final/)
+    source_locale = SCREENSHOT_SOURCE_LOCALE_MAP[locale] || locale
+    source_locale_dir = File.join(SCREENSHOTS_FINAL_DIR, source_locale)
     unless Dir.exist?(source_locale_dir)
       UI.important("  ⚠ Nessun screenshot trovato per #{locale} in #{source_locale_dir}")
       next
@@ -306,12 +309,19 @@ def prepare_screenshots_for_deliver
       copied += 1
     end
 
-    UI.message("  #{locale} → #{deliver_locale}: #{copied} screenshot")
+    UI.message("  #{locale} (source: #{source_locale}): #{copied} screenshot")
     total_copied += copied
   end
 
   screenshots_per_locale = total_copied > 0 ? total_copied / SUPPORTED_LOCALES.length : 0
   UI.success("#{total_copied} screenshot pronti per deliver (#{SUPPORTED_LOCALES.length} locale × #{screenshots_per_locale} screenshot)")
+  UI.message("Directory deliver screenshot: #{DELIVER_SCREENSHOTS_DIR}")
+
+  # Verifica difensiva: controlla che la directory abbia locale subdirectory con file
+  locale_dirs = Dir.glob(File.join(DELIVER_SCREENSHOTS_DIR, "*")).select { |p| File.directory?(p) }
+  if locale_dirs.empty?
+    UI.user_error!("ERRORE CRITICO: La directory deliver screenshot #{DELIVER_SCREENSHOTS_DIR} non contiene subdirectory locale! Verifica il path.")
+  end
 end
 
 # Cancella/rimuove versioni in stato "pending" (Waiting for Review, Ready for Review,
@@ -903,6 +913,58 @@ platform :ios do
       UI.important("  Verifica e correggi prima di procedere.")
       UI.important("═══════════════════════════════════════════")
     end
+  end
+
+  # ── Debug: Upload solo screenshot ──────────────────────────────────────────
+
+  desc "Debug: verifica e upload solo screenshot su ASC"
+  lane :upload_screenshots_only do
+    api_key = asc_api_key
+    version = read_pubspec_version
+
+    # Prepara screenshot per deliver (copia da screenshots/final/ alla dir deliver)
+    prepare_screenshots_for_deliver
+
+    # Mostra esattamente cosa c'è nella directory screenshot
+    UI.header("Contenuto directory screenshot per deliver")
+    screenshots_dir = DELIVER_SCREENSHOTS_DIR
+    UI.message("Directory: #{screenshots_dir}")
+
+    Dir.glob(File.join(screenshots_dir, "*")).sort.each do |locale_dir|
+      next unless File.directory?(locale_dir)
+      locale = File.basename(locale_dir)
+      files = Dir.glob(File.join(locale_dir, "*.png")).sort
+      UI.message("  #{locale}/: #{files.length} file")
+      files.each do |f|
+        # Leggi dimensioni con sips (macOS)
+        size_info = `sips -g pixelWidth -g pixelHeight "#{f}" 2>/dev/null`
+        width = size_info[/pixelWidth:\s*(\d+)/, 1]
+        height = size_info[/pixelHeight:\s*(\d+)/, 1]
+        UI.message("    #{File.basename(f)} — #{width}x#{height}")
+      end
+    end
+
+    # Cancella review pending prima di uploadare
+    cancel_pending_versions_if_needed(api_key, version[:version])
+
+    # Upload solo screenshot
+    upload_to_app_store(
+      api_key: api_key,
+      ipa: IPA_PATH,
+      app_version: version[:version],
+
+      skip_metadata: true,
+      skip_binary_upload: true,
+
+      skip_screenshots: false,
+      screenshots_path: screenshots_dir,
+      overwrite_screenshots: true,
+
+      force: true,
+      precheck_include_in_app_purchases: false,
+      submit_for_review: false,
+      automatic_release: false,
+    )
   end
 
   # ── Error Handling ────────────────────────────────────────────────────────

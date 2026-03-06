@@ -156,6 +156,9 @@ ios/fastlane/screenshots/
 ios/fastlane/test_output/
 ios/fastlane/README.md
 
+# Stale deliver screenshots directory (deliver's ensure_folders_created may recreate this)
+ios/screenshots/
+
 # Bundler
 ios/vendor/
 ios/.bundle/
