@@ -394,95 +394,77 @@ class _PassaportoStampCard extends StatelessWidget {
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.all(8),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    // Timbro circolare centrale
-                    Container(
-                      padding: const EdgeInsets.all(6),
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        border: Border.all(
-                          color: AppTheme.deepTeal.withAlpha(
-                            (0.4 * 255).toInt(),
-                          ),
-                          width: 2.5,
-                        ),
-                      ),
-                      child: Container(
-                        padding: const EdgeInsets.all(10),
+                child: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      // Timbro circolare centrale
+                      Container(
+                        padding: const EdgeInsets.all(6),
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
                           border: Border.all(
                             color: AppTheme.deepTeal.withAlpha(
-                              (0.3 * 255).toInt(),
+                              (0.4 * 255).toInt(),
                             ),
-                            width: 1.5,
+                            width: 2.5,
                           ),
                         ),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            // Icona montagna
-                            Icon(
-                              Icons.landscape,
-                              color: AppTheme.deepTeal,
-                              size: 28,
-                            ),
-                            const SizedBox(height: 4),
-                            // Nome rifugio
-                            Text(
-                              latestCheckIn.rifugioNome,
-                              style: TextStyle(
-                                fontSize: 9,
-                                fontWeight: FontWeight.bold,
-                                height: 1.1,
-                                color: AppTheme.deepTeal,
+                        child: Container(
+                          padding: const EdgeInsets.all(10),
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            border: Border.all(
+                              color: AppTheme.deepTeal.withAlpha(
+                                (0.3 * 255).toInt(),
                               ),
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
-                              textAlign: TextAlign.center,
+                              width: 1.5,
                             ),
-                          ],
+                          ),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              // Icona montagna
+                              Icon(
+                                Icons.landscape,
+                                color: AppTheme.deepTeal,
+                                size: 28,
+                              ),
+                              const SizedBox(height: 4),
+                              // Nome rifugio
+                              Text(
+                                latestCheckIn.rifugioNome,
+                                style: TextStyle(
+                                  fontSize: 9,
+                                  fontWeight: FontWeight.bold,
+                                  height: 1.1,
+                                  color: AppTheme.deepTeal,
+                                ),
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                                textAlign: TextAlign.center,
+                              ),
+                            ],
+                          ),
                         ),
                       ),
-                    ),
-                    const SizedBox(height: 6),
-                    // Altitudine
-                    if (latestCheckIn.altitudine != null)
-                      Text(
-                        '${latestCheckIn.altitudine!.toInt()} m',
-                        style: TextStyle(
-                          fontSize: 9,
-                          color: Colors.grey[700],
-                          fontWeight: FontWeight.w600,
+                      const SizedBox(height: 6),
+                      // Altitudine
+                      if (latestCheckIn.altitudine != null)
+                        Text(
+                          '${latestCheckIn.altitudine!.toInt()} m',
+                          style: TextStyle(
+                            fontSize: 9,
+                            color: Colors.grey[700],
+                            fontWeight: FontWeight.w600,
+                          ),
+                          textAlign: TextAlign.center,
                         ),
-                        textAlign: TextAlign.center,
-                      ),
-                    const SizedBox(height: 6),
-                    // Prima visita
-                    Text(
-                      l10n.firstVisitLabel,
-                      style: TextStyle(
-                        fontSize: 8,
-                        color: Colors.grey[600],
-                        fontWeight: FontWeight.w400,
-                      ),
-                    ),
-                    Text(
-                      dateFormat.format(oldestCheckIn.dataVisita),
-                      style: TextStyle(
-                        fontSize: 9,
-                        color: Colors.grey[700],
-                        fontWeight: FontWeight.w600,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                    // Ultima visita (se più di una)
-                    if (visitCount > 1) ...[
-                      const SizedBox(height: 4),
+                      const SizedBox(height: 6),
+                      // Prima visita
                       Text(
-                        l10n.lastVisitLabel,
+                        l10n.firstVisitLabel,
                         style: TextStyle(
                           fontSize: 8,
                           color: Colors.grey[600],
@@ -490,7 +472,7 @@ class _PassaportoStampCard extends StatelessWidget {
                         ),
                       ),
                       Text(
-                        dateFormat.format(latestCheckIn.dataVisita),
+                        dateFormat.format(oldestCheckIn.dataVisita),
                         style: TextStyle(
                           fontSize: 9,
                           color: Colors.grey[700],
@@ -498,8 +480,29 @@ class _PassaportoStampCard extends StatelessWidget {
                         ),
                         textAlign: TextAlign.center,
                       ),
+                      // Ultima visita (se più di una)
+                      if (visitCount > 1) ...[
+                        const SizedBox(height: 4),
+                        Text(
+                          l10n.lastVisitLabel,
+                          style: TextStyle(
+                            fontSize: 8,
+                            color: Colors.grey[600],
+                            fontWeight: FontWeight.w400,
+                          ),
+                        ),
+                        Text(
+                          dateFormat.format(latestCheckIn.dataVisita),
+                          style: TextStyle(
+                            fontSize: 9,
+                            color: Colors.grey[700],
+                            fontWeight: FontWeight.w600,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ],
                     ],
-                  ],
+                  ),
                 ),
               ),
             ),
