@@ -52,27 +52,100 @@ LEGACY_SIZE_SOURCE = {
     "iPad_Pro_12_9": "iPad_Pro_13",
 }
 
-# Configurazione screenshot (deve matchare i nomi nel golden test)
+# Lingue supportate (deve matchare SUPPORTED_LOCALES nel Fastfile)
+SUPPORTED_LOCALES = ["it-IT", "en-US", "de-DE", "fr-FR"]
+DEFAULT_LOCALE = "it-IT"
+
+# Configurazione screenshot localizzata per lingua
+# I nomi dei file (key) devono matchare i marker SCREENSHOT_READY nel test di integrazione
 SCREENSHOTS_CONFIG = {
-    "01_lista_rifugi": {
-        "title": "Scopri oltre\n1000 rifugi",
-        "subtitle": "Database completo CAI\ncon informazioni dettagliate",
+    "it-IT": {
+        "01_lista_rifugi": {
+            "title": "Scopri oltre\n1000 rifugi",
+            "subtitle": "Database completo CAI\ncon informazioni dettagliate",
+        },
+        "02_mappa": {
+            "title": "Mappa\nintelligente",
+            "subtitle": "Trova i rifugi più vicini\ncon clustering avanzato",
+        },
+        "03_dettaglio_rifugio": {
+            "title": "Tutte le info\nche cerchi",
+            "subtitle": "Contatti, servizi,\naltitudine e foto",
+        },
+        "04_profilo": {
+            "title": "Il tuo profilo\nalpinista",
+            "subtitle": "Tieni traccia dei rifugi\nvisitati e preferiti",
+        },
+        "05_passaporto": {
+            "title": "Passaporto\ndei Rifugi",
+            "subtitle": "Registra le tue visite\ne colleziona i timbri",
+        },
     },
-    "02_mappa": {
-        "title": "Mappa\nintelligente",
-        "subtitle": "Trova i rifugi più vicini\ncon clustering avanzato",
+    "en-US": {
+        "01_lista_rifugi": {
+            "title": "Discover over\n1000 shelters",
+            "subtitle": "Complete CAI database\nwith detailed information",
+        },
+        "02_mappa": {
+            "title": "Smart\nmap",
+            "subtitle": "Find the nearest shelters\nwith advanced clustering",
+        },
+        "03_dettaglio_rifugio": {
+            "title": "All the info\nyou need",
+            "subtitle": "Contacts, services,\naltitude and photos",
+        },
+        "04_profilo": {
+            "title": "Your\nmountaineer profile",
+            "subtitle": "Track visited\nand favorite shelters",
+        },
+        "05_passaporto": {
+            "title": "Shelter\nPassport",
+            "subtitle": "Log your visits\nand collect stamps",
+        },
     },
-    "03_dettaglio_rifugio": {
-        "title": "Tutte le info\nche cerchi",
-        "subtitle": "Contatti, servizi,\naltitudine e foto",
+    "de-DE": {
+        "01_lista_rifugi": {
+            "title": "Entdecke über\n1000 Hütten",
+            "subtitle": "Vollständige CAI-Datenbank\nmit detaillierten Infos",
+        },
+        "02_mappa": {
+            "title": "Intelligente\nKarte",
+            "subtitle": "Finde die nächsten Hütten\nmit intelligentem Clustering",
+        },
+        "03_dettaglio_rifugio": {
+            "title": "Alle Infos\ndie du brauchst",
+            "subtitle": "Kontakte, Services,\nHöhe und Fotos",
+        },
+        "04_profilo": {
+            "title": "Dein\nBergsteiger-Profil",
+            "subtitle": "Verfolge besuchte\nund bevorzugte Hütten",
+        },
+        "05_passaporto": {
+            "title": "Hütten-\nPass",
+            "subtitle": "Registriere deine Besuche\nund sammle Stempel",
+        },
     },
-    "04_profilo": {
-        "title": "Il tuo profilo\nalpinista",
-        "subtitle": "Tieni traccia dei rifugi\nvisitati e preferiti",
-    },
-    "05_passaporto": {
-        "title": "Passaporto\ndei Rifugi",
-        "subtitle": "Registra le tue visite\ne colleziona i timbri",
+    "fr-FR": {
+        "01_lista_rifugi": {
+            "title": "Découvrez plus de\n1000 refuges",
+            "subtitle": "Base de données CAI\navec informations détaillées",
+        },
+        "02_mappa": {
+            "title": "Carte\nintelligente",
+            "subtitle": "Trouvez les refuges proches\navec clustering avancé",
+        },
+        "03_dettaglio_rifugio": {
+            "title": "Toutes les infos\ndont vous avez besoin",
+            "subtitle": "Contacts, services,\naltitude et photos",
+        },
+        "04_profilo": {
+            "title": "Votre profil\nd'alpiniste",
+            "subtitle": "Suivez les refuges\nvisités et favoris",
+        },
+        "05_passaporto": {
+            "title": "Passeport\ndes Refuges",
+            "subtitle": "Enregistrez vos visites\net collectionnez les tampons",
+        },
     },
 }
 
@@ -431,52 +504,60 @@ def has_multi_device_raw() -> bool:
     return False
 
 
-def process_overlays_multi_device() -> int:
-    """Applica overlay usando screenshot raw per-device."""
+def process_overlays_multi_device(locales: list) -> int:
+    """Applica overlay usando screenshot raw per-device, per ogni locale richiesto."""
     processed = 0
 
-    for size_name, target_dims in APP_STORE_SIZES.items():
-        if size_name in LEGACY_SIZE_SOURCE:
-            source_size = LEGACY_SIZE_SOURCE[size_name]
-            source_dir = RAW_DIR / source_size
-            label = f"(resize da {source_size})"
-        else:
-            source_dir = RAW_DIR / size_name
-            label = "(nativo)"
-
-        if not source_dir.exists() or not list(source_dir.glob("*.png")):
-            print(
-                f"   ⚠️  Nessun raw trovato per {size_name} in {source_dir.relative_to(PROJECT_ROOT)}"
-            )
+    for locale in locales:
+        locale_config = SCREENSHOTS_CONFIG.get(locale)
+        if not locale_config:
+            print(f"   ⚠️  Configurazione mancante per locale: {locale}")
             continue
 
-        print(f"\n   📐 {size_name} {target_dims[0]}×{target_dims[1]} {label}")
+        print(f"\n   🌍 {locale}")
 
-        for screenshot_path in sorted(source_dir.glob("*.png")):
-            config = None
-            for key, cfg in SCREENSHOTS_CONFIG.items():
-                if key in screenshot_path.stem:
-                    config = cfg
-                    break
+        for size_name, target_dims in APP_STORE_SIZES.items():
+            if size_name in LEGACY_SIZE_SOURCE:
+                source_size = LEGACY_SIZE_SOURCE[size_name]
+                source_dir = RAW_DIR / source_size
+                label = f"(resize da {source_size})"
+            else:
+                source_dir = RAW_DIR / size_name
+                label = "(nativo)"
 
-            if not config:
+            if not source_dir.exists() or not list(source_dir.glob("*.png")):
+                print(
+                    f"   ⚠️  Nessun raw trovato per {size_name} in {source_dir.relative_to(PROJECT_ROOT)}"
+                )
                 continue
 
-            output_path = FINAL_DIR / size_name / screenshot_path.name
-            if add_overlay(
-                screenshot_path,
-                output_path,
-                config["title"],
-                config["subtitle"],
-                target_size=target_dims,
-            ):
-                print(f"      ✅ {screenshot_path.name}")
-                processed += 1
+            print(f"\n      📐 {size_name} {target_dims[0]}×{target_dims[1]} {label}")
+
+            for screenshot_path in sorted(source_dir.glob("*.png")):
+                config = None
+                for key, cfg in locale_config.items():
+                    if key in screenshot_path.stem:
+                        config = cfg
+                        break
+
+                if not config:
+                    continue
+
+                output_path = FINAL_DIR / locale / size_name / screenshot_path.name
+                if add_overlay(
+                    screenshot_path,
+                    output_path,
+                    config["title"],
+                    config["subtitle"],
+                    target_size=target_dims,
+                ):
+                    print(f"         ✅ {screenshot_path.name}")
+                    processed += 1
 
     return processed
 
 
-def process_overlays_single_device(resize: bool = True) -> int:
+def process_overlays_single_device(locales: list, resize: bool = True) -> int:
     """Applica overlay a screenshot raw flat (fallback se non organizzati per device)."""
     screenshots = list(RAW_DIR.glob("*.png")) if RAW_DIR.exists() else []
 
@@ -487,48 +568,56 @@ def process_overlays_single_device(resize: bool = True) -> int:
     print(f"   Trovati {len(screenshots)} screenshot")
     processed = 0
 
-    for screenshot_path in sorted(screenshots):
-        config = None
-        for key, cfg in SCREENSHOTS_CONFIG.items():
-            if key in screenshot_path.stem:
-                config = cfg
-                break
-
-        if not config:
-            print(f"   ⚠️  Config non trovata per: {screenshot_path.name}")
+    for locale in locales:
+        locale_config = SCREENSHOTS_CONFIG.get(locale)
+        if not locale_config:
+            print(f"   ⚠️  Configurazione mancante per locale: {locale}")
             continue
 
-        if resize:
-            for size_name, size_dims in APP_STORE_SIZES.items():
-                output_path = FINAL_DIR / size_name / screenshot_path.name
+        print(f"\n   🌍 {locale}")
+
+        for screenshot_path in sorted(screenshots):
+            config = None
+            for key, cfg in locale_config.items():
+                if key in screenshot_path.stem:
+                    config = cfg
+                    break
+
+            if not config:
+                print(f"   ⚠️  Config non trovata per: {screenshot_path.name}")
+                continue
+
+            if resize:
+                for size_name, size_dims in APP_STORE_SIZES.items():
+                    output_path = FINAL_DIR / locale / size_name / screenshot_path.name
+                    if add_overlay(
+                        screenshot_path,
+                        output_path,
+                        config["title"],
+                        config["subtitle"],
+                        target_size=size_dims,
+                    ):
+                        print(f"   ✅ {size_name}/{screenshot_path.name}")
+                        processed += 1
+            else:
+                output_path = FINAL_DIR / locale / screenshot_path.name
                 if add_overlay(
-                    screenshot_path,
-                    output_path,
-                    config["title"],
-                    config["subtitle"],
-                    target_size=size_dims,
+                    screenshot_path, output_path, config["title"], config["subtitle"]
                 ):
-                    print(f"   ✅ {size_name}/{screenshot_path.name}")
+                    print(f"   ✅ {screenshot_path.name}")
                     processed += 1
-        else:
-            output_path = FINAL_DIR / screenshot_path.name
-            if add_overlay(
-                screenshot_path, output_path, config["title"], config["subtitle"]
-            ):
-                print(f"   ✅ {screenshot_path.name}")
-                processed += 1
 
     return processed
 
 
-def process_overlays(resize: bool = True) -> int:
+def process_overlays(locales: list, resize: bool = True) -> int:
     """Applica overlay, scegliendo automaticamente tra multi-device e single-device."""
     if has_multi_device_raw():
         print("   📱 Modalità multi-device: screenshot nativi per ogni dimensione")
-        return process_overlays_multi_device()
+        return process_overlays_multi_device(locales)
     else:
         print("   📱 Modalità single-device: resize da un unico set di raw")
-        return process_overlays_single_device(resize=resize)
+        return process_overlays_single_device(locales, resize=resize)
 
 
 def main():
@@ -544,6 +633,12 @@ def main():
         "--no-resize",
         action="store_true",
         help="Non ridimensionare per tutte le dimensioni App Store",
+    )
+    parser.add_argument(
+        "--locale",
+        type=str,
+        default=None,
+        help=f"Genera solo per un locale specifico (es. it-IT). Default: tutte ({', '.join(SUPPORTED_LOCALES)})",
     )
     args = parser.parse_args()
 
@@ -564,13 +659,26 @@ def main():
         print(f"   tools/capture_screenshots.sh --all")
         sys.exit(1)
 
+    # Determina i locale da processare
+    if args.locale:
+        if args.locale not in SUPPORTED_LOCALES:
+            print(f"❌ Locale non supportato: {args.locale}")
+            print(f"   Locale supportati: {', '.join(SUPPORTED_LOCALES)}")
+            sys.exit(1)
+        locales = [args.locale]
+    else:
+        locales = SUPPORTED_LOCALES
+
+    print(f"   🌍 Lingue: {', '.join(locales)}")
+
     # Applica overlay e ridimensionamento
-    processed = process_overlays(resize=not args.no_resize)
+    processed = process_overlays(locales, resize=not args.no_resize)
 
     if processed == 0:
         print("\n⚠️  Nessun screenshot processato!")
         print(f"   Verifica che ci siano screenshot .png in {RAW_DIR}")
-        print(f"   con nomi che contengono: {', '.join(SCREENSHOTS_CONFIG.keys())}")
+        screenshot_keys = list(SCREENSHOTS_CONFIG.get(DEFAULT_LOCALE, {}).keys())
+        print(f"   con nomi che contengono: {', '.join(screenshot_keys)}")
         sys.exit(1)
 
     print(f"\n   ✅ {processed} screenshot finali generati")
@@ -593,11 +701,22 @@ def main():
     if FINAL_DIR.exists():
         final_count = len(list(FINAL_DIR.rglob("*.png")))
         print(f"📁 Screenshot finali: {FINAL_DIR} ({final_count} file)")
-        for size_dir in sorted(FINAL_DIR.iterdir()):
-            if size_dir.is_dir():
-                count = len(list(size_dir.glob("*.png")))
-                print(f"   └── {size_dir.name}/ ({count} screenshot)")
+        for locale_dir in sorted(FINAL_DIR.iterdir()):
+            if locale_dir.is_dir():
+                locale_count = len(list(locale_dir.rglob("*.png")))
+                print(f"   └── {locale_dir.name}/")
+                for size_dir in sorted(locale_dir.iterdir()):
+                    if size_dir.is_dir():
+                        count = len(list(size_dir.glob("*.png")))
+                        print(f"       └── {size_dir.name}/ ({count} screenshot)")
 
+    locale_count = len(locales)
+    device_count = len(APP_STORE_SIZES)
+    screenshots_per_device = len(SCREENSHOTS_CONFIG.get(DEFAULT_LOCALE, {}))
+    expected_total = locale_count * device_count * screenshots_per_device
+    print(
+        f"\n📊 {locale_count} lingue × {device_count} dimensioni × {screenshots_per_device} schermate = {expected_total} screenshot totali"
+    )
     print(f"\n📤 Pronti per upload su App Store Connect!")
     print(f"   cd ios && bundle exec fastlane upload_screenshots")
     print(f"\n🎉 Fatto!")

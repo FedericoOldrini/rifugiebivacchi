@@ -249,13 +249,12 @@ def write_release_notes(notes_per_locale)
   end
 end
 #
-# Input:  screenshots/final/<device>/<screen>.png
+# Input:  screenshots/final/<locale>/<device>/<screen>.png
 # Output: ios/fastlane/screenshots/<locale>/<device>_<screen>.png
 #
-# Gli screenshot vengono copiati in TUTTI i locale supportati.
-# Attualmente gli screenshot sono in italiano — vengono condivisi tra tutti i locale
-# perché l'interfaccia mostra dati (nomi rifugi, altitudini) che sono uguali in tutte le lingue.
-# In futuro, se si vorranno screenshot localizzati, basterà generare set separati per locale.
+# Gli screenshot sono localizzati: ogni locale ha il proprio set con overlay
+# (titolo e sottotitolo) nella lingua corrispondente. I raw screenshot sono
+# identici (l'app è in italiano), ma l'overlay testuale cambia per ogni lingua.
 #
 # deliver riconosce automaticamente il display type dalla risoluzione del PNG
 #
@@ -270,17 +269,24 @@ def prepare_screenshots_for_deliver
   total_copied = 0
 
   SUPPORTED_LOCALES.each do |locale|
-    locale_dir = File.join(DELIVER_SCREENSHOTS_DIR, locale)
-    FileUtils.mkdir_p(locale_dir)
+    deliver_locale_dir = File.join(DELIVER_SCREENSHOTS_DIR, locale)
+    FileUtils.mkdir_p(deliver_locale_dir)
+
+    # Leggi da screenshots/final/<locale>/<device>/<screen>.png
+    source_locale_dir = File.join(SCREENSHOTS_FINAL_DIR, locale)
+    unless Dir.exist?(source_locale_dir)
+      UI.important("  ⚠ Nessun screenshot trovato per #{locale} in #{source_locale_dir}")
+      next
+    end
 
     copied = 0
-    Dir.glob(File.join(SCREENSHOTS_FINAL_DIR, "*", "*.png")).each do |file|
+    Dir.glob(File.join(source_locale_dir, "*", "*.png")).each do |file|
       device = File.basename(File.dirname(file))
       screen = File.basename(file)
 
       # Copia con nome che include device per evitare collisioni
       # deliver ordina alfabeticamente per posizione nello store
-      dest = File.join(locale_dir, "#{device}_#{screen}")
+      dest = File.join(deliver_locale_dir, "#{device}_#{screen}")
       FileUtils.cp(file, dest)
       copied += 1
     end
@@ -289,7 +295,8 @@ def prepare_screenshots_for_deliver
     total_copied += copied
   end
 
-  UI.success("#{total_copied} screenshot pronti per deliver (#{SUPPORTED_LOCALES.length} locale × #{total_copied / SUPPORTED_LOCALES.length} screenshot)")
+  screenshots_per_locale = total_copied > 0 ? total_copied / SUPPORTED_LOCALES.length : 0
+  UI.success("#{total_copied} screenshot pronti per deliver (#{SUPPORTED_LOCALES.length} locale × #{screenshots_per_locale} screenshot)")
 end
 
 # ── Platform ──────────────────────────────────────────────────────────────────
@@ -467,16 +474,23 @@ platform :ios do
       end
     end
 
-    # Conta risultati finali
+    # Conta risultati finali (struttura: final/<locale>/<device>/<screenshot>.png)
     if Dir.exist?(SCREENSHOTS_FINAL_DIR)
       count = Dir.glob(File.join(SCREENSHOTS_FINAL_DIR, "**", "*.png")).length
       UI.success("#{count} screenshot finali generati in screenshots/final/")
 
-      APP_STORE_DEVICE_NAMES.each do |device|
-        device_dir = File.join(SCREENSHOTS_FINAL_DIR, device)
-        if Dir.exist?(device_dir)
-          dc = Dir.glob(File.join(device_dir, "*.png")).length
-          UI.message("  #{device}/: #{dc} screenshot")
+      SUPPORTED_LOCALES.each do |locale|
+        locale_dir = File.join(SCREENSHOTS_FINAL_DIR, locale)
+        next unless Dir.exist?(locale_dir)
+        locale_count = Dir.glob(File.join(locale_dir, "**", "*.png")).length
+        UI.message("  #{locale}/: #{locale_count} screenshot")
+
+        APP_STORE_DEVICE_NAMES.each do |device|
+          device_dir = File.join(locale_dir, device)
+          if Dir.exist?(device_dir)
+            dc = Dir.glob(File.join(device_dir, "*.png")).length
+            UI.message("    #{device}/: #{dc}")
+          end
         end
       end
     end
@@ -602,8 +616,8 @@ platform :ios do
     UI.success("  Binary:      caricata su App Store Connect")
     UI.success("  Metadata:    release notes + testi aggiornati per #{SUPPORTED_LOCALES.length} locale")
     unless options[:skip_screenshots]
-      screenshot_count = Dir.exist?(SCREENSHOTS_FINAL_DIR) ? Dir.glob(File.join(SCREENSHOTS_FINAL_DIR, "**", "*.png")).length : 30
-      UI.success("  Screenshot:  #{screenshot_count} screenshot (5 schermate x #{APP_STORE_DEVICE_NAMES.length} dimensioni)")
+      screenshot_count = Dir.exist?(SCREENSHOTS_FINAL_DIR) ? Dir.glob(File.join(SCREENSHOTS_FINAL_DIR, "**", "*.png")).length : 120
+      UI.success("  Screenshot:  #{screenshot_count} screenshot (#{SUPPORTED_LOCALES.length} lingue × #{APP_STORE_DEVICE_NAMES.length} dimensioni × 5 schermate)")
     end
     UI.success("  Git tag:     v#{new_version}")
     unless options[:skip_push]
@@ -725,20 +739,21 @@ platform :ios do
 
     if Dir.exist?(SCREENSHOTS_FINAL_DIR)
       final_count = Dir.glob(File.join(SCREENSHOTS_FINAL_DIR, "**", "*.png")).length
-      if final_count >= 30
-        UI.success("  ✓ Screenshot finali: #{final_count} file")
+      expected_count = SUPPORTED_LOCALES.length * APP_STORE_DEVICE_NAMES.length * 5  # 4 locale × 6 device × 5 screenshot = 120
+      if final_count >= expected_count
+        UI.success("  ✓ Screenshot finali: #{final_count}/#{expected_count} file")
       else
-        UI.important("  ⚠ Screenshot finali: #{final_count}/30 file (esegui 'fastlane screenshots')")
+        UI.important("  ⚠ Screenshot finali: #{final_count}/#{expected_count} file (esegui 'fastlane screenshots')")
       end
 
-      # Verifica per-device
-      APP_STORE_DEVICE_NAMES.each do |device|
-        device_dir = File.join(SCREENSHOTS_FINAL_DIR, device)
-        if Dir.exist?(device_dir)
-          count = Dir.glob(File.join(device_dir, "*.png")).length
-          UI.success("    #{device}: #{count} screenshot")
+      # Verifica per-locale e per-device
+      SUPPORTED_LOCALES.each do |locale|
+        locale_dir = File.join(SCREENSHOTS_FINAL_DIR, locale)
+        if Dir.exist?(locale_dir)
+          locale_count = Dir.glob(File.join(locale_dir, "**", "*.png")).length
+          UI.success("    #{locale}: #{locale_count} screenshot")
         else
-          UI.error("    #{device}: mancante")
+          UI.error("    #{locale}: mancante")
           all_ok = false
         end
       end
