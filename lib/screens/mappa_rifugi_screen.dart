@@ -9,6 +9,7 @@ import '../services/clustering_service.dart';
 import '../screens/dettaglio_rifugio_screen.dart';
 import '../screens/offline_map_screen.dart';
 import '../widgets/map_legend.dart';
+import '../utils/screenshot_mode.dart';
 import 'dart:ui' as ui;
 
 class MappaRifugiScreen extends StatefulWidget {
@@ -44,6 +45,14 @@ class _MappaRifugiScreenState extends State<MappaRifugiScreen> {
   }
 
   Future<void> _getCurrentLocation() async {
+    // In modalità screenshot, salta completamente Geolocator per evitare
+    // il dialog nativo dei permessi di localizzazione che blocca
+    // la cattura automatica degli screenshot.
+    if (ScreenshotMode.enabled) {
+      setState(() => _isLoading = false);
+      return;
+    }
+
     try {
       bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
       if (!serviceEnabled) {
@@ -315,6 +324,163 @@ class _MappaRifugiScreenState extends State<MappaRifugiScreen> {
   // Build
   // ──────────────────────────────────────────────
 
+  // ──────────────────────────────────────────────
+  // Screenshot Mode — mappa statica senza GoogleMap
+  // ──────────────────────────────────────────────
+
+  /// In ScreenshotMode usa un Google Maps Static API image per evitare
+  /// che il GoogleMap widget istanzi CLLocationManager (trigger popup).
+  Widget _buildScreenshotMap(BuildContext context, List<Rifugio> rifugi) {
+    // Crea marker visivi finti sopra un'immagine statica di mappa.
+    // Centra sulle Dolomiti / Alpi centrali con zoom adeguato.
+    return Stack(
+      children: [
+        // Sfondo: immagine statica via Google Maps Static API
+        Positioned.fill(
+          child: Image.asset(
+            'assets/screenshots_images/map_placeholder.png',
+            fit: BoxFit.cover,
+            errorBuilder: (_, error, stackTrace) => Container(
+              color: const Color(0xFFE8E0D8),
+              child: const Center(
+                child: Icon(Icons.map, size: 64, color: Color(0xFF6C757D)),
+              ),
+            ),
+          ),
+        ),
+
+        // Legenda compatta centrata in alto
+        const Positioned(
+          top: 12,
+          left: 0,
+          right: 0,
+          child: Center(child: MapLegend()),
+        ),
+
+        // Marker finti posizionati casualmente per effetto visivo
+        ..._buildFakeMarkers(context, rifugi),
+
+        // Pulsante "la mia posizione"
+        Positioned(
+          bottom: 16,
+          right: 16,
+          child: FloatingActionButton.small(
+            heroTag: 'locateMe',
+            onPressed: () {},
+            child: const Icon(Icons.my_location),
+          ),
+        ),
+
+        // Toggle mappa offline
+        Positioned(
+          bottom: 16,
+          left: 16,
+          child: FloatingActionButton.small(
+            heroTag: 'toggleMap',
+            onPressed: () {},
+            tooltip: AppLocalizations.of(context)!.mapOffline,
+            child: const Icon(Icons.download_outlined),
+          ),
+        ),
+      ],
+    );
+  }
+
+  /// Genera marker visivi decorativi per lo screenshot della mappa.
+  List<Widget> _buildFakeMarkers(BuildContext context, List<Rifugio> rifugi) {
+    // Posizioni relative (frazioni della larghezza/altezza dello schermo)
+    // distribuite per sembrare marker reali su una mappa alpina.
+    const positions = [
+      (0.35, 0.25),
+      (0.65, 0.20),
+      (0.20, 0.40),
+      (0.50, 0.35),
+      (0.75, 0.45),
+      (0.30, 0.55),
+      (0.60, 0.50),
+      (0.45, 0.65),
+      (0.80, 0.60),
+      (0.25, 0.72),
+    ];
+
+    final screenSize = MediaQuery.of(context).size;
+    final widgets = <Widget>[];
+
+    for (int i = 0; i < positions.length && i < rifugi.length; i++) {
+      final (relX, relY) = positions[i];
+      final tipo = rifugi[i].tipo;
+      final color = MapMarkerStyle.colorForTipo(tipo);
+      final iconData = MapMarkerStyle.iconForTipo(tipo);
+
+      widgets.add(
+        Positioned(
+          left: screenSize.width * relX - 16,
+          top: screenSize.height * relY - 16,
+          child: Container(
+            width: 32,
+            height: 32,
+            decoration: BoxDecoration(
+              color: color,
+              shape: BoxShape.circle,
+              border: Border.all(color: Colors.white, width: 2),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.3),
+                  blurRadius: 4,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+            ),
+            child: Icon(iconData, color: Colors.white, size: 16),
+          ),
+        ),
+      );
+    }
+
+    // Aggiungi un cluster marker per realismo
+    widgets.add(
+      Positioned(
+        left: screenSize.width * 0.52 - 20,
+        top: screenSize.height * 0.42 - 20,
+        child: Container(
+          width: 40,
+          height: 40,
+          decoration: BoxDecoration(
+            color: MapMarkerStyle.clusterColor(15),
+            shape: BoxShape.circle,
+            border: Border.all(
+              color: Colors.white.withValues(alpha: 0.9),
+              width: 2,
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.2),
+                blurRadius: 4,
+                offset: const Offset(0, 2),
+              ),
+            ],
+          ),
+          child: const Center(
+            child: Text(
+              '15',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 14,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+
+    return widgets;
+  }
+
+  // ──────────────────────────────────────────────
+  // Build
+  // ──────────────────────────────────────────────
+
   @override
   Widget build(BuildContext context) {
     if (_useOfflineMap) {
@@ -354,6 +520,13 @@ class _MappaRifugiScreenState extends State<MappaRifugiScreen> {
               }).toList()
             : provider.rifugi;
 
+        // In ScreenshotMode, non montiamo il GoogleMap widget per evitare
+        // che il Google Maps SDK (binario chiuso) istanzi CLLocationManager
+        // e triggeri il popup dei permessi di localizzazione.
+        if (ScreenshotMode.enabled) {
+          return _buildScreenshotMap(context, provider.rifugi);
+        }
+
         return Stack(
           children: [
             // Mappa
@@ -365,7 +538,7 @@ class _MappaRifugiScreenState extends State<MappaRifugiScreen> {
                 zoom: userPos != null ? 10 : 8,
               ),
               markers: _markers,
-              myLocationEnabled: true,
+              myLocationEnabled: !ScreenshotMode.enabled,
               myLocationButtonEnabled: false,
               zoomControlsEnabled: false,
               mapToolbarEnabled: false,

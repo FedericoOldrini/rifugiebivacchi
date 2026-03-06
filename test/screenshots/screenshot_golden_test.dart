@@ -29,9 +29,9 @@ import 'package:golden_toolkit/golden_toolkit.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:provider/provider.dart';
 
+import 'package:rifugi_bivacchi/data/screenshot_data.dart';
 import 'package:rifugi_bivacchi/l10n/app_localizations.dart';
 import 'package:rifugi_bivacchi/models/rifugio.dart';
-import 'package:rifugi_bivacchi/models/rifugio_checkin.dart';
 import 'package:rifugi_bivacchi/providers/auth_provider.dart';
 import 'package:rifugi_bivacchi/providers/filtro_provider.dart';
 import 'package:rifugi_bivacchi/providers/passaporto_provider.dart';
@@ -41,6 +41,7 @@ import 'package:rifugi_bivacchi/screens/home_screen.dart';
 import 'package:rifugi_bivacchi/screens/passaporto_screen.dart';
 import 'package:rifugi_bivacchi/theme/app_theme.dart';
 import 'package:rifugi_bivacchi/providers/theme_provider.dart';
+import 'package:rifugi_bivacchi/widgets/rifugio_image.dart';
 
 // ============================================================
 // Device definitions per App Store
@@ -60,259 +61,8 @@ const _devices = <Device>[
   Device(name: 'iPad_Pro_12_9', size: Size(1024, 1366), devicePixelRatio: 2.0),
 ];
 
-// ============================================================
-// Dati fake
-// ============================================================
-
-List<Rifugio> _fakeRifugi() => [
-  Rifugio(
-    id: 'rif001',
-    nome: 'Rifugio Auronzo',
-    descrizione: 'Ai piedi delle Tre Cime di Lavaredo',
-    latitudine: 46.6117,
-    longitudine: 12.2944,
-    altitudine: 2320,
-    tipo: 'rifugio',
-    operatore: 'CAI Auronzo',
-    telefono: '+39 0435 39002',
-    email: 'info@rifugioauronzo.it',
-    postiLetto: 122,
-    ristorante: true,
-    wifi: true,
-    elettricita: true,
-    pagamentoPos: true,
-    region: 'Veneto',
-    province: 'Belluno',
-    municipality: 'Auronzo di Cadore',
-    valley: 'Val di Landro',
-    status: 'aperto',
-    familiesChildrenAccess: true,
-  ),
-  Rifugio(
-    id: 'rif002',
-    nome: 'Rifugio Locatelli',
-    descrizione: 'Panorama sulle Tre Cime di Lavaredo',
-    latitudine: 46.6283,
-    longitudine: 12.3100,
-    altitudine: 2405,
-    tipo: 'rifugio',
-    operatore: 'CAI Padova',
-    telefono: '+39 0474 972002',
-    postiLetto: 80,
-    ristorante: true,
-    wifi: false,
-    elettricita: true,
-    region: 'Trentino-Alto Adige',
-    province: 'Bolzano',
-    status: 'aperto',
-  ),
-  Rifugio(
-    id: 'rif003',
-    nome: 'Rifugio Zsigmondy-Comici',
-    descrizione: 'Nel cuore delle Dolomiti di Sesto',
-    latitudine: 46.6319,
-    longitudine: 12.3028,
-    altitudine: 2224,
-    tipo: 'rifugio',
-    operatore: 'CAI Alto Adige',
-    postiLetto: 50,
-    ristorante: true,
-    region: 'Trentino-Alto Adige',
-    province: 'Bolzano',
-    valley: 'Alta Pusteria',
-    status: 'aperto',
-  ),
-  Rifugio(
-    id: 'rif004',
-    nome: 'Bivacco Fanton',
-    descrizione: 'Bivacco in alta quota nel gruppo del Sorapiss',
-    latitudine: 46.5064,
-    longitudine: 12.2042,
-    altitudine: 2700,
-    tipo: 'bivacco',
-    postiLetto: 8,
-    ristorante: false,
-    wifi: false,
-    elettricita: false,
-    region: 'Veneto',
-    province: 'Belluno',
-    status: 'aperto',
-  ),
-  Rifugio(
-    id: 'rif005',
-    nome: 'Rifugio Pedrotti',
-    descrizione: 'Affacciato sulle Dolomiti di Brenta',
-    latitudine: 46.1793,
-    longitudine: 10.8872,
-    altitudine: 2491,
-    tipo: 'rifugio',
-    operatore: 'SAT Trento',
-    telefono: '+39 0461 948115',
-    postiLetto: 120,
-    ristorante: true,
-    wifi: true,
-    elettricita: true,
-    pagamentoPos: true,
-    defibrillatore: true,
-    region: 'Trentino-Alto Adige',
-    province: 'Trento',
-    municipality: 'San Lorenzo Dorsino',
-    valley: 'Val di Brenta',
-    status: 'aperto',
-    familiesChildrenAccess: true,
-    hotWater: true,
-    showers: true,
-  ),
-  Rifugio(
-    id: 'rif006',
-    nome: 'Rifugio Tuckett',
-    descrizione: 'Nel cuore delle Dolomiti di Brenta',
-    latitudine: 46.1911,
-    longitudine: 10.8792,
-    altitudine: 2272,
-    tipo: 'rifugio',
-    operatore: 'SAT Trento',
-    postiLetto: 80,
-    ristorante: true,
-    elettricita: true,
-    region: 'Trentino-Alto Adige',
-    province: 'Trento',
-    status: 'aperto',
-  ),
-  Rifugio(
-    id: 'rif007',
-    nome: 'Rifugio Ponti',
-    descrizione: 'Immerso nelle Alpi Lepontine',
-    latitudine: 46.1400,
-    longitudine: 8.1200,
-    altitudine: 2559,
-    tipo: 'rifugio',
-    operatore: 'CAI Verbania',
-    postiLetto: 40,
-    ristorante: true,
-    region: 'Piemonte',
-    province: 'Verbania',
-    status: 'aperto',
-  ),
-  Rifugio(
-    id: 'rif008',
-    nome: 'Malga Federa',
-    descrizione: 'Vista spettacolare sulla Croda da Lago',
-    latitudine: 46.4678,
-    longitudine: 12.0617,
-    altitudine: 1966,
-    tipo: 'malga',
-    operatore: 'Privato',
-    postiLetto: 20,
-    ristorante: true,
-    wifi: true,
-    elettricita: true,
-    region: 'Veneto',
-    province: 'Belluno',
-    municipality: "Cortina d'Ampezzo",
-    status: 'aperto',
-    petAccess: true,
-    familiesChildrenAccess: true,
-  ),
-  Rifugio(
-    id: 'rif009',
-    nome: 'Rifugio Brentei',
-    descrizione: 'Punto di partenza per le vie delle Dolomiti di Brenta',
-    latitudine: 46.1628,
-    longitudine: 10.8750,
-    altitudine: 2182,
-    tipo: 'rifugio',
-    operatore: 'SAT Trento',
-    postiLetto: 96,
-    ristorante: true,
-    elettricita: true,
-    region: 'Trentino-Alto Adige',
-    province: 'Trento',
-    status: 'aperto',
-  ),
-  Rifugio(
-    id: 'rif010',
-    nome: 'Bivacco Gervasutti',
-    descrizione: 'Bivacco futuristico sul Monte Bianco',
-    latitudine: 45.8547,
-    longitudine: 6.9433,
-    altitudine: 2835,
-    tipo: 'bivacco',
-    postiLetto: 12,
-    ristorante: false,
-    wifi: false,
-    elettricita: true,
-    region: "Valle d'Aosta",
-    province: 'Aosta',
-    status: 'aperto',
-  ),
-];
-
-List<RifugioCheckIn> _fakeCheckIns() => [
-  RifugioCheckIn(
-    id: 'ci001',
-    rifugioId: 'rif001',
-    rifugioNome: 'Rifugio Auronzo',
-    rifugioLat: 46.6117,
-    rifugioLng: 12.2944,
-    altitudine: 2320,
-    dataVisita: DateTime(2025, 8, 15),
-  ),
-  RifugioCheckIn(
-    id: 'ci002',
-    rifugioId: 'rif002',
-    rifugioNome: 'Rifugio Locatelli',
-    rifugioLat: 46.6283,
-    rifugioLng: 12.3100,
-    altitudine: 2405,
-    dataVisita: DateTime(2025, 8, 16),
-  ),
-  RifugioCheckIn(
-    id: 'ci003',
-    rifugioId: 'rif005',
-    rifugioNome: 'Rifugio Pedrotti',
-    rifugioLat: 46.1793,
-    rifugioLng: 10.8872,
-    altitudine: 2491,
-    dataVisita: DateTime(2025, 7, 22),
-  ),
-  RifugioCheckIn(
-    id: 'ci004',
-    rifugioId: 'rif010',
-    rifugioNome: 'Bivacco Gervasutti',
-    rifugioLat: 45.8547,
-    rifugioLng: 6.9433,
-    altitudine: 2835,
-    dataVisita: DateTime(2025, 9, 3),
-  ),
-  RifugioCheckIn(
-    id: 'ci005',
-    rifugioId: 'rif001',
-    rifugioNome: 'Rifugio Auronzo',
-    rifugioLat: 46.6117,
-    rifugioLng: 12.2944,
-    altitudine: 2320,
-    dataVisita: DateTime(2025, 9, 10),
-    note: 'Seconda visita, giornata stupenda!',
-  ),
-  RifugioCheckIn(
-    id: 'ci006',
-    rifugioId: 'rif009',
-    rifugioNome: 'Rifugio Brentei',
-    rifugioLat: 46.1628,
-    rifugioLng: 10.8750,
-    altitudine: 2182,
-    dataVisita: DateTime(2025, 7, 28),
-  ),
-];
-
-List<String> _fakePreferiti() => [
-  'rif001',
-  'rif002',
-  'rif005',
-  'rif008',
-  'rif010',
-];
+// Dati fake importati da lib/data/screenshot_data.dart:
+// fakeRifugi(), fakeCheckIns(), fakePreferiti()
 
 // ============================================================
 // Helper: wrappa un widget con il contesto completo dell'app
@@ -321,7 +71,7 @@ List<String> _fakePreferiti() => [
 /// Crea il MultiProvider con tutti i provider fake configurati.
 Widget _buildScreenWrapper({required Widget child}) {
   final rifugiProvider = RifugiProvider(testMode: true);
-  rifugiProvider.setRifugiForTest(_fakeRifugi());
+  rifugiProvider.setRifugiForTest(fakeRifugi());
 
   final authProvider = AuthProvider(testMode: true);
   authProvider.setFakeUser(
@@ -331,10 +81,10 @@ Widget _buildScreenWrapper({required Widget child}) {
   );
 
   final passaportoProvider = PassaportoProvider(testMode: true);
-  passaportoProvider.setCheckInsForTest(_fakeCheckIns());
+  passaportoProvider.setCheckInsForTest(fakeCheckIns());
 
   final preferitiProvider = PreferitiProvider(testMode: true);
-  preferitiProvider.setPreferitiForTest(_fakePreferiti());
+  preferitiProvider.setPreferitiForTest(fakePreferiti());
 
   return MultiProvider(
     providers: [
@@ -486,7 +236,7 @@ class _MapScreenPlaceholder extends StatelessWidget {
       Offset(size.width * 0.8, size.height * 0.30),
       Offset(size.width * 0.15, size.height * 0.70),
     ];
-    final rifugi = _fakeRifugi();
+    final rifugi = fakeRifugi();
 
     return List.generate(positions.length.clamp(0, rifugi.length), (i) {
       final pos = positions[i];
@@ -629,22 +379,45 @@ class _DettaglioScreenForGolden extends StatelessWidget {
                   shadows: [Shadow(blurRadius: 8, color: Colors.black54)],
                 ),
               ),
-              background: Container(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [colorScheme.primary, colorScheme.primaryContainer],
-                  ),
-                ),
-                child: Center(
-                  child: Icon(
-                    Icons.landscape,
-                    size: 100,
-                    color: Colors.white.withAlpha(80),
-                  ),
-                ),
-              ),
+              background: rifugio.immagine != null
+                  ? Stack(
+                      fit: StackFit.expand,
+                      children: [
+                        RifugioImage(
+                          imageUrl: rifugio.immagine!,
+                          fit: BoxFit.cover,
+                        ),
+                        // Scrim gradient per leggibilità del titolo
+                        const DecoratedBox(
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              begin: Alignment.topCenter,
+                              end: Alignment.bottomCenter,
+                              colors: [Colors.transparent, Colors.black54],
+                            ),
+                          ),
+                        ),
+                      ],
+                    )
+                  : Container(
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: [
+                            colorScheme.primary,
+                            colorScheme.primaryContainer,
+                          ],
+                        ),
+                      ),
+                      child: Center(
+                        child: Icon(
+                          Icons.landscape,
+                          size: 100,
+                          color: Colors.white.withAlpha(80),
+                        ),
+                      ),
+                    ),
             ),
             actions: [
               IconButton(
@@ -1261,7 +1034,7 @@ void main() {
   // 03 - Dettaglio Rifugio (semplificato, senza platform views)
   // --------------------------------------------------------
   testGoldens('03_dettaglio_rifugio', (tester) async {
-    final rifugio = _fakeRifugi().first; // Rifugio Auronzo
+    final rifugio = fakeRifugi().first; // Capanna Margherita
 
     await tester.pumpWidgetBuilder(
       _buildScreenWrapper(child: _DettaglioScreenForGolden(rifugio: rifugio)),
