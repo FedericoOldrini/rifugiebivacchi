@@ -6,7 +6,7 @@
 #
 #   bundle exec fastlane beta                # Build + upload su TestFlight
 #   bundle exec fastlane release             # Build + metadata + screenshot + upload per review
-#   bundle exec fastlane screenshots         # Golden tests + overlay + resize
+#   bundle exec fastlane screenshots         # Cattura simulatore + overlay + resize
 #   bundle exec fastlane upload_metadata     # Upload solo testi/metadata su ASC
 #   bundle exec fastlane upload_screenshots  # Upload solo screenshot su ASC
 #   bundle exec fastlane full_release        # Pipeline completa: bump + release notes auto + screenshot + build + upload + tag + push
@@ -27,22 +27,30 @@ SCREENSHOTS_FINAL_DIR = File.join(PROJECT_ROOT, "screenshots", "final")
 METADATA_DIR = File.join(__dir__, "metadata")
 DELIVER_SCREENSHOTS_DIR = File.join(__dir__, "screenshots")
 
-# Golden test output directory
-GOLDEN_OUTPUT_DIR = File.join(PROJECT_ROOT, "test", "screenshots", "goldens", "screenshots")
+# Capture script per screenshot simulatore
+CAPTURE_SCRIPT = File.join(PROJECT_ROOT, "tools", "capture_screenshots.sh")
 
 # App Store Connect API Key
 ASC_KEY_ID = "M6WVD946N7"
 ASC_ISSUER_ID = "d2d23ddf-c15d-44d4-9a56-705cbab0f2dc"
 ASC_KEY_PATH = File.expand_path("~/private_keys/AuthKey_M6WVD946N7.p8")
 
-# Device sizes generati dai golden tests (deve matchare _devices nel test Dart)
-GOLDEN_DEVICE_NAMES = [
+# Device sizes per App Store (deve matchare APP_STORE_SIZES in generate_screenshots.py)
+APP_STORE_DEVICE_NAMES = [
   "iPhone_6_9",
   "iPhone_6_7",
   "iPhone_6_5",
   "iPhone_5_5",
   "iPad_Pro_13",
   "iPad_Pro_12_9",
+]
+
+# Simulatori nativi (i restanti sono generati per resize da generate_screenshots.py)
+NATIVE_SIMULATOR_DEVICES = [
+  "iPhone_6_9",
+  "iPhone_6_7",
+  "iPhone_6_5",
+  "iPad_Pro_13",
 ]
 
 # Lingue supportate (locale code per deliver/App Store Connect)
@@ -96,54 +104,6 @@ def flutter_build_ipa
 
   UI.success("IPA generato: #{IPA_PATH}")
   IPA_PATH
-end
-
-# Riorganizza l'output dei golden tests nella struttura attesa da generate_screenshots.py
-#
-# Golden test output: test/screenshots/goldens/screenshots/<screen>.<device>.png
-# Struttura attesa:   screenshots/raw/<device>/<screen>.png
-#
-def organize_golden_screenshots
-  unless Dir.exist?(GOLDEN_OUTPUT_DIR)
-    UI.user_error!("Directory golden output non trovata: #{GOLDEN_OUTPUT_DIR}")
-  end
-
-  # Pulisci raw dir precedente
-  FileUtils.rm_rf(SCREENSHOTS_RAW_DIR)
-
-  copied = 0
-  Dir.glob(File.join(GOLDEN_OUTPUT_DIR, "*.png")).each do |file|
-    basename = File.basename(file, ".png")
-
-    # Il filename ha formato: <screen_name>.<device_name>
-    # Es: "01_lista_rifugi.iPhone_6_9"
-    # Splitta sull'ultimo punto per separare screen_name e device_name
-    last_dot = basename.rindex(".")
-    next unless last_dot
-
-    screen_name = basename[0...last_dot]
-    device_name = basename[(last_dot + 1)..]
-
-    # Verifica che il device sia tra quelli attesi
-    next unless GOLDEN_DEVICE_NAMES.include?(device_name)
-
-    # Copia nella struttura per-device
-    dest_dir = File.join(SCREENSHOTS_RAW_DIR, device_name)
-    FileUtils.mkdir_p(dest_dir)
-    FileUtils.cp(file, File.join(dest_dir, "#{screen_name}.png"))
-    copied += 1
-  end
-
-  UI.success("#{copied} screenshot organizzati da golden tests -> raw/per-device")
-
-  # Mostra riepilogo
-  GOLDEN_DEVICE_NAMES.each do |device|
-    device_dir = File.join(SCREENSHOTS_RAW_DIR, device)
-    if Dir.exist?(device_dir)
-      count = Dir.glob(File.join(device_dir, "*.png")).length
-      UI.message("  #{device}/: #{count} screenshot")
-    end
-  end
 end
 
 # Genera automaticamente le release notes in tutte le lingue supportate
@@ -465,34 +425,41 @@ platform :ios do
     end
   end
 
-  # ── Screenshots (Golden Tests) ───────────────────────────────────────────
+  # ── Screenshots (Simulatore iOS) ──────────────────────────────────────────
 
-  desc "Genera screenshot con golden tests, applica overlay e ridimensiona"
+  desc "Cattura screenshot su simulatori iOS reali, applica overlay e ridimensiona"
   desc "Uso: fastlane screenshots [skip_capture:true] [skip_overlay:true]"
   lane :screenshots do |options|
     unless options[:skip_capture]
-      UI.header("Generazione Screenshot (Golden Tests)")
+      UI.header("Cattura Screenshot (Simulatori iOS)")
+      UI.message("Lancio cattura multi-device su #{NATIVE_SIMULATOR_DEVICES.length} simulatori...")
+      UI.message("Script: #{CAPTURE_SCRIPT}")
 
-      # Esegui golden tests — genera 30 PNG individuali (5 schermate x 6 device)
-      # Nessun simulatore necessario: i widget vengono renderizzati direttamente nel processo di test
       Dir.chdir(PROJECT_ROOT) do
-        sh("flutter", "test", "--update-goldens", "--tags=screenshots", "test/screenshots/")
+        sh(CAPTURE_SCRIPT, "--all")
       end
 
       # Verifica output
-      golden_count = Dir.glob(File.join(GOLDEN_OUTPUT_DIR, "*.png")).length
-      UI.success("#{golden_count} golden screenshot generati!")
+      raw_count = Dir.glob(File.join(SCREENSHOTS_RAW_DIR, "**", "*.png")).length
+      UI.success("#{raw_count} screenshot raw catturati!")
 
-      if golden_count == 0
-        UI.user_error!("Nessun golden screenshot trovato in #{GOLDEN_OUTPUT_DIR}")
+      if raw_count == 0
+        UI.user_error!("Nessun screenshot catturato. Verifica i simulatori disponibili.")
+      end
+
+      # Report per device
+      NATIVE_SIMULATOR_DEVICES.each do |device|
+        device_dir = File.join(SCREENSHOTS_RAW_DIR, device)
+        if Dir.exist?(device_dir)
+          count = Dir.glob(File.join(device_dir, "*.png")).length
+          UI.message("  #{device}/: #{count} screenshot")
+        else
+          UI.important("  #{device}/: nessuno screenshot trovato")
+        end
       end
     end
 
-    # Riorganizza golden output nella struttura per-device attesa da generate_screenshots.py
-    UI.header("Organizzazione Screenshot")
-    organize_golden_screenshots
-
-    # Applica overlay e ridimensiona
+    # Applica overlay e ridimensionamento
     unless options[:skip_overlay]
       UI.header("Overlay e Ridimensionamento")
       Dir.chdir(PROJECT_ROOT) do
@@ -500,10 +467,18 @@ platform :ios do
       end
     end
 
-    # Conta risultati
+    # Conta risultati finali
     if Dir.exist?(SCREENSHOTS_FINAL_DIR)
       count = Dir.glob(File.join(SCREENSHOTS_FINAL_DIR, "**", "*.png")).length
       UI.success("#{count} screenshot finali generati in screenshots/final/")
+
+      APP_STORE_DEVICE_NAMES.each do |device|
+        device_dir = File.join(SCREENSHOTS_FINAL_DIR, device)
+        if Dir.exist?(device_dir)
+          dc = Dir.glob(File.join(device_dir, "*.png")).length
+          UI.message("  #{device}/: #{dc} screenshot")
+        end
+      end
     end
   end
 
@@ -627,7 +602,8 @@ platform :ios do
     UI.success("  Binary:      caricata su App Store Connect")
     UI.success("  Metadata:    release notes + testi aggiornati per #{SUPPORTED_LOCALES.length} locale")
     unless options[:skip_screenshots]
-      UI.success("  Screenshot:  30 screenshot caricati (5 schermate x 6 device)")
+      screenshot_count = Dir.exist?(SCREENSHOTS_FINAL_DIR) ? Dir.glob(File.join(SCREENSHOTS_FINAL_DIR, "**", "*.png")).length : 30
+      UI.success("  Screenshot:  #{screenshot_count} screenshot (5 schermate x #{APP_STORE_DEVICE_NAMES.length} dimensioni)")
     end
     UI.success("  Git tag:     v#{new_version}")
     unless options[:skip_push]
@@ -738,11 +714,12 @@ platform :ios do
     # -- Screenshot --
     UI.message("")
     UI.message("Screenshot:")
-    golden_tests_ok = Dir.exist?(File.join(PROJECT_ROOT, "test", "screenshots"))
-    if golden_tests_ok
-      UI.success("  ✓ Golden tests presenti")
+    integration_test_ok = File.exist?(File.join(PROJECT_ROOT, "integration_test", "screenshot_test.dart"))
+    capture_script_ok = File.exist?(CAPTURE_SCRIPT)
+    if integration_test_ok && capture_script_ok
+      UI.success("  ✓ Integration test + capture script presenti")
     else
-      UI.error("  ✗ Golden tests non trovati")
+      UI.error("  ✗ Integration test o capture script mancanti")
       all_ok = false
     end
 
@@ -755,7 +732,7 @@ platform :ios do
       end
 
       # Verifica per-device
-      GOLDEN_DEVICE_NAMES.each do |device|
+      APP_STORE_DEVICE_NAMES.each do |device|
         device_dir = File.join(SCREENSHOTS_FINAL_DIR, device)
         if Dir.exist?(device_dir)
           count = Dir.glob(File.join(device_dir, "*.png")).length

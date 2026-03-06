@@ -9,8 +9,7 @@ Questo script viene invocato da Fastlane con:
     python3 tools/generate_screenshots.py --skip-test
 
 I raw screenshot devono già essere presenti in screenshots/raw/<device_name>/.
-Vengono generati dai golden tests (test/screenshots/screenshot_golden_test.dart)
-e organizzati dal Fastfile (helper organize_golden_screenshots).
+Vengono catturati da simulatori iOS reali tramite capture_screenshots.sh --all.
 
 Requisiti:
 - Python 3.7+
@@ -551,9 +550,9 @@ def main():
     print_header("Screenshot Overlay — Rifugi e Bivacchi")
 
     if not args.skip_test:
-        print("❌ La cattura automatica via simulatore è stata rimossa.")
-        print("   Usa i golden tests tramite Fastlane:")
-        print("   cd ios && bundle exec fastlane screenshots")
+        print("❌ La cattura diretta è stata rimossa da questo script.")
+        print("   Usa il capture script per catturare screenshot da simulatore:")
+        print("   tools/capture_screenshots.sh --all")
         print()
         print("   Oppure usa --skip-test per applicare overlay a raw esistenti.")
         sys.exit(1)
@@ -561,8 +560,8 @@ def main():
     # Verifica che ci siano raw screenshot
     if not RAW_DIR.exists():
         print(f"❌ Directory raw non trovata: {RAW_DIR}")
-        print(f"   Esegui prima i golden tests tramite Fastlane:")
-        print(f"   cd ios && bundle exec fastlane screenshots")
+        print(f"   Esegui prima la cattura da simulatore:")
+        print(f"   tools/capture_screenshots.sh --all")
         sys.exit(1)
 
     # Applica overlay e ridimensionamento
