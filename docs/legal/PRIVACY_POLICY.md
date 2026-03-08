@@ -230,12 +230,10 @@ Per domande su questa Privacy Policy o sulle pratiche di privacy:
 
 **Email Privacy:** privacy@rifugibivacchi.app
 **Email Supporto:** supporto@rifugibivacchi.app
-**Indirizzo Postale:** [Il tuo indirizzo]
 
 **Titolare del Trattamento:**
-[Nome sviluppatore/azienda]
-[Indirizzo]
-[P.IVA se applicabile]
+Federico Oldrini
+Email: oldrini.federico@gmail.com
 
 ## 14. Consenso
 

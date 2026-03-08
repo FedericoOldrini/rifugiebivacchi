@@ -31,8 +31,8 @@
 
 **Testo overlay:**
 ```
-🏔️ Oltre 1000 Rifugi
-Database completo CAI sempre aggiornato
+🏔️ Oltre 5.600 Rifugi
+Database completo con dati CAI, OSM e Wikidata
 ```
 
 ### 2. Mappa Interattiva
@@ -220,17 +220,17 @@ Il Team di Rifugi e Bivacchi
 
 **TITOLO:** Rifugi e Bivacchi: la nuova app per esplorare le Alpi italiane
 
-**SOTTOTITOLO:** Oltre 1000 rifugi CAI in un'unica applicazione gratuita per iOS
+**SOTTOTITOLO:** Oltre 5.600 rifugi e bivacchi in un'unica applicazione gratuita per iOS
 
 **CORPO:**
 [Data] - Nasce Rifugi e Bivacchi, l'app dedicata agli amanti della montagna che raccoglie in un unico database tutte le informazioni sui rifugi e bivacchi delle Alpi italiane.
 
-L'applicazione, disponibile gratuitamente su App Store, offre accesso immediato a oltre 1000 strutture del Club Alpino Italiano (CAI) con informazioni dettagliate su altitudine, servizi, contatti e periodi di apertura.
+L'applicazione, disponibile gratuitamente su App Store, offre accesso immediato a oltre 5.600 strutture con dati provenienti dal Club Alpino Italiano (CAI), OpenStreetMap, Wikidata e altre fonti verificate. Informazioni dettagliate su altitudine, servizi, contatti e periodi di apertura.
 
-"Volevamo creare uno strumento semplice e completo per chi ama la montagna," spiega [Nome], sviluppatore dell'app. "Che tu stia pianificando un weekend o un trekking di più giorni, Rifugi e Bivacchi ti aiuta a trovare il rifugio perfetto."
+"Volevamo creare uno strumento semplice e completo per chi ama la montagna," spiega Federico Oldrini, sviluppatore dell'app. "Che tu stia pianificando un weekend o un trekking di più giorni, Rifugi e Bivacchi ti aiuta a trovare il rifugio perfetto."
 
 **CARATTERISTICHE PRINCIPALI:**
-- Database completo con oltre 1000 rifugi CAI
+- Database completo con oltre 5.600 rifugi e bivacchi
 - Mappa interattiva con geolocalizzazione
 - Ricerca avanzata con filtri per servizi e altitudine
 - Passaporto digitale per registrare le visite
@@ -252,7 +252,7 @@ L'app è disponibile da oggi su App Store per iPhone e iPad.
 
 Rifugi e Bivacchi è ora disponibile su App Store! 📱
 
-✨ Oltre 1000 rifugi CAI
+✨ Oltre 5.600 rifugi e bivacchi
 ✨ Mappa interattiva
 ✨ Info complete su ogni struttura
 ✨ Passaporto digitale
@@ -269,7 +269,7 @@ Link in bio 👆
 ```
 🏔️ Rifugi e Bivacchi è LIVE su App Store!
 
-✅ 1000+ rifugi CAI
+✅ 5.600+ rifugi e bivacchi
 ✅ Mappa interattiva
 ✅ Ricerca avanzata
 ✅ Passaporto digitale
@@ -286,7 +286,7 @@ Perfetta per pianificare la tua prossima avventura in montagna ⛰️
 ```
 🎉 Grande Notizia per gli Amanti della Montagna! 🏔️
 
-Siamo entusiasti di presentarvi Rifugi e Bivacchi, la nuova app per iOS che raccoglie oltre 1000 rifugi e bivacchi delle Alpi italiane in un'unica piattaforma facile da usare!
+Siamo entusiasti di presentarvi Rifugi e Bivacchi, la nuova app per iOS che raccoglie oltre 5.600 rifugi e bivacchi delle Alpi italiane in un'unica piattaforma facile da usare!
 
 🗺️ Cosa puoi fare con l'app:
 ✓ Trova rifugi vicino a te con la mappa interattiva

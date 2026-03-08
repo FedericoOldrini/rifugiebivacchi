@@ -3,7 +3,7 @@
 ## 📱 Generale
 
 ### Cos'è Rifugi e Bivacchi?
-Rifugi e Bivacchi è un'app gratuita per iOS che ti aiuta a scoprire e pianificare visite ai rifugi alpini in Italia. Include oltre 1000 rifugi con informazioni dettagliate, mappe interattive e funzionalità utili per gli amanti della montagna.
+Rifugi e Bivacchi è un'app gratuita per iOS che ti aiuta a scoprire e pianificare visite ai rifugi alpini in Italia. Include oltre 5.600 rifugi e bivacchi con informazioni dettagliate, mappe interattive e funzionalità utili per gli amanti della montagna.
 
 ### L'app è gratuita?
 Sì, l'app è completamente gratuita da scaricare e utilizzare. Tutte le funzionalità principali sono accessibili senza pagamento. Offriamo donazioni volontarie per chi vuole supportare lo sviluppo.
@@ -28,7 +28,7 @@ I preferiti e il passaporto sono salvati localmente e accessibili offline.
 ## 🏔️ Rifugi e Dati
 
 ### Quanti rifugi sono presenti?
-L'app include oltre 1000 rifugi e bivacchi delle Alpi italiane, principalmente dal database ufficiale del CAI (Club Alpino Italiano).
+L'app include oltre 5.600 rifugi e bivacchi delle Alpi italiane, con dati provenienti dal CAI (Club Alpino Italiano), OpenStreetMap, Wikidata e altre fonti verificate.
 
 ### Come vengono aggiornate le informazioni?
 Aggiorniamo regolarmente il database con:

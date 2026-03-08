@@ -1,14 +1,9 @@
 Neuheiten in Version 1.1.1:
 
-• Localize App Store screenshots with per-locale overlay text (4 languages × 6 devices × 5 screens = 120 screenshots)
-• Multi-device simulator screenshot capture and Fastlane integration
-• Simulator-based App Store screenshot capture pipeline
-• Add multi-locale App Store metadata and enhanced Fastlane pipeline
-• Automated App Store screenshots via golden tests and Fastlane
-• Add Fastlane setup for automated iOS build, TestFlight upload and release pipeline
+- Datenbank auf uber 5.600 Hutten und Biwaks erweitert mit Daten von CAI, OpenStreetMap und Wikidata
+- App Store jetzt in 4 Sprachen lokalisiert: Italienisch, Englisch, Deutsch und Franzosisch
+- Aktualisierte Screenshots mit lokalisierten Overlays fur jede Sprache
+- Ein Anzeigeproblem im Hutten-Pass behoben
+- Allgemeine Verbesserungen bei Stabilitat und Leistung
 
-• Resolve RenderFlex overflow in PassaportoScreen stamp card
-• Null-safe analytics service, improved screenshot test, bump version to 1.1.0+9
-
-• Remove obsolete screenshot tools and migrate to golden test + Fastlane pipeline
-• Verbesserungen bei Leistung und Stabilität
+Vielen Dank fur die Nutzung von Rifugi e Bivacchi! Hinterlasse eine Bewertung, wenn dir die App gefallt.

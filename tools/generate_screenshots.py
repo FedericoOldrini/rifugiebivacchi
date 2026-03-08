@@ -61,8 +61,8 @@ DEFAULT_LOCALE = "it-IT"
 SCREENSHOTS_CONFIG = {
     "it-IT": {
         "01_lista_rifugi": {
-            "title": "Scopri oltre\n1000 rifugi",
-            "subtitle": "Database completo CAI\ncon informazioni dettagliate",
+            "title": "Scopri oltre\n5.600 rifugi",
+            "subtitle": "Il database piu completo\nd'Italia",
         },
         "02_mappa": {
             "title": "Mappa\nintelligente",
@@ -83,8 +83,8 @@ SCREENSHOTS_CONFIG = {
     },
     "en-US": {
         "01_lista_rifugi": {
-            "title": "Discover over\n1000 shelters",
-            "subtitle": "Complete CAI database\nwith detailed information",
+            "title": "Discover over\n5,600 shelters",
+            "subtitle": "Italy's most complete\nmountain database",
         },
         "02_mappa": {
             "title": "Smart\nmap",
@@ -105,8 +105,8 @@ SCREENSHOTS_CONFIG = {
     },
     "de-DE": {
         "01_lista_rifugi": {
-            "title": "Entdecke über\n1000 Hütten",
-            "subtitle": "Vollständige CAI-Datenbank\nmit detaillierten Infos",
+            "title": "Entdecke über\n5.600 Hütten",
+            "subtitle": "Italiens umfangreichste\nBerg-Datenbank",
         },
         "02_mappa": {
             "title": "Intelligente\nKarte",
@@ -127,8 +127,8 @@ SCREENSHOTS_CONFIG = {
     },
     "fr-FR": {
         "01_lista_rifugi": {
-            "title": "Découvrez plus de\n1000 refuges",
-            "subtitle": "Base de données CAI\navec informations détaillées",
+            "title": "Découvrez plus de\n5 600 refuges",
+            "subtitle": "La base de données\nla plus complète d'Italie",
         },
         "02_mappa": {
             "title": "Carte\nintelligente",

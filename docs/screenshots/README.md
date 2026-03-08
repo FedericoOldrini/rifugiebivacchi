@@ -107,7 +107,7 @@ screenshots/raw/iPhone_6_9/01_lista_rifugi.png
 Lo script `tools/generate_screenshots.py --skip-test` applica a ogni screenshot:
 
 - **Sfondo colorato** (deep teal RGB 44, 95, 93) nella parte superiore
-- **Titolo** in bianco (es. "Scopri oltre 1000 rifugi")
+- **Titolo** in bianco (es. "Scopri oltre 5.600 rifugi")
 - **Sottotitolo** in chiaro (es. "Database completo CAI con informazioni dettagliate")
 - **Ridimensionamento** alla risoluzione esatta richiesta dall'App Store
 
@@ -132,7 +132,7 @@ Le dimensioni legacy (iPhone 5.5" e iPad Pro 12.9") vengono generate ridimension
 
 | # | Screenshot | Titolo | Sottotitolo |
 |---|---|---|---|
-| 1 | `01_lista_rifugi` | Scopri oltre 1000 rifugi | Database completo CAI con informazioni dettagliate |
+| 1 | `01_lista_rifugi` | Scopri oltre 5.600 rifugi | Il database piu completo d'Italia |
 | 2 | `02_mappa` | Mappa intelligente | Trova i rifugi più vicini con clustering avanzato |
 | 3 | `03_dettaglio_rifugio` | Tutte le info che cerchi | Contatti, servizi, altitudine e foto |
 | 4 | `04_profilo` | Il tuo profilo alpinista | Tieni traccia dei rifugi visitati e preferiti |

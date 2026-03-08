@@ -1,14 +1,9 @@
 What's new in version 1.1.1:
 
-• Localize App Store screenshots with per-locale overlay text (4 languages × 6 devices × 5 screens = 120 screenshots)
-• Multi-device simulator screenshot capture and Fastlane integration
-• Simulator-based App Store screenshot capture pipeline
-• Add multi-locale App Store metadata and enhanced Fastlane pipeline
-• Automated App Store screenshots via golden tests and Fastlane
-• Add Fastlane setup for automated iOS build, TestFlight upload and release pipeline
+- Expanded database to over 5,600 shelters and bivouacs with CAI, OpenStreetMap and Wikidata data
+- App Store now localized in 4 languages: Italian, English, German and French
+- Updated screenshots with localized overlays for each language
+- Fixed a display issue in the Shelter Passport screen
+- General stability and performance improvements
 
-• Resolve RenderFlex overflow in PassaportoScreen stamp card
-• Null-safe analytics service, improved screenshot test, bump version to 1.1.0+9
-
-• Remove obsolete screenshot tools and migrate to golden test + Fastlane pipeline
-• Performance and stability improvements
+Thanks for using Rifugi e Bivacchi! Leave a review if you enjoy the app.

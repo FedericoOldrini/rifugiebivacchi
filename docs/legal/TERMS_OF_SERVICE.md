@@ -4,7 +4,7 @@
 
 ## 1. Accettazione dei Termini
 
-Benvenuto su Rifugi e Bivacchi ("l'App", "noi", "nostro"). L'App è fornita da [Nome Sviluppatore/Azienda].
+Benvenuto su Rifugi e Bivacchi ("l'App", "noi", "nostro"). L'App è fornita da Federico Oldrini, sviluppatore indipendente.
 
 Utilizzando l'App, accetti di essere vincolato da questi Termini e Condizioni ("Termini"). Se non accetti questi Termini, non utilizzare l'App.
 
@@ -282,13 +282,13 @@ Alla terminazione:
 Questi Termini sono regolati dalle leggi italiane.
 
 ### 16.2 Giurisdizione
-Per controversie, le parti si sottomettono alla giurisdizione esclusiva dei tribunali di [Città], Italia.
+Per controversie, le parti si sottomettono alla giurisdizione esclusiva dei tribunali di Milano, Italia.
 
 ### 16.3 Risoluzione Amichevole
 Prima di intraprendere azioni legali, le parti si impegnano a tentare una risoluzione amichevole per almeno 30 giorni.
 
 ### 16.4 Arbitrato
-[Opzionale] Le controversie possono essere risolte tramite arbitrato secondo regolamento Camera Arbitrale [nome].
+Le controversie possono essere risolte tramite mediazione o arbitrato secondo la normativa italiana vigente.
 
 ## 17. Disposizioni Generali
 
@@ -326,13 +326,10 @@ Per domande su questi Termini:
 
 **Email Supporto:** supporto@rifugibivacchi.app
 **Email Legale:** legal@rifugibivacchi.app
-**Indirizzo Postale:** [Il tuo indirizzo]
 
-**Informazioni Azienda:**
-[Nome Sviluppatore/Azienda]
-[Indirizzo completo]
-[P.IVA se applicabile]
-[PEC se applicabile]
+**Sviluppatore:**
+Federico Oldrini
+Email: oldrini.federico@gmail.com
 
 ## 20. Riconoscimenti
 
