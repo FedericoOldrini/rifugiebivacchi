@@ -227,7 +227,7 @@ Questa checklist ti guida passo dopo passo nella pubblicazione di Rifugi e Bivac
   - [ ] Purchase history
 
 ### App Store Information
-- [ ] Copyright: "© 2026 [Tuo Nome]"
+- [ ] Copyright: "© 2026 Rifugi e Bivacchi"
 - [ ] Contact Information: Email visibile
 - [ ] Demo Account (se necessario):
   - Username: test@rifugibivacchi.app
@@ -249,6 +249,53 @@ Questa checklist ti guida passo dopo passo nella pubblicazione di Rifugi e Bivac
 - [ ] Inglese
 - [ ] Tedesco
 - [ ] Francese
+
+---
+
+## ✅ FASE 7.5: ASO e Verifica Metadata (Pre-Release)
+
+> Questa fase deve essere completata PRIMA di ogni release per garantire che il listing
+> sia ottimizzato per la discoverability e non contenga errori che causano reject.
+
+### Limiti Caratteri (tutti i 4 locali: it, en-US, de-DE, fr-FR)
+- [ ] **Keywords** ≤ 100 caratteri per ogni locale (virgola come separatore, NESSUNO spazio)
+- [ ] **Subtitle** ≤ 30 caratteri per ogni locale
+- [ ] **Promotional text** ≤ 170 caratteri per ogni locale
+- [ ] **Description** ≤ 4000 caratteri per ogni locale
+- [ ] **Name** ≤ 30 caratteri per ogni locale
+
+### Contenuto Descrizioni
+- [ ] Nessun emoji nelle description (App Store Connect li rifiuta)
+- [ ] Nessun emoji nei promotional text
+- [ ] Prima riga della description contiene USP principali (gratuita, offline, conteggio strutture)
+- [ ] Fonti dati menzionate (CAI, OpenStreetMap, Wikidata, Refuges.info)
+- [ ] "Gratuita" / "Free" / "Kostenlos" / "Gratuit" menzionato esplicitamente
+- [ ] Conteggio strutture aggiornato e coerente con i dati reali
+- [ ] Formattazione numeri corretta per locale (IT: 5.600, EN: 5,600, DE: 5.600, FR: 5 600)
+
+### Keywords ASO
+- [ ] Keywords non duplicano parole gia presenti in Name o Subtitle
+- [ ] Keywords includono termini ad alto volume di ricerca
+- [ ] Keywords includono varianti linguistiche rilevanti (es. hiking + trekking)
+- [ ] Nessun keyword ripetuto all'interno dello stesso locale
+
+### Coerenza Cross-Locale
+- [ ] Stesso conteggio strutture in tutti i locali
+- [ ] Release notes tradotte in tutti e 4 i locali
+- [ ] Promotional text coerente in tutti i locali (stesse USP)
+
+### Coerenza con Website e Docs
+- [ ] Conteggio strutture allineato su site/index.html
+- [ ] Conteggio strutture allineato su site/support.html
+- [ ] APP_STORE_LISTING.md aggiornato con metadata attuali
+- [ ] Privacy policy e Terms of Service senza placeholder
+
+### Verifica Automatica (Fastlane)
+Eseguire prima dell'upload:
+```bash
+# Verifica limiti caratteri metadata
+cd ios && bundle exec fastlane run validate_metadata
+```
 
 ---
 
@@ -299,7 +346,7 @@ Questa checklist ti guida passo dopo passo nella pubblicazione di Rifugi e Bivac
 Rifugi e Bivacchi è un'app informativa sui rifugi alpini italiani.
 
 FUNZIONALITÀ PRINCIPALI:
-- Database 1000+ rifugi (dati pubblici CAI)
+- Database 5.600+ rifugi e bivacchi (dati CAI, OSM, Wikidata)
 - Mappa con Google Maps
 - Ricerca e filtri
 - Preferiti e Passaporto
@@ -412,10 +459,11 @@ Common rejection reasons:
 - [ ] Reddit communities
 
 ### App Store Optimization (ASO)
-- [ ] Keywords ottimizzate
-- [ ] Descrizione compelling
-- [ ] Screenshots con testi overlay
-- [ ] Review e rating monitoring
+- [ ] Verifica FASE 7.5 completata per questa release
+- [ ] Keywords ottimizzate e validate (≤100 chars)
+- [ ] Descrizione compelling con USP in prima riga
+- [ ] Screenshots con testi overlay aggiornati
+- [ ] Review e rating monitoring attivo
 - [ ] Rispondere alle recensioni
 
 ---
@@ -507,7 +555,8 @@ Buona fortuna con Rifugi e Bivacchi! 🏔️
 ---
 
 **Documento creato:** 9 febbraio 2026
-**Versione Checklist:** 1.0
-**Per:** Rifugi e Bivacchi v1.0.0
+**Ultimo aggiornamento:** 8 marzo 2026
+**Versione Checklist:** 1.1
+**Per:** Rifugi e Bivacchi v1.1.1+
 
-© 2026 Rifugi e Bivacchi Development Team
+© 2026 Federico Oldrini
