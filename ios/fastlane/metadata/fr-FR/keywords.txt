@@ -1,1 +1,1 @@
-refuges,montagne,bivouacs,alpes,randonnée,trekking,Italie,CAI,dolomites,alpages
+refuges,montagne,bivouacs,alpes,randonnée,trekking,Italie,CAI,dolomites,sentiers,carte,météo,offline

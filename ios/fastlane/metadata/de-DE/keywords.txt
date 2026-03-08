@@ -1,1 +1,1 @@
-Berghütten,Schutzhütten,Biwaks,Alpen,Wandern,Trekking,Italien,CAI,Dolomiten,Almhütten
+Berghütten,Schutzhütten,Biwaks,Alpen,Wandern,Trekking,Italien,CAI,Dolomiten,Karte,offline,Wetter

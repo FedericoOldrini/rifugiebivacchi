@@ -1,66 +1,51 @@
-Pianifica le tue avventure in montagna con Rifugi e Bivacchi, l'app completa per scoprire rifugi alpini, bivacchi e strutture di montagna nelle Alpi italiane.
+Scopri oltre 5.600 rifugi, bivacchi e strutture alpine in Italia - gratis, senza pubblicita e funziona anche offline. Rifugi e Bivacchi e la guida piu completa per le tue avventure in montagna.
 
 CARATTERISTICHE PRINCIPALI
 
-OLTRE 1000 RIFUGI E BIVACCHI
-Accedi al database completo dei rifugi CAI (Club Alpino Italiano) con informazioni sempre aggiornate su strutture, servizi e contatti.
+IL DATABASE PIU COMPLETO D'ITALIA
+Oltre 5.600 strutture da fonti verificate: Club Alpino Italiano (CAI), OpenStreetMap, Wikidata e Refuges.info. Informazioni sempre aggiornate su servizi, contatti e accessibilita.
 
 MAPPA INTERATTIVA
-Visualizza tutti i rifugi su una mappa dettagliata con clustering intelligente. Naviga facilmente tra centinaia di strutture e trova quelle più vicine alla tua posizione.
+Visualizza tutti i rifugi su una mappa dettagliata con clustering intelligente. Naviga facilmente tra migliaia di strutture e trova quelle piu vicine alla tua posizione.
 
-RICERCA GEOLOCALIZZATA
-Trova automaticamente i rifugi più vicini a te o cerca per nome, regione, altitudine e servizi disponibili.
+METEO IN TEMPO REALE
+Consulta le previsioni meteo per ogni rifugio direttamente nell'app. Pianifica le tue escursioni con informazioni aggiornate su temperatura, vento e precipitazioni.
+
+MAPPE OFFLINE
+Tutti i dati dei rifugi sono disponibili anche senza connessione internet, dopo il primo caricamento. Perfetto per escursioni in zone senza copertura di rete.
+
+RICERCA E FILTRI AVANZATI
+Trova i rifugi per nome, regione, altitudine, servizi disponibili, periodo di apertura, capacita e tempo di accesso. Geolocalizzazione automatica per trovare i piu vicini.
 
 INFORMAZIONI DETTAGLIATE
 Per ogni rifugio trovi:
-- Nome e località
-- Altitudine e coordinate GPS
-- Capacità posti letto
-- Periodo di apertura
-- Contatti (telefono, email, sito web)
+- Nome, localita e altitudine
+- Coordinate GPS per la navigazione
+- Capacita posti letto e periodo di apertura
+- Contatti diretti (telefono, email, sito web)
 - Servizi disponibili (ristorante, docce, WiFi, ecc.)
-- Tempo di accesso e difficoltà
+- Tempo di accesso e difficolta
 - Foto della struttura
 
-PREFERITI E PASSAPORTO
+PASSAPORTO DEI RIFUGI
+- Registra le tue visite con timbri digitali
 - Salva i tuoi rifugi preferiti per accesso rapido
-- Registra le tue visite con il Passaporto dei Rifugi
-- Traccia le tue avventure in montagna
-
-FILTRI AVANZATI
-Cerca rifugi per:
-- Altitudine minima/massima
-- Servizi specifici (ristorante, docce, WiFi)
-- Periodo di apertura
-- Capacità posti letto
-- Tempo di accesso
+- Traccia e condividi le tue avventure in montagna
 
 FUNZIONI SMART
 - Condividi rifugi con gli amici
 - Chiama direttamente il rifugio dall'app
 - Ottieni indicazioni stradali con un tap
-- Visualizza sito web e informazioni meteo
+- Tema stagionale che cambia con le stagioni
+
+GRATUITA E SENZA PUBBLICITA
+Tutte le funzionalita sono incluse gratuitamente. Nessuna pubblicita invasiva, nessun abbonamento necessario. Sviluppata con passione da un amante della montagna.
 
 PRIVACY E SICUREZZA
 - I tuoi dati rimangono sul tuo dispositivo
 - Accesso opzionale con account per sincronizzazione
 - Nessun tracciamento non autorizzato
 
-PERFETTA PER
-- Escursionisti e alpinisti
-- Trekker e appassionati di montagna
-- Famiglie che pianificano gite in montagna
-- Ciclisti e trail runner
-- Chiunque ami la montagna
-
-PERCHÉ SCEGLIERE RIFUGI E BIVACCHI
-- Database ufficiale CAI sempre aggiornato
-- Interfaccia semplice e intuitiva
-- Funziona anche offline (dopo primo caricamento dati)
-- Gratuita con tutte le funzionalità incluse
-- Nessuna pubblicità invasiva
-- Sviluppata da appassionati di montagna
-
-Che tu stia pianificando un weekend sulle Dolomiti, un trekking sul Monte Rosa o una traversata delle Alpi, Rifugi e Bivacchi è il compagno perfetto per ogni avventura.
+Che tu stia pianificando un weekend sulle Dolomiti, un trekking sul Monte Rosa o una traversata delle Alpi, Rifugi e Bivacchi e il compagno perfetto per ogni avventura.
 
 Scarica ora e inizia a esplorare le meraviglie delle Alpi italiane!

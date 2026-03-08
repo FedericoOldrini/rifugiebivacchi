@@ -1,66 +1,51 @@
-Plane deine Bergabenteuer mit Berghütten, der umfassenden App zum Entdecken von Schutzhütten, Biwaks und Almhütten in den italienischen Alpen.
+Entdecke uber 5.600 Berghütten, Biwaks und Schutzhütten in Italien - kostenlos, werbefrei und offline verfügbar. Berghütten ist der umfassendste Führer für deine alpinen Abenteuer.
 
 HAUPTFUNKTIONEN
 
-ÜBER 5.600 HÜTTEN UND BIWAKS
-Greife auf die umfangreiche Datenbank der Hütten des italienischen Alpenvereins (CAI) zu, mit stets aktuellen Informationen zu Einrichtungen, Diensten und Kontakten.
+DIE UMFANGREICHSTE DATENBANK ITALIENS
+Über 5.600 Einrichtungen aus verifizierten Quellen: Italienischer Alpenverein (CAI), OpenStreetMap, Wikidata und Refuges.info. Stets aktuelle Informationen zu Diensten, Kontakten und Erreichbarkeit.
 
 INTERAKTIVE KARTE
-Zeige alle Hütten auf einer detaillierten Karte mit intelligentem Clustering an. Navigiere einfach durch Hunderte von Einrichtungen und finde die nächstgelegenen.
+Zeige alle Hütten auf einer detaillierten Karte mit intelligentem Clustering an. Navigiere einfach durch Tausende von Einrichtungen und finde die nächstgelegenen.
 
-STANDORTBASIERTE SUCHE
-Finde automatisch die nächsten Hütten oder suche nach Name, Region, Höhe und verfügbaren Diensten.
+ECHTZEIT-WETTER
+Rufe die Wettervorhersage für jede Hütte direkt in der App ab. Plane deine Wanderungen mit aktuellen Informationen zu Temperatur, Wind und Niederschlag.
+
+OFFLINE-KARTEN
+Alle Hüttendaten sind nach dem ersten Download auch ohne Internetverbindung verfügbar. Perfekt für Wanderungen in Gebieten ohne Netzabdeckung.
+
+SUCHE UND ERWEITERTE FILTER
+Finde Hütten nach Name, Region, Höhe, verfügbaren Diensten, Öffnungszeiten, Kapazität und Zugangszeit. Automatische Standortbestimmung für die nächstgelegenen.
 
 DETAILLIERTE INFORMATIONEN
 Für jede Hütte findest du:
-- Name und Standort
-- Höhe und GPS-Koordinaten
-- Schlafplatzkapazität
-- Öffnungszeiten
-- Kontakte (Telefon, E-Mail, Website)
+- Name, Standort und Höhe
+- GPS-Koordinaten zur Navigation
+- Schlafplatzkapazität und Öffnungszeiten
+- Direkte Kontakte (Telefon, E-Mail, Website)
 - Verfügbare Dienste (Restaurant, Duschen, WLAN usw.)
 - Zugangszeit und Schwierigkeit
 - Fotos der Einrichtung
 
-FAVORITEN UND HÜTTENPASS
+HÜTTENPASS
+- Protokolliere deine Besuche mit digitalen Stempeln
 - Speichere deine Lieblingshütten für schnellen Zugriff
-- Protokolliere deine Besuche mit dem Hüttenpass
-- Verfolge deine Bergabenteuer
-
-ERWEITERTE FILTER
-Suche Hütten nach:
-- Min./Max. Höhe
-- Spezifische Dienste (Restaurant, Duschen, WLAN)
-- Öffnungszeiten
-- Schlafplatzkapazität
-- Zugangszeit
+- Verfolge und teile deine Bergabenteuer
 
 SMARTE FUNKTIONEN
 - Teile Hütten mit Freunden
 - Rufe die Hütte direkt aus der App an
 - Erhalte Wegbeschreibungen mit einem Tipp
-- Zeige Wettervorhersage und Website an
+- Saisonales Thema, das sich mit den Jahreszeiten ändert
+
+KOSTENLOS UND WERBEFREI
+Alle Funktionen sind kostenlos enthalten. Keine aufdringliche Werbung, kein Abo erforderlich. Mit Leidenschaft von einem Bergliebhaber entwickelt.
 
 DATENSCHUTZ UND SICHERHEIT
 - Deine Daten bleiben auf deinem Gerät
 - Optionaler Account-Zugang zur Synchronisierung
 - Kein unbefugtes Tracking
 
-PERFEKT FÜR
-- Wanderer und Bergsteiger
-- Trekker und Bergbegeisterte
-- Familien, die Bergausflüge planen
-- Radfahrer und Trailrunner
-- Alle, die die Berge lieben
-
-WARUM BERGHÜTTEN WÄHLEN
-- Offizielle CAI-Datenbank stets aktuell
-- Einfache und intuitive Benutzeroberfläche
-- Funktioniert offline (nach erstem Datendownload)
-- Kostenlos mit allen Funktionen
-- Keine aufdringliche Werbung
-- Von Bergliebhabern entwickelt
-
-Ob du ein Wochenende in den Dolomiten planst, eine Trekkingtour am Monte Rosa oder eine Alpenüberquerung – Berghütten ist der perfekte Begleiter für jedes Abenteuer.
+Ob du ein Wochenende in den Dolomiten planst, eine Trekkingtour am Monte Rosa oder eine Alpenüberquerung - Berghütten ist der perfekte Begleiter für jedes Abenteuer.
 
 Jetzt herunterladen und die Wunder der italienischen Alpen entdecken!

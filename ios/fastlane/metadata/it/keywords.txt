@@ -1,1 +1,1 @@
-rifugi,bivacchi,montagna,alpi,CAI,trekking,escursioni,alpinismo,hiking,dolomiti
+rifugi,bivacchi,montagna,alpi,CAI,trekking,escursioni,alpinismo,hiking,dolomiti,offline,meteo,mappa

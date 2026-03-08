@@ -1,65 +1,50 @@
-Plan your mountain adventures with Mountain Shelters, the complete app to discover alpine shelters, bivouacs and mountain huts in the Italian Alps.
+Discover over 5,600 mountain shelters, bivouacs and alpine huts in Italy - free, ad-free and works offline. Mountain Shelters is the most complete guide for your alpine adventures.
 
 KEY FEATURES
 
-OVER 5,600 SHELTERS AND BIVOUACS
-Access the comprehensive database of Italian Alpine Club (CAI) shelters with always up-to-date information on facilities, services and contacts.
+THE MOST COMPREHENSIVE DATABASE IN ITALY
+Over 5,600 structures from verified sources: Italian Alpine Club (CAI), OpenStreetMap, Wikidata and Refuges.info. Always up-to-date information on facilities, services and contacts.
 
 INTERACTIVE MAP
-View all shelters on a detailed map with smart clustering. Easily navigate through hundreds of facilities and find the ones closest to your location.
+View all shelters on a detailed map with smart clustering. Easily navigate through thousands of facilities and find the ones closest to your location.
 
-GEOLOCATED SEARCH
-Automatically find the shelters nearest to you or search by name, region, altitude and available services.
+REAL-TIME WEATHER
+Check weather forecasts for any shelter directly in the app. Plan your hikes with up-to-date information on temperature, wind and precipitation.
+
+OFFLINE MAPS
+All shelter data is available without an internet connection after the first load. Perfect for hikes in areas without network coverage.
+
+SEARCH AND ADVANCED FILTERS
+Find shelters by name, region, altitude, available services, opening period, capacity and access time. Automatic geolocation to find the nearest ones.
 
 DETAILED INFORMATION
 For each shelter you'll find:
-- Name and location
-- Altitude and GPS coordinates
-- Bed capacity
-- Opening period
-- Contacts (phone, email, website)
+- Name, location and altitude
+- GPS coordinates for navigation
+- Bed capacity and opening period
+- Direct contacts (phone, email, website)
 - Available services (restaurant, showers, WiFi, etc.)
 - Access time and difficulty
 - Photos of the facility
 
-FAVOURITES AND PASSPORT
+SHELTER PASSPORT
+- Log your visits with digital stamps
 - Save your favourite shelters for quick access
-- Log your visits with the Shelter Passport
-- Track your mountain adventures
-
-ADVANCED FILTERS
-Search shelters by:
-- Min/max altitude
-- Specific services (restaurant, showers, WiFi)
-- Opening period
-- Bed capacity
-- Access time
+- Track and share your mountain adventures
 
 SMART FEATURES
 - Share shelters with friends
 - Call the shelter directly from the app
 - Get driving directions with one tap
-- View weather forecasts and website
+- Seasonal theme that changes with the seasons
+
+FREE AND AD-FREE
+All features are included for free. No intrusive advertising, no subscription required. Developed with passion by a mountain lover.
 
 PRIVACY AND SECURITY
 - Your data stays on your device
 - Optional account access for syncing
 - No unauthorised tracking
-
-PERFECT FOR
-- Hikers and mountaineers
-- Trekkers and mountain enthusiasts
-- Families planning mountain trips
-- Cyclists and trail runners
-- Anyone who loves the mountains
-
-WHY CHOOSE MOUNTAIN SHELTERS
-- Official CAI database always up to date
-- Simple and intuitive interface
-- Works offline (after first data load)
-- Free with all features included
-- No intrusive advertising
-- Developed by mountain lovers
 
 Whether you're planning a weekend in the Dolomites, a trek on Monte Rosa or a traverse of the Alps, Mountain Shelters is the perfect companion for every adventure.
 

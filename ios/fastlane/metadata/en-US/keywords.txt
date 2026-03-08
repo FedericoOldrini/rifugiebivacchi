@@ -1,1 +1,1 @@
-mountain,shelters,huts,bivouacs,alps,hiking,trekking,Italy,CAI,dolomites
+mountain,shelters,huts,bivouacs,alps,hiking,trekking,Italy,CAI,dolomites,refuge,offline,weather

@@ -1,66 +1,51 @@
-Planifiez vos aventures en montagne avec Refuges de Montagne, l'application complète pour découvrir les refuges alpins, bivouacs et alpages dans les Alpes italiennes.
+Decouvrez plus de 5 600 refuges, bivouacs et cabanes alpines en Italie - gratuit, sans publicite et fonctionne hors ligne. Refuges de Montagne est le guide le plus complet pour vos aventures alpines.
 
-FONCTIONNALITÉS PRINCIPALES
+FONCTIONNALITES PRINCIPALES
 
-PLUS DE 5 600 REFUGES ET BIVOUACS
-Accédez à la base de données complète des refuges du Club Alpin Italien (CAI) avec des informations toujours à jour sur les installations, services et contacts.
+LA BASE DE DONNEES LA PLUS COMPLETE D'ITALIE
+Plus de 5 600 structures issues de sources verifiees : Club Alpin Italien (CAI), OpenStreetMap, Wikidata et Refuges.info. Informations toujours a jour sur les installations, services et contacts.
 
 CARTE INTERACTIVE
-Visualisez tous les refuges sur une carte détaillée avec clustering intelligent. Naviguez facilement parmi des centaines d'établissements et trouvez les plus proches de votre position.
+Visualisez tous les refuges sur une carte detaillee avec clustering intelligent. Naviguez facilement parmi des milliers d'etablissements et trouvez les plus proches de votre position.
 
-RECHERCHE GÉOLOCALISÉE
-Trouvez automatiquement les refuges les plus proches ou recherchez par nom, région, altitude et services disponibles.
+METEO EN TEMPS REEL
+Consultez les previsions meteo pour chaque refuge directement dans l'application. Planifiez vos randonnees avec des informations actualisees sur la temperature, le vent et les precipitations.
 
-INFORMATIONS DÉTAILLÉES
+CARTES HORS LIGNE
+Toutes les donnees des refuges sont disponibles sans connexion internet apres le premier chargement. Parfait pour les randonnees dans les zones sans couverture reseau.
+
+RECHERCHE ET FILTRES AVANCES
+Trouvez des refuges par nom, region, altitude, services disponibles, periode d'ouverture, capacite et temps d'acces. Geolocalisation automatique pour trouver les plus proches.
+
+INFORMATIONS DETAILLEES
 Pour chaque refuge vous trouverez :
-- Nom et localité
-- Altitude et coordonnées GPS
-- Capacité en couchages
-- Période d'ouverture
-- Contacts (téléphone, e-mail, site web)
+- Nom, localite et altitude
+- Coordonnees GPS pour la navigation
+- Capacite en couchages et periode d'ouverture
+- Contacts directs (telephone, e-mail, site web)
 - Services disponibles (restaurant, douches, WiFi, etc.)
-- Temps d'accès et difficulté
-- Photos de l'établissement
+- Temps d'acces et difficulte
+- Photos de l'etablissement
 
-FAVORIS ET PASSEPORT
-- Enregistrez vos refuges préférés pour un accès rapide
-- Consignez vos visites avec le Passeport des Refuges
-- Suivez vos aventures en montagne
-
-FILTRES AVANCÉS
-Recherchez des refuges par :
-- Altitude min./max.
-- Services spécifiques (restaurant, douches, WiFi)
-- Période d'ouverture
-- Capacité en couchages
-- Temps d'accès
+PASSEPORT DES REFUGES
+- Consignez vos visites avec des tampons numeriques
+- Enregistrez vos refuges preferes pour un acces rapide
+- Suivez et partagez vos aventures en montagne
 
 FONCTIONS INTELLIGENTES
 - Partagez les refuges avec vos amis
 - Appelez directement le refuge depuis l'application
-- Obtenez l'itinéraire en un seul geste
-- Consultez les prévisions météo et le site web
+- Obtenez l'itineraire en un seul geste
+- Theme saisonnier qui change avec les saisons
 
-CONFIDENTIALITÉ ET SÉCURITÉ
-- Vos données restent sur votre appareil
-- Accès optionnel avec compte pour la synchronisation
-- Aucun suivi non autorisé
+GRATUIT ET SANS PUBLICITE
+Toutes les fonctionnalites sont incluses gratuitement. Aucune publicite intrusive, aucun abonnement necessaire. Developpee avec passion par un amoureux de la montagne.
 
-IDÉALE POUR
-- Randonneurs et alpinistes
-- Trekkeurs et passionnés de montagne
-- Familles planifiant des sorties en montagne
-- Cyclistes et traileurs
-- Tous ceux qui aiment la montagne
+CONFIDENTIALITE ET SECURITE
+- Vos donnees restent sur votre appareil
+- Acces optionnel avec compte pour la synchronisation
+- Aucun suivi non autorise
 
-POURQUOI CHOISIR REFUGES DE MONTAGNE
-- Base de données officielle CAI toujours à jour
-- Interface simple et intuitive
-- Fonctionne hors ligne (après le premier chargement des données)
-- Gratuite avec toutes les fonctionnalités incluses
-- Aucune publicité intrusive
-- Développée par des passionnés de montagne
+Que vous planifiiez un week-end dans les Dolomites, un trek au Mont Rose ou une traversee des Alpes, Refuges de Montagne est le compagnon parfait pour chaque aventure.
 
-Que vous planifiiez un week-end dans les Dolomites, un trek au Mont Rose ou une traversée des Alpes, Refuges de Montagne est le compagnon parfait pour chaque aventure.
-
-Téléchargez maintenant et commencez à explorer les merveilles des Alpes italiennes !
+Telechargez maintenant et commencez a explorer les merveilles des Alpes italiennes !
