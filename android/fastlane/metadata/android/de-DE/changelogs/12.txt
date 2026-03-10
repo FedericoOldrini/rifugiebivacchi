@@ -1,0 +1,6 @@
+Neuheiten in Version 1.1.2:
+
+• Verbessertes Onboarding-Erlebnis für die Standortzugriffsanfrage
+• Kleinere Stabilitäts- und Leistungsverbesserungen
+
+Vielen Dank für die Nutzung von Rifugi e Bivacchi!

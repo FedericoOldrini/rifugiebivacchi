@@ -1,0 +1,6 @@
+What's new in version 1.1.2:
+
+• Improved onboarding experience for location access request
+• Minor stability and performance fixes
+
+Thanks for using Rifugi e Bivacchi!

@@ -1,0 +1,6 @@
+Nouveautés de la version 1.1.2 :
+
+• Amélioration de l'expérience d'intégration pour la demande d'accès à la localisation
+• Corrections mineures de stabilité et de performances
+
+Merci d'utiliser Rifugi e Bivacchi !

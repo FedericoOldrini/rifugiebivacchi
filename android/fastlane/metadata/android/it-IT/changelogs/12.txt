@@ -1,0 +1,6 @@
+Novità nella versione 1.1.2:
+
+• Migliorata l'esperienza di onboarding per la richiesta di accesso alla posizione
+• Correzioni minori di stabilità e prestazioni
+
+Grazie per usare Rifugi e Bivacchi!

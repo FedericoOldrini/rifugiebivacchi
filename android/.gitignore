@@ -12,3 +12,16 @@ GeneratedPluginRegistrant.java
 key.properties
 **/*.keystore
 **/*.jks
+
+# Google Play Service Account key (sensibile!)
+play-store-key.json
+
+# Fastlane generated files
+fastlane/report.xml
+fastlane/README.md
+fastlane/test_output/
+
+# Screenshot generati per supply (rigenerabili)
+fastlane/metadata/android/*/images/phoneScreenshots/
+fastlane/metadata/android/*/images/sevenInchScreenshots/
+fastlane/metadata/android/*/images/tenInchScreenshots/

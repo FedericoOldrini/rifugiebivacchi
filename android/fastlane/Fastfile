@@ -1,0 +1,721 @@
+# ──────────────────────────────────────────────────────────────────────────────
+# Fastfile — Rifugi e Bivacchi (Android / Google Play)
+# ──────────────────────────────────────────────────────────────────────────────
+#
+# Lane disponibili:
+#
+#   bundle exec fastlane beta                  # Build AAB + upload su Internal Testing
+#   bundle exec fastlane release               # Build AAB + metadata + screenshot + upload su Production
+#   bundle exec fastlane upload_metadata        # Upload solo testi/metadata su Google Play
+#   bundle exec fastlane upload_screenshots     # Upload solo screenshot su Google Play
+#   bundle exec fastlane full_release           # Pipeline completa: bump + release notes + screenshot + build + upload + tag + push
+#   bundle exec fastlane bump_version           # Incrementa version/build number
+#   bundle exec fastlane preflight              # Verifica stato pre-release
+#   bundle exec fastlane validate               # Valida AAB senza upload
+#
+# Prerequisiti:
+#   - Google Play Service Account JSON: android/play-store-key.json
+#   - Keystore configurato in android/key.properties
+#   - Metadata in android/fastlane/metadata/android/
+#   - Screenshot in android/fastlane/metadata/android/<locale>/images/
+#
+# Setup Service Account:
+#   Vedi docs/setup/GOOGLE_PLAY_SETUP.md
+#
+# ──────────────────────────────────────────────────────────────────────────────
+
+default_platform(:android)
+
+# ── Costanti ──────────────────────────────────────────────────────────────────
+
+PROJECT_ROOT = File.expand_path("../..", __dir__)
+AAB_PATH = File.join(PROJECT_ROOT, "build", "app", "outputs", "bundle", "release", "app-release.aab")
+APK_PATH = File.join(PROJECT_ROOT, "build", "app", "outputs", "flutter-apk", "app-release.apk")
+PUBSPEC_PATH = File.join(PROJECT_ROOT, "pubspec.yaml")
+
+# Directory metadata per supply (fastlane android)
+# supply si aspetta: metadata/android/<locale>/<files>
+METADATA_DIR = File.expand_path(File.join(__dir__, "metadata", "android"))
+
+# Screenshot sorgente (generati da tools/generate_screenshots.py)
+SCREENSHOTS_FINAL_DIR = File.join(PROJECT_ROOT, "screenshots", "final")
+
+# Lingue supportate — Google Play usa codici BCP-47
+# NOTA: Google Play usa "it-IT" (NON "it" come Apple)
+SUPPORTED_LOCALES = ["it-IT", "en-US", "de-DE", "fr-FR"]
+PRIMARY_LOCALE = "it-IT"
+
+# Mappatura Google Play locale → locale usato da generate_screenshots.py
+# Il generatore Python usa "it-IT" che coincide con Google Play.
+SCREENSHOT_SOURCE_LOCALE_MAP = {
+  "it-IT" => "it-IT",
+  "en-US" => "en-US",
+  "de-DE" => "de-DE",
+  "fr-FR" => "fr-FR",
+}
+
+# Dimensioni screenshot per Google Play (phone)
+# Google Play accetta: min 320px, max 3840px per lato, aspect ratio 16:9 o 9:16
+# Usiamo gli screenshot iPhone 6.9" (1320x2868) ridimensionati a 1080x2340 (standard Android)
+GOOGLE_PLAY_PHONE_SIZE = "1080x2340"
+
+# ── Helper Methods ────────────────────────────────────────────────────────────
+
+def read_pubspec_version
+  content = File.read(PUBSPEC_PATH)
+  match = content.match(/^version:\s*(\d+\.\d+\.\d+)\+(\d+)/)
+  unless match
+    UI.user_error!("Impossibile leggere la versione da pubspec.yaml")
+  end
+  { version: match[1], build: match[2].to_i }
+end
+
+def write_pubspec_version(version, build)
+  content = File.read(PUBSPEC_PATH)
+  new_content = content.gsub(
+    /^version:\s*\d+\.\d+\.\d+\+\d+/,
+    "version: #{version}+#{build}"
+  )
+  File.write(PUBSPEC_PATH, new_content)
+  UI.success("pubspec.yaml aggiornato a #{version}+#{build}")
+end
+
+def flutter_build_aab
+  UI.header("Flutter Build AAB")
+
+  Dir.chdir(PROJECT_ROOT) do
+    sh("flutter", "clean")
+    sh("flutter", "pub", "get")
+    sh("flutter", "build", "appbundle", "--release")
+  end
+
+  unless File.exist?(AAB_PATH)
+    UI.user_error!("AAB non trovato in #{AAB_PATH}")
+  end
+
+  size_mb = (File.size(AAB_PATH) / 1024.0 / 1024.0).round(1)
+  UI.success("AAB generato: #{AAB_PATH} (#{size_mb} MB)")
+  AAB_PATH
+end
+
+def flutter_build_apk
+  UI.header("Flutter Build APK")
+
+  Dir.chdir(PROJECT_ROOT) do
+    sh("flutter", "clean")
+    sh("flutter", "pub", "get")
+    sh("flutter", "build", "apk", "--release")
+  end
+
+  unless File.exist?(APK_PATH)
+    UI.user_error!("APK non trovato in #{APK_PATH}")
+  end
+
+  size_mb = (File.size(APK_PATH) / 1024.0 / 1024.0).round(1)
+  UI.success("APK generato: #{APK_PATH} (#{size_mb} MB)")
+  APK_PATH
+end
+
+# Genera release notes in tutte le lingue analizzando i commit git.
+# Replica la stessa logica del Fastfile iOS.
+def generate_release_notes_from_commits(version)
+  last_tag = `git describe --tags --abbrev=0 HEAD 2>/dev/null`.strip
+  if last_tag.empty?
+    range = "HEAD"
+    UI.important("Nessun tag precedente trovato, uso tutti i commit")
+  else
+    range = "#{last_tag}..HEAD"
+    UI.message("Analisi commit: #{range}")
+  end
+
+  raw_commits = `git log #{range} --pretty=format:"%s" --no-merges`.strip.split("\n")
+  raw_commits = raw_commits.reject { |c| c.strip.empty? }
+
+  if raw_commits.empty?
+    UI.important("Nessun commit trovato da #{last_tag}. Uso release notes generiche.")
+    raw_commits = ["fix: miglioramenti generali e correzioni"]
+  end
+
+  UI.message("#{raw_commits.length} commit trovati")
+
+  features = []
+  fixes = []
+  improvements = []
+
+  raw_commits.each do |commit|
+    message = commit
+      .sub(/^(feat|fix|refactor|perf|chore|docs|style|test|ci|build|release)(\(.+?\))?:\s*/i, "")
+      .strip
+      .sub(/^./) { |c| c.upcase }
+
+    next if commit.match?(/^(release|chore|ci|docs|test|build)(\(.+?\))?:/i)
+
+    case commit
+    when /^feat/i
+      features << message
+    when /^fix/i
+      fixes << message
+    when /^(refactor|perf|style)/i
+      improvements << message
+    else
+      features << message
+    end
+  end
+
+  if features.empty? && fixes.empty? && improvements.empty?
+    improvements << "Miglioramenti prestazioni e stabilità"
+  end
+
+  # Google Play: max 500 caratteri per le release notes (What's New)
+  translations = {
+    "it-IT" => {
+      header: "Novità nella versione #{version}:",
+      generic_perf: "Miglioramenti prestazioni e stabilità",
+    },
+    "en-US" => {
+      header: "What's new in version #{version}:",
+      generic_perf: "Performance and stability improvements",
+    },
+    "de-DE" => {
+      header: "Neuheiten in Version #{version}:",
+      generic_perf: "Verbesserungen bei Leistung und Stabilität",
+    },
+    "fr-FR" => {
+      header: "Nouveautés de la version #{version} :",
+      generic_perf: "Améliorations des performances et de la stabilité",
+    },
+  }
+
+  notes_per_locale = {}
+
+  translations.each do |locale, t|
+    lines = [t[:header], ""]
+
+    features.each { |f| lines << "• #{f}" }
+
+    unless fixes.empty?
+      lines << "" unless features.empty?
+      fixes.each { |f| lines << "• #{f}" }
+    end
+
+    unless improvements.empty?
+      lines << "" unless features.empty? && fixes.empty?
+      improvements.each { |i| lines << "• #{i}" }
+    end
+
+    perf_line = "• #{t[:generic_perf]}"
+    unless lines.any? { |l| l.downcase.include?("prestazion") || l.downcase.include?("performance") || l.downcase.include?("leistung") || l.downcase.include?("stabilit") }
+      lines << perf_line
+    end
+
+    content = lines.join("\n").strip
+
+    # Google Play ha un limite di 500 caratteri per "What's New"
+    if content.length > 500
+      UI.important("⚠ #{locale} release notes: #{content.length}/500 caratteri — tronco...")
+      content = content[0..496] + "..."
+    end
+
+    notes_per_locale[locale] = content
+  end
+
+  notes_per_locale
+end
+
+# Scrive le release notes nei file changelogs per supply.
+# supply si aspetta: metadata/android/<locale>/changelogs/<versionCode>.txt
+def write_changelogs(notes_per_locale, version_code)
+  notes_per_locale.each do |locale, notes|
+    changelog_dir = File.join(METADATA_DIR, locale, "changelogs")
+    FileUtils.mkdir_p(changelog_dir)
+    file_path = File.join(changelog_dir, "#{version_code}.txt")
+    File.write(file_path, notes + "\n")
+    UI.success("  ✓ #{locale}/changelogs/#{version_code}.txt (#{notes.length} caratteri)")
+  end
+end
+
+# Prepara gli screenshot per Google Play.
+# Copia e ridimensiona gli screenshot da screenshots/final/ alla struttura supply:
+#   metadata/android/<locale>/images/phoneScreenshots/
+#
+# Google Play accetta fino a 8 screenshot per tipo di device.
+# Usiamo gli screenshot iPhone_6_9 ridimensionati per il phone.
+def prepare_screenshots_for_supply
+  unless Dir.exist?(SCREENSHOTS_FINAL_DIR)
+    UI.user_error!("Screenshot finali non trovati in #{SCREENSHOTS_FINAL_DIR}. Esegui prima la generazione screenshot.")
+  end
+
+  total_copied = 0
+
+  SUPPORTED_LOCALES.each do |locale|
+    phone_dir = File.join(METADATA_DIR, locale, "images", "phoneScreenshots")
+    FileUtils.rm_rf(phone_dir)
+    FileUtils.mkdir_p(phone_dir)
+
+    source_locale = SCREENSHOT_SOURCE_LOCALE_MAP[locale] || locale
+    # Usiamo iPhone_6_9 come sorgente (il più grande, 1320x2868)
+    source_device_dir = File.join(SCREENSHOTS_FINAL_DIR, source_locale, "iPhone_6_9")
+
+    unless Dir.exist?(source_device_dir)
+      UI.important("  ⚠ Nessun screenshot trovato per #{locale} in #{source_device_dir}")
+      next
+    end
+
+    files = Dir.glob(File.join(source_device_dir, "*.png")).sort
+    copied = 0
+
+    files.first(8).each_with_index do |file, idx|
+      # Rinomina con indice numerico per ordinamento corretto su Google Play
+      dest = File.join(phone_dir, "%02d_%s" % [idx + 1, File.basename(file)])
+
+      # Ridimensiona a dimensione Android standard (1080x2340)
+      # sips è disponibile su macOS
+      FileUtils.cp(file, dest)
+      system("sips", "--resampleHeightWidth", "2340", "1080", dest, out: File::NULL, err: File::NULL)
+
+      copied += 1
+    end
+
+    UI.message("  #{locale}: #{copied} screenshot phone")
+    total_copied += copied
+  end
+
+  UI.success("#{total_copied} screenshot pronti per Google Play (#{SUPPORTED_LOCALES.length} locale)")
+end
+
+# ── Platform ──────────────────────────────────────────────────────────────────
+
+platform :android do
+
+  # ── Version Bump ──────────────────────────────────────────────────────────
+
+  desc "Incrementa il build number (o la versione se specificata)"
+  desc "Uso: fastlane bump_version [version:1.2.0] [bump:patch|minor|major]"
+  lane :bump_version do |options|
+    current = read_pubspec_version
+    UI.message("Versione corrente: #{current[:version]}+#{current[:build]}")
+
+    new_version = current[:version]
+    new_build = current[:build] + 1
+
+    if options[:version]
+      new_version = options[:version]
+    elsif options[:bump]
+      parts = current[:version].split(".").map(&:to_i)
+      case options[:bump]
+      when "major"
+        parts[0] += 1
+        parts[1] = 0
+        parts[2] = 0
+      when "minor"
+        parts[1] += 1
+        parts[2] = 0
+      when "patch"
+        parts[2] += 1
+      end
+      new_version = parts.join(".")
+    end
+
+    write_pubspec_version(new_version, new_build)
+    UI.success("Nuova versione: #{new_version}+#{new_build}")
+
+    { version: new_version, build: new_build }
+  end
+
+  # ── Build ─────────────────────────────────────────────────────────────────
+
+  desc "Build AAB release (senza upload)"
+  lane :build do
+    flutter_build_aab
+  end
+
+  desc "Build APK release (per test locali)"
+  lane :build_apk do
+    flutter_build_apk
+  end
+
+  # ── Validate ──────────────────────────────────────────────────────────────
+
+  desc "Valida l'AAB senza upload su Google Play"
+  lane :validate do
+    flutter_build_aab
+
+    # Valida il bundle con bundletool (se disponibile)
+    if system("which bundletool > /dev/null 2>&1")
+      Dir.chdir(PROJECT_ROOT) do
+        sh("bundletool", "validate", "--bundle", AAB_PATH)
+      end
+      UI.success("AAB validato con successo!")
+    else
+      UI.important("bundletool non trovato — skip validazione bundle.")
+      UI.important("Installa con: brew install bundletool")
+    end
+  end
+
+  # ── Beta (Internal Testing) ──────────────────────────────────────────────
+
+  desc "Build e upload su Internal Testing track"
+  desc "Uso: fastlane beta [skip_build:true] [track:internal|alpha|beta]"
+  lane :beta do |options|
+    track = options[:track] || "internal"
+
+    unless options[:skip_build]
+      flutter_build_aab
+    end
+
+    version = read_pubspec_version
+
+    upload_to_play_store(
+      aab: AAB_PATH,
+      track: track,
+      release_status: "draft",
+      skip_upload_metadata: true,
+      skip_upload_images: true,
+      skip_upload_screenshots: true,
+      skip_upload_changelogs: false,
+      version_name: "#{version[:version]}+#{version[:build]}",
+    )
+
+    UI.success("Build #{version[:version]}+#{version[:build]} caricata su Google Play (#{track})!")
+  end
+
+  # ── Release (Production) ─────────────────────────────────────────────────
+
+  desc "Build e upload per Google Play production con metadata, screenshot e binary"
+  desc "Uso: fastlane release [skip_build:true] [skip_metadata:true] [skip_screenshots:true] [skip_binary:true] [rollout:0.1]"
+  lane :release do |options|
+    version = read_pubspec_version
+
+    # Build
+    unless options[:skip_build]
+      flutter_build_aab
+    end
+
+    # Prepara screenshot per supply (se non skippati)
+    unless options[:skip_screenshots]
+      prepare_screenshots_for_supply
+    end
+
+    # Upload su Google Play
+    upload_to_play_store(
+      aab: options[:skip_binary] ? nil : AAB_PATH,
+      track: "production",
+      release_status: options[:rollout] ? "inProgress" : "draft",
+      rollout: options[:rollout] ? options[:rollout].to_s : nil,
+
+      # Metadata
+      skip_upload_metadata: options[:skip_metadata] || false,
+      metadata_path: File.expand_path(File.join(__dir__, "metadata")),
+
+      # Screenshot
+      skip_upload_images: options[:skip_screenshots] || false,
+      skip_upload_screenshots: options[:skip_screenshots] || false,
+
+      # Changelogs
+      skip_upload_changelogs: false,
+
+      # Version
+      version_name: "#{version[:version]}+#{version[:build]}",
+    )
+
+    UI.success("Build #{version[:version]}+#{version[:build]} caricata su Google Play (production)!")
+
+    if options[:rollout]
+      UI.success("Rollout impostato al #{(options[:rollout].to_f * 100).to_i}%")
+    else
+      UI.important("Build caricata come DRAFT. Pubblica manualmente dalla Google Play Console.")
+    end
+  end
+
+  # ── Upload Metadata ──────────────────────────────────────────────────────
+
+  desc "Upload solo metadata (testi) su Google Play"
+  lane :upload_metadata do
+    upload_to_play_store(
+      skip_upload_aab: true,
+      skip_upload_apk: true,
+      skip_upload_metadata: false,
+      skip_upload_images: true,
+      skip_upload_screenshots: true,
+      skip_upload_changelogs: true,
+      metadata_path: File.expand_path(File.join(__dir__, "metadata")),
+    )
+
+    UI.success("Metadata caricati su Google Play!")
+  end
+
+  # ── Upload Screenshots ────────────────────────────────────────────────────
+
+  desc "Upload screenshot su Google Play"
+  lane :upload_screenshots do
+    prepare_screenshots_for_supply
+
+    upload_to_play_store(
+      skip_upload_aab: true,
+      skip_upload_apk: true,
+      skip_upload_metadata: true,
+      skip_upload_images: false,
+      skip_upload_screenshots: false,
+      skip_upload_changelogs: true,
+      metadata_path: File.expand_path(File.join(__dir__, "metadata")),
+    )
+
+    UI.success("Screenshot caricati su Google Play!")
+  end
+
+  # ── Full Release ──────────────────────────────────────────────────────────
+
+  desc "Pipeline completa: bump version + metadata + screenshot + build + upload + git tag + push"
+  desc "Uso: fastlane full_release [bump:patch|minor|major] [version:1.2.0] [rollout:0.1] [skip_screenshots:true] [skip_push:true]"
+  lane :full_release do |options|
+    UI.header("FULL RELEASE PIPELINE (Android)")
+
+    # 1. Bump version
+    UI.header("Step 1/7 — Version Bump")
+    version_info = bump_version(
+      version: options[:version],
+      bump: options[:bump]
+    )
+    new_version = version_info[:version]
+    new_build = version_info[:build]
+
+    # 2. Generazione automatica release notes
+    UI.header("Step 2/7 — Generazione Release Notes / Changelogs")
+    notes_per_locale = generate_release_notes_from_commits(new_version)
+    write_changelogs(notes_per_locale, new_build)
+    UI.success("Changelogs generati per #{SUPPORTED_LOCALES.length} locale")
+
+    # 3. Screenshot (opzionale)
+    unless options[:skip_screenshots]
+      UI.header("Step 3/7 — Preparazione Screenshot")
+      prepare_screenshots_for_supply
+    else
+      UI.message("Screenshot preparazione saltata (skip_screenshots:true)")
+    end
+
+    # 4. Build
+    UI.header("Step 4/7 — Build AAB")
+    flutter_build_aab
+
+    # 5. Upload su Google Play
+    UI.header("Step 5/7 — Upload Google Play")
+    release(
+      skip_build: true,
+      skip_metadata: false,
+      skip_screenshots: options[:skip_screenshots] || false,
+      rollout: options[:rollout]
+    )
+
+    # 6. Git commit, tag e push
+    UI.header("Step 6/7 — Git Commit, Tag & Push")
+    Dir.chdir(PROJECT_ROOT) do
+      sh("git", "add", "pubspec.yaml")
+      sh("git", "add", File.join("android", "fastlane", "metadata"))
+      sh("git", "commit", "-m", "release(android): v#{new_version}+#{new_build}")
+      sh("git", "tag", "-a", "v#{new_version}-android", "-m", "Android Release v#{new_version} (build #{new_build})")
+
+      unless options[:skip_push]
+        sh("git", "push", "origin", "main")
+        sh("git", "push", "origin", "v#{new_version}-android")
+        UI.success("Commit e tag v#{new_version}-android pushati su origin")
+      else
+        UI.important("Push saltato (skip_push:true)")
+      end
+    end
+
+    # 7. Riepilogo
+    UI.header("Step 7/7 — Riepilogo")
+    UI.success("=" * 70)
+    UI.success("ANDROID RELEASE v#{new_version}+#{new_build} COMPLETATA!")
+    UI.success("=" * 70)
+    UI.success("")
+    UI.success("  Binary:      AAB caricato su Google Play")
+    UI.success("  Metadata:    testi aggiornati per #{SUPPORTED_LOCALES.length} locale")
+    unless options[:skip_screenshots]
+      UI.success("  Screenshot:  caricati per tutte le lingue")
+    end
+    UI.success("  Git tag:     v#{new_version}-android")
+  end
+
+  # ── Preflight ─────────────────────────────────────────────────────────────
+
+  desc "Verifica stato pre-release"
+  lane :preflight do
+    version = read_pubspec_version
+
+    UI.header("Preflight Check (Android) — v#{version[:version]}+#{version[:build]}")
+    UI.message("")
+
+    all_ok = true
+
+    # -- Configurazione --
+    UI.message("Configurazione:")
+    checks = {
+      "pubspec.yaml" => File.exist?(PUBSPEC_PATH),
+      "key.properties" => File.exist?(File.join(PROJECT_ROOT, "android", "key.properties")),
+      "play-store-key.json" => File.exist?(File.join(PROJECT_ROOT, "android", "play-store-key.json")),
+    }
+    checks.each do |name, ok|
+      if ok
+        UI.success("  ✓ #{name}")
+      else
+        UI.error("  ✗ #{name}")
+        all_ok = false
+      end
+    end
+
+    # -- Metadata per locale --
+    locale_files = %w[title.txt short_description.txt full_description.txt]
+
+    SUPPORTED_LOCALES.each do |locale|
+      UI.message("")
+      UI.message("Metadata [#{locale}]:")
+
+      locale_files.each do |filename|
+        full_path = File.join(METADATA_DIR, locale, filename)
+        exists = File.exist?(full_path) && !File.read(full_path).strip.empty?
+        if exists
+          UI.success("  ✓ #{filename}")
+        else
+          UI.error("  ✗ #{filename}")
+          all_ok = false
+        end
+      end
+
+      # Verifica limiti caratteri Google Play
+      char_limits = {
+        "title.txt" => { max: 30, label: "Titolo" },
+        "short_description.txt" => { max: 80, label: "Descrizione breve" },
+        "full_description.txt" => { max: 4000, label: "Descrizione completa" },
+      }
+
+      char_limits.each do |filename, info|
+        file_path = File.join(METADATA_DIR, locale, filename)
+        next unless File.exist?(file_path)
+
+        content_len = File.read(file_path).strip.length
+        if content_len <= info[:max]
+          UI.success("  ✓ #{info[:label]}: #{content_len}/#{info[:max]} caratteri")
+        else
+          UI.error("  ✗ #{info[:label]}: #{content_len}/#{info[:max]} caratteri (troppo lungo!)")
+          all_ok = false
+        end
+      end
+
+      # Verifica changelog per la build corrente
+      changelog_path = File.join(METADATA_DIR, locale, "changelogs", "#{version[:build]}.txt")
+      if File.exist?(changelog_path)
+        cl_len = File.read(changelog_path).strip.length
+        if cl_len <= 500
+          UI.success("  ✓ Changelog build #{version[:build]}: #{cl_len}/500 caratteri")
+        else
+          UI.error("  ✗ Changelog build #{version[:build]}: #{cl_len}/500 caratteri (troppo lungo!)")
+          all_ok = false
+        end
+      else
+        UI.important("  ⚠ Changelog per build #{version[:build]} non trovato")
+      end
+    end
+
+    # -- Screenshot --
+    UI.message("")
+    UI.message("Screenshot:")
+    SUPPORTED_LOCALES.each do |locale|
+      phone_dir = File.join(METADATA_DIR, locale, "images", "phoneScreenshots")
+      if Dir.exist?(phone_dir)
+        count = Dir.glob(File.join(phone_dir, "*.png")).length
+        if count >= 2
+          UI.success("  ✓ #{locale} phone: #{count} screenshot")
+        else
+          UI.error("  ✗ #{locale} phone: #{count} screenshot (minimo 2)")
+          all_ok = false
+        end
+      else
+        UI.important("  ⚠ #{locale} phone: nessuno screenshot")
+      end
+    end
+
+    # -- Flutter analyze --
+    UI.message("")
+    UI.message("Analisi codice:")
+    Dir.chdir(PROJECT_ROOT) do
+      sh("flutter", "analyze", "--no-fatal-infos")
+    end
+
+    # -- Risultato --
+    UI.message("")
+    if all_ok
+      UI.success("═══════════════════════════════════════════")
+      UI.success("  Tutto pronto per il rilascio Android!")
+      UI.success("═══════════════════════════════════════════")
+    else
+      UI.important("═══════════════════════════════════════════")
+      UI.important("  Alcuni check non sono passati.")
+      UI.important("  Verifica e correggi prima di procedere.")
+      UI.important("═══════════════════════════════════════════")
+    end
+  end
+
+  # ── Promote ───────────────────────────────────────────────────────────────
+
+  desc "Promuovi una build da un track all'altro"
+  desc "Uso: fastlane promote [from:internal] [to:production] [rollout:0.1]"
+  lane :promote do |options|
+    from_track = options[:from] || "internal"
+    to_track = options[:to] || "production"
+    version = read_pubspec_version
+
+    upload_to_play_store(
+      track: from_track,
+      track_promote_to: to_track,
+      release_status: options[:rollout] ? "inProgress" : "completed",
+      rollout: options[:rollout] ? options[:rollout].to_s : nil,
+      skip_upload_aab: true,
+      skip_upload_apk: true,
+      skip_upload_metadata: true,
+      skip_upload_images: true,
+      skip_upload_screenshots: true,
+      version_name: "#{version[:version]}+#{version[:build]}",
+    )
+
+    UI.success("Build promossa da #{from_track} a #{to_track}!")
+  end
+
+  # ── Rollout ───────────────────────────────────────────────────────────────
+
+  desc "Aggiorna la percentuale di rollout su production"
+  desc "Uso: fastlane update_rollout rollout:0.5"
+  lane :update_rollout do |options|
+    unless options[:rollout]
+      UI.user_error!("Specifica la percentuale di rollout: fastlane update_rollout rollout:0.5")
+    end
+
+    version = read_pubspec_version
+
+    upload_to_play_store(
+      track: "production",
+      release_status: options[:rollout].to_f >= 1.0 ? "completed" : "inProgress",
+      rollout: options[:rollout].to_s,
+      skip_upload_aab: true,
+      skip_upload_apk: true,
+      skip_upload_metadata: true,
+      skip_upload_images: true,
+      skip_upload_screenshots: true,
+      version_name: "#{version[:version]}+#{version[:build]}",
+    )
+
+    pct = (options[:rollout].to_f * 100).to_i
+    if pct >= 100
+      UI.success("Rollout completato al 100% — rilascio completo!")
+    else
+      UI.success("Rollout aggiornato al #{pct}%")
+    end
+  end
+
+  # ── Error Handling ────────────────────────────────────────────────────────
+
+  error do |lane, exception|
+    UI.error("Lane '#{lane}' fallita: #{exception.message}")
+  end
+
+end
