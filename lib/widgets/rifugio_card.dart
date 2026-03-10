@@ -28,7 +28,9 @@ class RifugioCard extends StatelessWidget {
     return Card(
       margin: const EdgeInsets.only(bottom: 12),
       color: isPreferito
-          ? Theme.of(context).colorScheme.primaryContainer.withOpacity(0.3)
+          ? Theme.of(
+              context,
+            ).colorScheme.primaryContainer.withValues(alpha: 0.3)
           : null,
       elevation: isPreferito ? 2 : 1,
       child: InkWell(
@@ -41,7 +43,7 @@ class RifugioCard extends StatelessWidget {
                   border: Border.all(
                     color: Theme.of(
                       context,
-                    ).colorScheme.primary.withOpacity(0.5),
+                    ).colorScheme.primary.withValues(alpha: 0.5),
                     width: 1.5,
                   ),
                 )
@@ -145,17 +147,19 @@ class RifugioCard extends StatelessWidget {
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              const Icon(
+                              Icon(
                                 Icons.check_circle,
-                                color: Colors.white,
+                                color: Theme.of(context).colorScheme.onPrimary,
                                 size: 16,
                               ),
                               if (visitCount > 1) ...[
                                 const SizedBox(width: 2),
                                 Text(
                                   '$visitCount',
-                                  style: const TextStyle(
-                                    color: Colors.white,
+                                  style: TextStyle(
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.onPrimary,
                                     fontSize: 12,
                                     fontWeight: FontWeight.bold,
                                   ),

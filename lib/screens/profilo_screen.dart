@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/auth_provider.dart';
-import '../providers/passaporto_provider.dart';
 import '../providers/preferiti_provider.dart';
 import '../providers/rifugi_provider.dart';
-import 'passaporto_screen.dart';
+import '../theme/app_theme.dart';
 import 'dettaglio_rifugio_screen.dart';
 import 'package:rifugi_bivacchi/l10n/app_localizations.dart';
 
@@ -115,38 +114,6 @@ class ProfiloScreen extends StatelessWidget {
           ),
           const SizedBox(height: 24),
 
-          // Sezione Passaporto dei Rifugi
-          Consumer<PassaportoProvider>(
-            builder: (context, passaportoProvider, child) {
-              final rifugiVisitati =
-                  passaportoProvider.checkInsByRifugio.length;
-              return Card(
-                child: ListTile(
-                  leading: Icon(
-                    Icons.card_travel,
-                    color: Theme.of(context).colorScheme.primary,
-                  ),
-                  title: Text(AppLocalizations.of(context)!.passaportoRifugi),
-                  subtitle: Text(
-                    AppLocalizations.of(
-                      context,
-                    )!.nRifugiVisitati(rifugiVisitati),
-                  ),
-                  trailing: const Icon(Icons.chevron_right),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const PassaportoScreen(),
-                      ),
-                    );
-                  },
-                ),
-              );
-            },
-          ),
-          const SizedBox(height: 16),
-
           // Sezione Preferiti
           Consumer2<PreferitiProvider, RifugiProvider>(
             builder: (context, preferitiProvider, rifugiProvider, child) {
@@ -159,7 +126,7 @@ class ProfiloScreen extends StatelessWidget {
                 child: Column(
                   children: [
                     ListTile(
-                      leading: Icon(Icons.star, color: Colors.amber[700]),
+                      leading: Icon(Icons.star, color: AppTheme.favoriteColor),
                       title: Text(
                         AppLocalizations.of(context)!.rifugiPreferiti,
                       ),

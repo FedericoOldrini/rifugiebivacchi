@@ -11,6 +11,15 @@ class _SeasonPalette {
   final Color secondaryDark;
   final Color tertiary;
 
+  /// Colore "brand" usato per sfondi scuri dei widget di condivisione (share card, passaporto, dialog).
+  final Color brand;
+
+  /// Variante più chiara del brand, per gradienti.
+  final Color brandLight;
+
+  /// Colore "successo" per badge CHECK-IN e icone di conferma.
+  final Color success;
+
   const _SeasonPalette({
     required this.primary,
     required this.primaryLight,
@@ -19,43 +28,77 @@ class _SeasonPalette {
     required this.secondaryLight,
     required this.secondaryDark,
     required this.tertiary,
+    required this.brand,
+    required this.brandLight,
+    required this.success,
   });
 }
 
 class AppTheme {
   // ──────────────────────────────────────────────
   // Colore branded fisso (usato per passaporto, share card, ecc.)
-  // Indipendente dalla stagione — identità visiva dell'app.
   // ──────────────────────────────────────────────
+  /// @deprecated Usare [brandColorFor] per colore stagionale nei widget share.
   static const Color deepTeal = Color(0xFF2C5F5D);
+
+  // ──────────────────────────────────────────────
+  // Colori semantici fissi (non variano con la stagione)
+  // ──────────────────────────────────────────────
+
+  /// Colore per stellina preferiti — amber caldo costante.
+  static const Color favoriteColor = Color(0xFFFFA000); // Colors.amber[700]
+
+  // ──────────────────────────────────────────────
+  // Colori brand stagionali (per widget di condivisione)
+  // ──────────────────────────────────────────────
+
+  /// Colore brand principale per la stagione data (sfondo share widget, passaporto, dialog).
+  static Color brandColorFor(AppSeason season) => _paletteFor(season).brand;
+
+  /// Colore brand chiaro per gradienti nei widget di condivisione.
+  static Color brandColorLightFor(AppSeason season) =>
+      _paletteFor(season).brandLight;
+
+  /// Colore "successo" per badge CHECK-IN e icone conferma, adattato alla stagione.
+  static Color successColorFor(AppSeason season) => _paletteFor(season).success;
 
   // ──────────────────────────────────────────────
   // Palette stagionali
   // ──────────────────────────────────────────────
 
-  /// 🌸 Primavera — Verde prato, rosa fiori di montagna, cielo azzurro tenue
+  /// 🌸 Primavera — Rosa fiori di montagna, lavanda, verde tenero
+  /// Palette fresca e luminosa ispirata ai rododendri e ai prati alpini in fiore.
   static const _spring = _SeasonPalette(
-    primary: Color(0xFF4A7C59), // Verde prato alpino
-    primaryLight: Color(0xFF6B9E7A), // Verde chiaro
-    primaryDark: Color(0xFF2D5A3A), // Verde scuro
-    secondary: Color(0xFFC2729C), // Rosa rododendro
-    secondaryLight: Color(0xFFD499B8),
-    secondaryDark: Color(0xFF8E4A6E),
-    tertiary: Color(0xFF6B9DBF), // Azzurro cielo primaverile
+    primary: Color(0xFF9B5E8C), // Malva-rosa rododendro alpino
+    primaryLight: Color(0xFFB87FAA), // Rosa lavanda chiaro
+    primaryDark: Color(0xFF6D3F62), // Malva scuro
+    secondary: Color(0xFF6A9B5E), // Verde prato tenero primaverile
+    secondaryLight: Color(0xFF8AB87F),
+    secondaryDark: Color(0xFF4A6D42),
+    tertiary: Color(0xFF7BA4C7), // Azzurro cielo primaverile
+    brand: Color(0xFF6D3F62), // Malva scuro per share widget
+    brandLight: Color(0xFF8C5A7E), // Malva medio per gradienti
+    success: Color(0xFF6A9B5E), // Verde prato per badge check-in
   );
 
-  /// ☀️ Estate — Teal profondo, azzurro-grigio, grigio roccia (tema originale)
+  /// ☀️ Estate — Verde alpino, sole dorato, grigio roccia calda
+  /// Palette ispirata ai prati verdi e ai boschi estivi in alta quota.
+  /// Richiama il colore originale dell'app (deepTeal 0xFF2C5F5D).
   static const _summer = _SeasonPalette(
-    primary: Color(0xFF2C5F5D), // Verde-azzurro scuro (deepTeal originale)
-    primaryLight: Color(0xFF3D7A77), // Verde-azzurro medio
-    primaryDark: Color(0xFF1A3F3D), // Verde-azzurro molto scuro
-    secondary: Color(0xFF4A6B7C), // Azzurro-grigio saturo (slateBlue originale)
-    secondaryLight: Color(0xFF607D8B),
-    secondaryDark: Color(0xFF2C3E47),
-    tertiary: Color(0xFF5A6C72), // Grigio freddo (coolGray originale)
+    primary: Color(0xFF2C5F5D), // Verde teal alpino (tema originale)
+    primaryLight: Color(0xFF3A7A77), // Verde teal luminoso
+    primaryDark: Color(0xFF1E4240), // Verde teal scuro
+    secondary: Color(0xFFD4A017), // Giallo sole dorato
+    secondaryLight: Color(0xFFE6B830),
+    secondaryDark: Color(0xFF9A7410),
+    tertiary: Color(0xFF7B8C8D), // Grigio roccia calda
+    brand: Color(0xFF1E4240), // Verde teal scuro per share widget
+    brandLight: Color(0xFF2C5F5D), // Verde teal per gradienti
+    success: Color(0xFF27AE60), // Verde fresco estivo per badge check-in
   );
 
   /// 🍂 Autunno — Arancione caldo, marrone terra, rosso foliage dei larici
+  /// Palette calda ispirata ai larici dorati e ai boschi autunnali alpini.
   static const _autumn = _SeasonPalette(
     primary: Color(0xFFA0522D), // Marrone-arancio caldo (sienna)
     primaryLight: Color(0xFFC4713E), // Arancione caldo
@@ -64,9 +107,13 @@ class AppTheme {
     secondaryLight: Color(0xFFD4A937),
     secondaryDark: Color(0xFF7A5A08),
     tertiary: Color(0xFF8B6F5E), // Marrone grigio (terra)
+    brand: Color(0xFF5C3317), // Marrone scuro caldo per share widget
+    brandLight: Color(0xFF7A4A2A), // Marrone medio per gradienti
+    success: Color(0xFF8B6F2A), // Oro scuro per badge check-in
   );
 
   /// ❄️ Inverno — Blu ghiaccio, grigio freddo, bianco-azzurro neve
+  /// Palette fredda e pulita ispirata alle Alpi innevate e al cielo invernale.
   static const _winter = _SeasonPalette(
     primary: Color(0xFF4A6FA5), // Blu montano freddo
     primaryLight: Color(0xFF6B8FC2), // Azzurro ghiaccio
@@ -75,6 +122,9 @@ class AppTheme {
     secondaryLight: Color(0xFF9BB0C4),
     secondaryDark: Color(0xFF4E6478),
     tertiary: Color(0xFF6E7B86), // Grigio pietra freddo
+    brand: Color(0xFF2E4A73), // Blu notte per share widget
+    brandLight: Color(0xFF3D5F8A), // Blu medio per gradienti
+    success: Color(0xFF5B8DB8), // Azzurro ghiaccio per badge check-in
   );
 
   /// Mappa stagione → palette.

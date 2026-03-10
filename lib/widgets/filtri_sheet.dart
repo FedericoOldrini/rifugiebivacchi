@@ -4,6 +4,7 @@ import 'package:rifugi_bivacchi/l10n/app_localizations.dart';
 import '../providers/filtro_provider.dart';
 import '../providers/preferiti_provider.dart';
 import '../services/rifugi_service.dart';
+import '../theme/app_theme.dart';
 
 /// Bottom sheet per i filtri avanzati e l'ordinamento.
 class FiltriSheet extends StatefulWidget {
@@ -224,7 +225,9 @@ class _FiltriSheetState extends State<FiltriSheet> {
       contentPadding: EdgeInsets.zero,
       secondary: Icon(
         filtro.soloPreferiti ? Icons.star : Icons.star_border,
-        color: filtro.soloPreferiti ? Colors.amber[700] : colorScheme.primary,
+        color: filtro.soloPreferiti
+            ? AppTheme.favoriteColor
+            : colorScheme.primary,
       ),
       title: Text(
         l10n.onlyFavorites,

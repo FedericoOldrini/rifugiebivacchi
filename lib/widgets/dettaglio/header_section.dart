@@ -4,6 +4,7 @@ import '../../models/rifugio.dart';
 import '../../providers/auth_provider.dart';
 import '../../providers/preferiti_provider.dart';
 import '../../widgets/rifugio_image.dart';
+import '../../theme/app_theme.dart';
 import 'package:rifugi_bivacchi/l10n/app_localizations.dart';
 
 /// SliverAppBar con immagine hero, gradiente e pulsante preferito.
@@ -17,18 +18,19 @@ class HeaderSection extends StatelessWidget {
     final authProvider = Provider.of<AuthProvider>(context);
     final preferitiProvider = Provider.of<PreferitiProvider>(context);
     final isPreferito = preferitiProvider.isPreferito(rifugio.id);
+    final colorScheme = Theme.of(context).colorScheme;
 
     return SliverAppBar(
       expandedHeight: 200,
       pinned: true,
-      foregroundColor: Colors.white,
+      foregroundColor: Colors.white, // Over image with scrim — bianco fisso
       actions: [
         // Pulsante preferito
         if (authProvider.user != null)
           IconButton(
             icon: Icon(
               isPreferito ? Icons.star : Icons.star_border,
-              color: isPreferito ? Colors.amber[700] : Colors.white,
+              color: isPreferito ? AppTheme.favoriteColor : Colors.white,
             ),
             onPressed: () async {
               await preferitiProvider.togglePreferito(
@@ -43,7 +45,7 @@ class HeaderSection extends StatelessWidget {
                       children: [
                         Icon(
                           isPreferito ? Icons.star_border : Icons.star,
-                          color: Colors.white,
+                          color: colorScheme.onInverseSurface,
                         ),
                         const SizedBox(width: 8),
                         Expanded(
@@ -61,8 +63,8 @@ class HeaderSection extends StatelessWidget {
                     ),
                     duration: const Duration(seconds: 2),
                     backgroundColor: isPreferito
-                        ? Theme.of(context).colorScheme.inverseSurface
-                        : Colors.amber[700],
+                        ? colorScheme.inverseSurface
+                        : AppTheme.favoriteColor,
                   ),
                 );
               }
@@ -93,12 +95,14 @@ class HeaderSection extends StatelessWidget {
                             Theme.of(context).colorScheme.primary,
                             Theme.of(
                               context,
-                            ).colorScheme.secondary.withOpacity(0.8),
+                            ).colorScheme.secondary.withValues(alpha: 0.8),
                           ],
                         ),
                       ),
                       child: const Center(
-                        child: CircularProgressIndicator(color: Colors.white),
+                        child: CircularProgressIndicator(
+                          color: Colors.white,
+                        ), // Over gradient — bianco fisso
                       ),
                     ),
                     errorWidget: (context, url, error) {

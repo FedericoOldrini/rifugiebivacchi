@@ -1,8 +1,8 @@
-/// Configurazione globale per i test Flutter.
-///
-/// Carica i font dell'app (Material Icons + Roboto) per i golden test,
-/// in modo che i golden file mostrino icone e testo reali
-/// invece di box rettangolari vuoti.
+// Configurazione globale per i test Flutter.
+//
+// Carica i font dell'app (Material Icons + Roboto) per i golden test,
+// in modo che i golden file mostrino icone e testo reali
+// invece di box rettangolari vuoti.
 import 'dart:async';
 
 import 'package:golden_toolkit/golden_toolkit.dart';

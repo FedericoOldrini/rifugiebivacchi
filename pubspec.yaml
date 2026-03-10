@@ -16,7 +16,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
 # In Windows, build-name is used as the major, minor, and patch parts
 # of the product and file versions while build-number is used as the build suffix.
-version: 1.1.1+10
+version: 1.1.2+12
 
 environment:
   sdk: ^3.10.7
@@ -89,6 +89,15 @@ dependencies:
   
   # In-app purchases
   in_app_purchase: ^3.2.0
+
+dependency_overrides:
+  # Forza path_provider_foundation 2.5.1 (method channel) per evitare il crash
+  # "Couldn't resolve native function 'DOBJC_initializeApi'" su iOS Simulator 26.x.
+  # La versione 2.6.0 usa FFI diretto via objective_c che non carica correttamente
+  # il framework nativo su Xcode 26 / iOS 26.2 simulator.
+  # Rimuovere questo override quando il bug sarà risolto upstream.
+  # Tracking: https://github.com/flutter/flutter/issues/169541
+  path_provider_foundation: 2.5.1
 
 dev_dependencies:
   flutter_test:

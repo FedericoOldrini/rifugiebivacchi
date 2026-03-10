@@ -1,6 +1,6 @@
 import 'dart:async';
+import 'dart:ui';
 import 'package:flutter/material.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -46,8 +46,8 @@ Future<void> main() async {
           return true;
         };
       } catch (e) {
-        print('Errore inizializzazione Firebase: $e');
-        print('L\'app funzionerà comunque, ma senza autenticazione.');
+        debugPrint('Errore inizializzazione Firebase: $e');
+        debugPrint('L\'app funzionerà comunque, ma senza autenticazione.');
       }
 
       runApp(const MyApp());

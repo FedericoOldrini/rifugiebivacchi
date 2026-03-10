@@ -20,6 +20,13 @@ class ThemeProvider extends ChangeNotifier {
   AppSeason _season = AppSeason.auto;
   ThemeMode _themeMode = ThemeMode.system;
 
+  /// Se `true`, salta la persistenza su SharedPreferences (usato nei test).
+  bool _persistEnabled = true;
+
+  ThemeProvider({bool testMode = false}) {
+    if (testMode) _persistEnabled = false;
+  }
+
   AppSeason get season => _season;
   ThemeMode get themeMode => _themeMode;
 
@@ -69,25 +76,35 @@ class ThemeProvider extends ChangeNotifier {
 
   /// Carica le preferenze salvate.
   Future<void> loadFromPrefs() async {
-    final prefs = await SharedPreferences.getInstance();
+    if (!_persistEnabled) return;
+    try {
+      final prefs = await SharedPreferences.getInstance();
 
-    final seasonIndex = prefs.getInt(_keySeason);
-    if (seasonIndex != null && seasonIndex < AppSeason.values.length) {
-      _season = AppSeason.values[seasonIndex];
+      final seasonIndex = prefs.getInt(_keySeason);
+      if (seasonIndex != null && seasonIndex < AppSeason.values.length) {
+        _season = AppSeason.values[seasonIndex];
+      }
+
+      final themeModeIndex = prefs.getInt(_keyThemeMode);
+      if (themeModeIndex != null && themeModeIndex < ThemeMode.values.length) {
+        _themeMode = ThemeMode.values[themeModeIndex];
+      }
+
+      notifyListeners();
+    } catch (e) {
+      debugPrint('ThemeProvider.loadFromPrefs error: $e');
     }
-
-    final themeModeIndex = prefs.getInt(_keyThemeMode);
-    if (themeModeIndex != null && themeModeIndex < ThemeMode.values.length) {
-      _themeMode = ThemeMode.values[themeModeIndex];
-    }
-
-    notifyListeners();
   }
 
   /// Persiste le preferenze.
   Future<void> _persist() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setInt(_keySeason, _season.index);
-    await prefs.setInt(_keyThemeMode, _themeMode.index);
+    if (!_persistEnabled) return;
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setInt(_keySeason, _season.index);
+      await prefs.setInt(_keyThemeMode, _themeMode.index);
+    } catch (e) {
+      debugPrint('ThemeProvider._persist error: $e');
+    }
   }
 }

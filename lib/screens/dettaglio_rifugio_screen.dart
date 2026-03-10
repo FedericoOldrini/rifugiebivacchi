@@ -8,6 +8,7 @@ import 'package:path_provider/path_provider.dart';
 import '../models/rifugio.dart';
 import '../providers/auth_provider.dart';
 import '../providers/passaporto_provider.dart';
+import '../providers/theme_provider.dart';
 import '../widgets/share_checkin_card.dart';
 import '../widgets/weather_widget.dart';
 import '../widgets/image_gallery.dart';
@@ -177,6 +178,8 @@ class _DettaglioRifugioScreenState extends State<DettaglioRifugioScreen> {
       final imageFile = File(imagePath);
       await imageFile.writeAsBytes(imageBytes);
 
+      if (!mounted) return;
+
       final passaportoProvider = Provider.of<PassaportoProvider>(
         context,
         listen: false,
@@ -222,6 +225,10 @@ class _DettaglioRifugioScreenState extends State<DettaglioRifugioScreen> {
       listen: false,
     );
     final visitCount = passaportoProvider.getVisitCount(widget.rifugio.id);
+    final season = Provider.of<ThemeProvider>(
+      context,
+      listen: false,
+    ).effectiveSeason;
 
     return ShareCheckinCard.fromRifugio(
       rifugioNome: widget.rifugio.nome,
@@ -229,6 +236,7 @@ class _DettaglioRifugioScreenState extends State<DettaglioRifugioScreen> {
       altitudine: widget.rifugio.altitudine,
       visitCount: visitCount,
       dataCheckin: DateTime.now(),
+      season: season,
     );
   }
 

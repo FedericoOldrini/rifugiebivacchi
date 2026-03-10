@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import '../models/rifugio_checkin.dart';
 
 class PassaportoService {
@@ -121,10 +122,10 @@ class PassaportoService {
     try {
       // Verifica autenticazione
       final currentUser = _auth.currentUser;
-      print('🔐 Current user: ${currentUser?.uid}');
-      print('🔐 Trying to write as: $userId');
-      print('🔐 User authenticated: ${currentUser != null}');
-      print('🔐 UIDs match: ${currentUser?.uid == userId}');
+      debugPrint('🔐 Current user: ${currentUser?.uid}');
+      debugPrint('🔐 Trying to write as: $userId');
+      debugPrint('🔐 User authenticated: ${currentUser != null}');
+      debugPrint('🔐 UIDs match: ${currentUser?.uid == userId}');
 
       if (currentUser == null) {
         throw Exception('user_not_authenticated');
@@ -136,13 +137,13 @@ class PassaportoService {
         );
       }
 
-      print('📝 Setting passaporto enabled for user $userId to $enabled');
+      debugPrint('📝 Setting passaporto enabled for user $userId to $enabled');
       await _firestore.collection('users').doc(userId).set({
         'passaportoEnabled': enabled,
       }, SetOptions(merge: true));
-      print('✅ Firestore write successful');
+      debugPrint('✅ Firestore write successful');
     } catch (e) {
-      print('❌ Firestore write error: $e');
+      debugPrint('❌ Firestore write error: $e');
       throw Exception('update_settings_error:$e');
     }
   }

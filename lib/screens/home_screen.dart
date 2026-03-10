@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:rifugi_bivacchi/l10n/app_localizations.dart';
-import '../screens/lista_rifugi_screen.dart';
-import '../screens/mappa_rifugi_screen.dart';
+import '../screens/esplora_screen.dart';
+import '../screens/passaporto_screen.dart';
 import '../screens/profilo_screen.dart';
 import '../screens/settings_screen.dart';
 import '../providers/auth_provider.dart';
@@ -22,8 +22,8 @@ class _HomeScreenState extends State<HomeScreen> {
   int _currentIndex = 0;
 
   final List<Widget> _screens = const [
-    ListaRifugiScreen(),
-    MappaRifugiScreen(),
+    ExploraScreen(),
+    PassaportoScreen(),
     ProfiloScreen(),
   ];
 
@@ -75,8 +75,8 @@ class _HomeScreenState extends State<HomeScreen> {
           ],
         ),
         actions: [
-          // Pulsante filtri avanzati (visibile solo nella tab Lista e Mappa)
-          if (_currentIndex == 0 || _currentIndex == 1)
+          // Pulsante filtri avanzati (visibile solo nella tab Esplora)
+          if (_currentIndex == 0)
             Consumer<FiltroProvider>(
               builder: (context, filtroProvider, child) {
                 final count = filtroProvider.activeFilterCount;
@@ -129,14 +129,14 @@ class _HomeScreenState extends State<HomeScreen> {
         },
         destinations: [
           NavigationDestination(
-            icon: const Icon(Icons.list_outlined),
-            selectedIcon: const Icon(Icons.list),
-            label: l10n.tabList,
+            icon: const Icon(Icons.explore_outlined),
+            selectedIcon: const Icon(Icons.explore),
+            label: l10n.tabExplore,
           ),
           NavigationDestination(
-            icon: const Icon(Icons.map_outlined),
-            selectedIcon: const Icon(Icons.map),
-            label: l10n.tabMap,
+            icon: const Icon(Icons.card_travel_outlined),
+            selectedIcon: const Icon(Icons.card_travel),
+            label: l10n.tabPassaporto,
           ),
           NavigationDestination(
             icon: const Icon(Icons.person_outline),

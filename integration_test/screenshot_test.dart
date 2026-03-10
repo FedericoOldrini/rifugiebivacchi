@@ -6,14 +6,13 @@
 /// con `xcrun simctl io screenshot`.
 ///
 /// Uso (tramite script wrapper):
-///   tools/capture_screenshots.sh <simulator-id>
+///   `tools/capture_screenshots.sh [simulator-id]`
 ///
 /// Uso diretto (senza cattura screenshot):
-///   flutter test integration_test/screenshot_test.dart -d <simulator-id>
+///   `flutter test integration_test/screenshot_test.dart -d [simulator-id]`
 ///
 library;
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';

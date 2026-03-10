@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../../providers/theme_provider.dart';
 import '../../theme/app_theme.dart';
 import 'package:rifugi_bivacchi/l10n/app_localizations.dart';
 
@@ -15,6 +17,14 @@ class ShareDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final season = Provider.of<ThemeProvider>(
+      context,
+      listen: false,
+    ).effectiveSeason;
+    final brandColor = AppTheme.brandColorFor(season);
+    final brandLight = AppTheme.brandColorLightFor(season);
+    final successColor = AppTheme.successColorFor(season);
+
     return Dialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
       child: Container(
@@ -24,8 +34,8 @@ class ShareDialog extends StatelessWidget {
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
-              AppTheme.deepTeal.withOpacity(0.95),
-              AppTheme.deepTeal.withGreen(120).withOpacity(0.95),
+              brandColor.withValues(alpha: 0.95),
+              brandLight.withValues(alpha: 0.95),
             ],
           ),
           borderRadius: BorderRadius.circular(24),
@@ -46,7 +56,7 @@ class ShareDialog extends StatelessWidget {
                         shape: BoxShape.circle,
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withOpacity(0.2),
+                            color: Colors.black.withValues(alpha: 0.2),
                             blurRadius: 20,
                             spreadRadius: 2,
                           ),
@@ -54,7 +64,7 @@ class ShareDialog extends StatelessWidget {
                       ),
                       child: Icon(
                         Icons.check_circle,
-                        color: Colors.green[700],
+                        color: successColor,
                         size: 48,
                       ),
                     ),
@@ -79,10 +89,10 @@ class ShareDialog extends StatelessWidget {
                     Container(
                       padding: const EdgeInsets.all(16),
                       decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.2),
+                        color: Colors.white.withValues(alpha: 0.2),
                         borderRadius: BorderRadius.circular(16),
                         border: Border.all(
-                          color: Colors.white.withOpacity(0.3),
+                          color: Colors.white.withValues(alpha: 0.3),
                           width: 1,
                         ),
                       ),
@@ -105,8 +115,8 @@ class ShareDialog extends StatelessWidget {
                                     AppLocalizations.of(
                                       context,
                                     )!.visitNumber(visitCount),
-                                    style: const TextStyle(
-                                      color: AppTheme.deepTeal,
+                                    style: TextStyle(
+                                      color: brandColor,
                                       fontSize: 18,
                                       fontWeight: FontWeight.bold,
                                     ),
@@ -190,7 +200,7 @@ class ShareDialog extends StatelessWidget {
                           onShare();
                         },
                         style: ElevatedButton.styleFrom(
-                          foregroundColor: AppTheme.deepTeal,
+                          foregroundColor: brandColor,
                           backgroundColor: Colors.white,
                           padding: const EdgeInsets.symmetric(vertical: 14),
                           shape: RoundedRectangleBorder(

@@ -35,18 +35,20 @@ void main() {
 
     // Get the Scaffold and check its background
     final scaffold = tester.widget<Scaffold>(find.byType(Scaffold));
-    print('Scaffold background: ${scaffold.backgroundColor}');
+    debugPrint('Scaffold background: ${scaffold.backgroundColor}');
 
     // Get the MaterialApp
     final materialApp = tester.widget<MaterialApp>(find.byType(MaterialApp));
-    print('MaterialApp theme brightness: ${materialApp.theme?.brightness}');
-    print(
+    debugPrint(
+      'MaterialApp theme brightness: ${materialApp.theme?.brightness}',
+    );
+    debugPrint(
       'MaterialApp theme surface: ${materialApp.theme?.colorScheme.surface}',
     );
-    print(
+    debugPrint(
       'MaterialApp theme scaffoldBg: ${materialApp.theme?.scaffoldBackgroundColor}',
     );
 
-    print('TEST PASSED - Widget tree renders correctly');
+    debugPrint('TEST PASSED - Widget tree renders correctly');
   });
 }

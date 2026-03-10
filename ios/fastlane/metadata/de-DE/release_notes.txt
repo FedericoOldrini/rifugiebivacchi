@@ -1,9 +1,6 @@
-Neuheiten in Version 1.1.1:
+Neuheiten in Version 1.1.2:
 
-- Datenbank auf uber 5.600 Hutten und Biwaks erweitert mit Daten von CAI, OpenStreetMap und Wikidata
-- App Store jetzt in 4 Sprachen lokalisiert: Italienisch, Englisch, Deutsch und Franzosisch
-- Aktualisierte Screenshots mit lokalisierten Overlays fur jede Sprache
-- Ein Anzeigeproblem im Hutten-Pass behoben
-- Allgemeine Verbesserungen bei Stabilitat und Leistung
+• Verbessertes Onboarding-Erlebnis für die Standortzugriffsanfrage
+• Kleinere Stabilitäts- und Leistungsverbesserungen
 
-Vielen Dank fur die Nutzung von Rifugi e Bivacchi! Hinterlasse eine Bewertung, wenn dir die App gefallt.
+Vielen Dank für die Nutzung von Rifugi e Bivacchi! Hinterlasse eine Bewertung, wenn dir die App gefällt.

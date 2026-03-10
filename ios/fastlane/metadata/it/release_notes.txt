@@ -1,9 +1,6 @@
-Novita nella versione 1.1.1:
+Novità nella versione 1.1.2:
 
-- Database ampliato a oltre 5.600 rifugi e bivacchi con dati da CAI, OpenStreetMap e Wikidata
-- App Store localizzato in 4 lingue: italiano, inglese, tedesco e francese
-- Screenshot aggiornati con overlay localizzati per ogni lingua
-- Risolto un problema di visualizzazione nella schermata Passaporto dei Rifugi
-- Miglioramenti generali di stabilita e prestazioni
+• Migliorata l'esperienza di onboarding per la richiesta di accesso alla posizione
+• Correzioni minori di stabilità e prestazioni
 
 Grazie per usare Rifugi e Bivacchi! Lascia una recensione se l'app ti piace.

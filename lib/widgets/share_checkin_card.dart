@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:ui' as ui;
 import 'package:cached_network_image/cached_network_image.dart';
+import '../providers/theme_provider.dart';
 import '../theme/app_theme.dart';
 import 'mountain_pattern_painter.dart';
 
@@ -17,6 +18,7 @@ class ShareCheckinCard extends StatelessWidget {
   final String visitLabel;
   final String checkInLabel;
   final String altitudeUnit;
+  final AppSeason season;
 
   const ShareCheckinCard({
     super.key,
@@ -30,6 +32,7 @@ class ShareCheckinCard extends StatelessWidget {
     this.visitLabel = '',
     this.checkInLabel = 'CHECK-IN',
     this.altitudeUnit = 'm s.l.m.',
+    this.season = AppSeason.summer,
   });
 
   /// Factory per creare la card da un oggetto Rifugio
@@ -44,6 +47,7 @@ class ShareCheckinCard extends StatelessWidget {
     String visitLabel = '',
     String checkInLabel = 'CHECK-IN',
     String altitudeUnit = 'm s.l.m.',
+    AppSeason season = AppSeason.summer,
   }) {
     return ShareCheckinCard(
       rifugioNome: rifugioNome,
@@ -56,11 +60,16 @@ class ShareCheckinCard extends StatelessWidget {
       visitLabel: visitLabel,
       checkInLabel: checkInLabel,
       altitudeUnit: altitudeUnit,
+      season: season,
     );
   }
 
   @override
   Widget build(BuildContext context) {
+    final brandColor = AppTheme.brandColorFor(season);
+    final brandLight = AppTheme.brandColorLightFor(season);
+    final successColor = AppTheme.successColorFor(season);
+
     return MediaQuery(
       data: const MediaQueryData(),
       child: Directionality(
@@ -72,7 +81,7 @@ class ShareCheckinCard extends StatelessWidget {
             gradient: LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
-              colors: [AppTheme.deepTeal, AppTheme.deepTeal.withGreen(120)],
+              colors: [brandColor, brandLight],
             ),
           ),
           child: Stack(
@@ -103,7 +112,7 @@ class ShareCheckinCard extends StatelessWidget {
                               ),
                               child: Icon(
                                 Icons.landscape,
-                                color: AppTheme.deepTeal,
+                                color: brandColor,
                                 size: 36,
                               ),
                             ),
@@ -133,7 +142,7 @@ class ShareCheckinCard extends StatelessWidget {
                                   ? visitLabel
                                   : 'VISITA N. $visitCount',
                               style: TextStyle(
-                                color: AppTheme.deepTeal,
+                                color: brandColor,
                                 fontSize: 20,
                                 fontWeight: FontWeight.bold,
                                 letterSpacing: 1,
@@ -158,7 +167,7 @@ class ShareCheckinCard extends StatelessWidget {
                                 fit: BoxFit.cover,
                                 placeholder: (context, url) => Container(
                                   decoration: BoxDecoration(
-                                    color: Colors.white.withOpacity(0.1),
+                                    color: Colors.white.withValues(alpha: 0.1),
                                     borderRadius: BorderRadius.circular(24),
                                   ),
                                   child: Center(
@@ -187,11 +196,11 @@ class ShareCheckinCard extends StatelessWidget {
                             vertical: 12,
                           ),
                           decoration: BoxDecoration(
-                            color: Colors.green[700],
+                            color: successColor,
                             borderRadius: BorderRadius.circular(30),
                             boxShadow: [
                               BoxShadow(
-                                color: Colors.black.withOpacity(0.3),
+                                color: Colors.black.withValues(alpha: 0.3),
                                 blurRadius: 15,
                                 offset: const Offset(0, 5),
                               ),
@@ -239,10 +248,10 @@ class ShareCheckinCard extends StatelessWidget {
                               vertical: 20,
                             ),
                             decoration: BoxDecoration(
-                              color: Colors.white.withOpacity(0.2),
+                              color: Colors.white.withValues(alpha: 0.2),
                               borderRadius: BorderRadius.circular(20),
                               border: Border.all(
-                                color: Colors.white.withOpacity(0.3),
+                                color: Colors.white.withValues(alpha: 0.3),
                                 width: 2,
                               ),
                             ),
@@ -293,9 +302,12 @@ class ShareCheckinCard extends StatelessWidget {
   Widget _buildPlaceholderImage() {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.2),
+        color: Colors.white.withValues(alpha: 0.2),
         borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: Colors.white.withOpacity(0.3), width: 2),
+        border: Border.all(
+          color: Colors.white.withValues(alpha: 0.3),
+          width: 2,
+        ),
       ),
       child: const Center(
         child: Icon(Icons.landscape, size: 120, color: Colors.white),

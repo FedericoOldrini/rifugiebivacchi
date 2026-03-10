@@ -120,6 +120,18 @@ abstract class AppLocalizations {
   /// **'Mappa'**
   String get tabMap;
 
+  /// No description provided for @tabExplore.
+  ///
+  /// In it, this message translates to:
+  /// **'Esplora'**
+  String get tabExplore;
+
+  /// No description provided for @tabPassaporto.
+  ///
+  /// In it, this message translates to:
+  /// **'Passaporto'**
+  String get tabPassaporto;
+
   /// No description provided for @tabProfile.
   ///
   /// In it, this message translates to:
@@ -1023,7 +1035,7 @@ abstract class AppLocalizations {
   /// No description provided for @allowLocation.
   ///
   /// In it, this message translates to:
-  /// **'Consenti Posizione'**
+  /// **'Continua'**
   String get allowLocation;
 
   /// No description provided for @permissionDenied.

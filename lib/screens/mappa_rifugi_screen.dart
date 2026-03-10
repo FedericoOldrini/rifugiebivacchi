@@ -341,9 +341,13 @@ class _MappaRifugiScreenState extends State<MappaRifugiScreen> {
             'assets/screenshots_images/map_placeholder.png',
             fit: BoxFit.cover,
             errorBuilder: (_, error, stackTrace) => Container(
-              color: const Color(0xFFE8E0D8),
-              child: const Center(
-                child: Icon(Icons.map, size: 64, color: Color(0xFF6C757D)),
+              color: Theme.of(context).colorScheme.surfaceContainerHighest,
+              child: Center(
+                child: Icon(
+                  Icons.map,
+                  size: 64,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
               ),
             ),
           ),
@@ -404,6 +408,7 @@ class _MappaRifugiScreenState extends State<MappaRifugiScreen> {
     ];
 
     final screenSize = MediaQuery.of(context).size;
+    final colorScheme = Theme.of(context).colorScheme;
     final widgets = <Widget>[];
 
     for (int i = 0; i < positions.length && i < rifugi.length; i++) {
@@ -422,16 +427,16 @@ class _MappaRifugiScreenState extends State<MappaRifugiScreen> {
             decoration: BoxDecoration(
               color: color,
               shape: BoxShape.circle,
-              border: Border.all(color: Colors.white, width: 2),
+              border: Border.all(color: colorScheme.surface, width: 2),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.3),
+                  color: colorScheme.shadow.withValues(alpha: 0.3),
                   blurRadius: 4,
                   offset: const Offset(0, 2),
                 ),
               ],
             ),
-            child: Icon(iconData, color: Colors.white, size: 16),
+            child: Icon(iconData, color: colorScheme.onPrimary, size: 16),
           ),
         ),
       );
@@ -449,22 +454,22 @@ class _MappaRifugiScreenState extends State<MappaRifugiScreen> {
             color: MapMarkerStyle.clusterColor(15),
             shape: BoxShape.circle,
             border: Border.all(
-              color: Colors.white.withValues(alpha: 0.9),
+              color: colorScheme.surface.withValues(alpha: 0.9),
               width: 2,
             ),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withValues(alpha: 0.2),
+                color: colorScheme.shadow.withValues(alpha: 0.2),
                 blurRadius: 4,
                 offset: const Offset(0, 2),
               ),
             ],
           ),
-          child: const Center(
+          child: Center(
             child: Text(
               '15',
               style: TextStyle(
-                color: Colors.white,
+                color: colorScheme.onPrimary,
                 fontSize: 14,
                 fontWeight: FontWeight.w700,
               ),

@@ -1,9 +1,6 @@
-Nouveautes de la version 1.1.1 :
+Nouveautés de la version 1.1.2 :
 
-- Base de donnees elargie a plus de 5 600 refuges et bivouacs avec des donnees CAI, OpenStreetMap et Wikidata
-- App Store desormais localise en 4 langues : italien, anglais, allemand et francais
-- Captures d'ecran mises a jour avec des superpositions localisees pour chaque langue
-- Correction d'un probleme d'affichage dans l'ecran Passeport des Refuges
-- Ameliorations generales de stabilite et de performances
+• Amélioration de l'expérience d'intégration pour la demande d'accès à la localisation
+• Corrections mineures de stabilité et de performances
 
-Merci d'utiliser Rifugi e Bivacchi ! Laissez un avis si l'app vous plait.
+Merci d'utiliser Rifugi e Bivacchi ! Laissez un avis si l'app vous plaît.

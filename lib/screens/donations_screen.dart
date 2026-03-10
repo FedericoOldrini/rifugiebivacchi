@@ -329,7 +329,7 @@ class _DonationsScreenState extends State<DonationsScreen> {
                           onTap: () => _buyProduct(product),
                         ),
                       );
-                    }).toList()
+                    })
                   else
                   // Fallback se i prodotti non sono disponibili
                   ...[

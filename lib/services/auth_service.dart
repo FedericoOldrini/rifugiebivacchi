@@ -6,13 +6,13 @@ import 'dart:io' show Platform;
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final GoogleSignIn _googleSignIn = GoogleSignIn.instance;
-  
+
   bool _initialized = false;
 
   // Inizializza Google Sign In (chiamalo una volta all'avvio)
   Future<void> initializeGoogleSignIn() async {
     if (_initialized) return;
-    
+
     await _googleSignIn.initialize();
     _initialized = true;
   }
@@ -28,16 +28,14 @@ class AuthService {
     try {
       // Assicurati che sia inizializzato
       await initializeGoogleSignIn();
-      
+
       // Prova prima un sign in silenzioso, poi interattivo
-      GoogleSignInAccount? googleUser = await _googleSignIn.attemptLightweightAuthentication();
-      
-      if (googleUser == null) {
-        // Se il sign in silenzioso fallisce, usa quello interattivo con scopes
-        googleUser = await _googleSignIn.authenticate(
-          scopeHint: ['email', 'profile'],
-        );
-      }
+      GoogleSignInAccount? googleUser = await _googleSignIn
+          .attemptLightweightAuthentication();
+
+      googleUser ??= await _googleSignIn.authenticate(
+        scopeHint: ['email', 'profile'],
+      );
 
       // Se googleUser è ancora null dopo authenticate, l'utente ha annullato
       // ma authenticate potrebbe già lanciare un'eccezione in questo caso
@@ -78,8 +76,11 @@ class AuthService {
       final userCredential = await _auth.signInWithCredential(oauthCredential);
 
       // Aggiorna il display name se disponibile
-      if (appleCredential.givenName != null || appleCredential.familyName != null) {
-        final displayName = '${appleCredential.givenName ?? ''} ${appleCredential.familyName ?? ''}'.trim();
+      if (appleCredential.givenName != null ||
+          appleCredential.familyName != null) {
+        final displayName =
+            '${appleCredential.givenName ?? ''} ${appleCredential.familyName ?? ''}'
+                .trim();
         if (displayName.isNotEmpty) {
           await userCredential.user?.updateDisplayName(displayName);
         }
@@ -94,10 +95,7 @@ class AuthService {
   // Logout
   Future<void> signOut() async {
     try {
-      await Future.wait([
-        _auth.signOut(),
-        _googleSignIn.signOut(),
-      ]);
+      await Future.wait([_auth.signOut(), _googleSignIn.signOut()]);
     } catch (e) {
       rethrow;
     }

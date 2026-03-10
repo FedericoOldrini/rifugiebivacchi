@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
+
 import 'dart:ui' as ui;
 import '../widgets/mountain_pattern_painter.dart';
 import 'package:provider/provider.dart';
@@ -11,6 +11,7 @@ import 'dart:io';
 import '../providers/auth_provider.dart';
 import '../providers/passaporto_provider.dart';
 import '../providers/rifugi_provider.dart';
+import '../providers/theme_provider.dart';
 import '../theme/app_theme.dart';
 import '../widgets/share_checkin_card.dart';
 import 'dettaglio_rifugio_screen.dart';
@@ -23,127 +24,114 @@ class PassaportoScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final authProvider = Provider.of<AuthProvider>(context);
     final passaportoProvider = Provider.of<PassaportoProvider>(context);
+    final colorScheme = Theme.of(context).colorScheme;
 
     if (authProvider.user == null) {
-      return Scaffold(
-        appBar: AppBar(
-          title: Text(AppLocalizations.of(context)!.passaportoRifugi),
-        ),
-        body: Center(child: Text(AppLocalizations.of(context)!.loginRequired)),
-      );
+      return Center(child: Text(AppLocalizations.of(context)!.loginRequired));
     }
 
     final checkIns = passaportoProvider.checkIns;
     final groupedCheckIns = passaportoProvider.checkInsByRifugio;
 
-    return Scaffold(
-      backgroundColor: const Color(0xFFF5F1E8), // Colore carta passaporto
-      appBar: AppBar(
-        title: Text(AppLocalizations.of(context)!.passaportoTitle),
-        backgroundColor: AppTheme.deepTeal,
-        foregroundColor: Colors.white,
-        actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: 16.0),
-            child: Center(
-              child: Container(
+    if (checkIns.isEmpty) {
+      return Center(
+        child: Padding(
+          padding: const EdgeInsets.all(24.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                Icons.hiking,
+                size: 100,
+                color: colorScheme.primary.withAlpha((0.3 * 255).toInt()),
+              ),
+              const SizedBox(height: 24),
+              Text(
+                AppLocalizations.of(context)!.passaportoEmpty,
+                style: const TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 16),
+              Text(
+                AppLocalizations.of(context)!.passaportoEmptyDesc,
+                textAlign: TextAlign.center,
+                style: const TextStyle(fontSize: 16),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
+    return Column(
+      children: [
+        // Badge conteggio rifugi + pulsante condividi
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 12, 16, 4),
+          child: Row(
+            children: [
+              Container(
                 padding: const EdgeInsets.symmetric(
                   horizontal: 12,
                   vertical: 6,
                 ),
                 decoration: BoxDecoration(
-                  color: Colors.white.withAlpha((0.2 * 255).toInt()),
+                  color: colorScheme.primaryContainer,
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Text(
                   AppLocalizations.of(context)!.nRifugi(groupedCheckIns.length),
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 14,
+                    color: colorScheme.onPrimaryContainer,
                   ),
                 ),
               ),
-            ),
+              const Spacer(),
+              OutlinedButton.icon(
+                onPressed: () => _sharePassaporto(context, checkIns),
+                icon: const Icon(Icons.share, size: 18),
+                label: Text(AppLocalizations.of(context)!.sharePassaporto),
+                style: OutlinedButton.styleFrom(
+                  foregroundColor: colorScheme.primary,
+                  side: BorderSide(color: colorScheme.outline),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 8,
+                  ),
+                ),
+              ),
+            ],
           ),
-        ],
-      ),
-      body: checkIns.isEmpty
-          ? Center(
-              child: Padding(
-                padding: const EdgeInsets.all(24.0),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      Icons.hiking,
-                      size: 100,
-                      color: AppTheme.deepTeal.withAlpha((0.3 * 255).toInt()),
-                    ),
-                    const SizedBox(height: 24),
-                    Text(
-                      AppLocalizations.of(context)!.passaportoEmpty,
-                      style: const TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    Text(
-                      AppLocalizations.of(context)!.passaportoEmptyDesc,
-                      textAlign: TextAlign.center,
-                      style: const TextStyle(fontSize: 16),
-                    ),
-                  ],
-                ),
-              ),
-            )
-          : Column(
-              children: [
-                // Pulsante condividi passaporto
-                Container(
-                  padding: const EdgeInsets.all(16),
-                  child: OutlinedButton.icon(
-                    onPressed: () => _sharePassaporto(context, checkIns),
-                    icon: const Icon(Icons.share),
-                    label: Text(AppLocalizations.of(context)!.sharePassaporto),
-                    style: OutlinedButton.styleFrom(
-                      foregroundColor: AppTheme.deepTeal,
-                      side: BorderSide(color: AppTheme.deepTeal),
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 24,
-                        vertical: 12,
-                      ),
-                    ),
-                  ),
-                ),
-                // Griglia di timbri (un card per rifugio)
-                Expanded(
-                  child: GridView.builder(
-                    padding: const EdgeInsets.all(16),
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 2,
-                          childAspectRatio: 0.65,
-                          crossAxisSpacing: 12,
-                          mainAxisSpacing: 12,
-                        ),
-                    itemCount: groupedCheckIns.length,
-                    itemBuilder: (context, index) {
-                      final rifugioId = groupedCheckIns.keys.elementAt(index);
-                      final rifugioCheckIns = groupedCheckIns[rifugioId]!;
-
-                      return _PassaportoStampCard(
-                        checkIns: rifugioCheckIns,
-                        index: index,
-                        onTap: () => _navigateToRifugio(context, rifugioId),
-                        onShare: () =>
-                            _shareRifugioCheckIns(context, rifugioCheckIns),
-                      );
-                    },
-                  ),
-                ),
-              ],
+        ),
+        // Griglia di timbri (un card per rifugio)
+        Expanded(
+          child: GridView.builder(
+            padding: const EdgeInsets.all(16),
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              childAspectRatio: 0.65,
+              crossAxisSpacing: 12,
+              mainAxisSpacing: 12,
             ),
+            itemCount: groupedCheckIns.length,
+            itemBuilder: (context, index) {
+              final rifugioId = groupedCheckIns.keys.elementAt(index);
+              final rifugioCheckIns = groupedCheckIns[rifugioId]!;
+
+              return _PassaportoStampCard(
+                checkIns: rifugioCheckIns,
+                index: index,
+                onTap: () => _navigateToRifugio(context, rifugioId),
+                onShare: () => _shareRifugioCheckIns(context, rifugioCheckIns),
+              );
+            },
+          ),
+        ),
+      ],
     );
   }
 
@@ -174,6 +162,10 @@ class PassaportoScreen extends StatelessWidget {
     try {
       final latestCheckIn = checkIns.first;
       final screenshotController = ScreenshotController();
+      final season = Provider.of<ThemeProvider>(
+        context,
+        listen: false,
+      ).effectiveSeason;
 
       // Trova il rifugio per ottenere l'immagine
       final rifugiProvider = Provider.of<RifugiProvider>(
@@ -197,6 +189,7 @@ class PassaportoScreen extends StatelessWidget {
           checkInLabel: l10n.shareCheckInLabel,
           altitudeUnit: l10n.shareAltitudeUnit,
           customHashtags: l10n.shareHashtags,
+          season: season,
         ),
         delay: const Duration(milliseconds: 100),
       );
@@ -206,6 +199,8 @@ class PassaportoScreen extends StatelessWidget {
           '${directory.path}/checkin_${latestCheckIn.rifugioId}.png';
       final imageFile = File(imagePath);
       await imageFile.writeAsBytes(image);
+
+      if (!context.mounted) return;
 
       final screenSize = MediaQuery.of(context).size;
       final shareRect = Rect.fromCenter(
@@ -218,14 +213,7 @@ class PassaportoScreen extends StatelessWidget {
         ShareParams(
           files: [XFile(imagePath)],
           text:
-              l10n.checkInShareText(
-                latestCheckIn.rifugioNome,
-                checkIns.length,
-              ) +
-              (latestCheckIn.altitudine != null
-                  ? '\n${l10n.shareAltitude(latestCheckIn.altitudine!.toInt())}'
-                  : '') +
-              '\n${l10n.shareHashtags}',
+              '${l10n.checkInShareText(latestCheckIn.rifugioNome, checkIns.length)}${latestCheckIn.altitudine != null ? '\n${l10n.shareAltitude(latestCheckIn.altitudine!.toInt())}' : ''}\n${l10n.shareHashtags}',
           sharePositionOrigin: shareRect,
         ),
       );
@@ -245,6 +233,10 @@ class PassaportoScreen extends StatelessWidget {
     final l10n = AppLocalizations.of(context)!;
     try {
       final screenshotController = ScreenshotController();
+      final season = Provider.of<ThemeProvider>(
+        context,
+        listen: false,
+      ).effectiveSeason;
 
       final totalRifugi = checkIns.length;
       final rifugiUnici = checkIns.map((c) => c.rifugioId).toSet().length;
@@ -252,6 +244,7 @@ class PassaportoScreen extends StatelessWidget {
       final image = await screenshotController.captureFromWidget(
         _SharePassaportoWidget(
           checkIns: checkIns,
+          season: season,
           myPassportTitle: l10n.shareMyPassportTitle,
           ofSheltersTitle: l10n.shareOfSheltersTitle,
           visitLabel: l10n.shareVisitSingular,
@@ -272,6 +265,8 @@ class PassaportoScreen extends StatelessWidget {
       final imagePath = '${directory.path}/passaporto_completo.png';
       final imageFile = File(imagePath);
       await imageFile.writeAsBytes(image);
+
+      if (!context.mounted) return;
 
       final screenSize = MediaQuery.of(context).size;
       final shareRect = Rect.fromCenter(
@@ -313,6 +308,7 @@ class _PassaportoStampCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final colorScheme = Theme.of(context).colorScheme;
     final dateFormat = DateFormat(
       'dd MMM yyyy',
       Localizations.localeOf(context).languageCode,
@@ -325,21 +321,20 @@ class _PassaportoStampCard extends StatelessWidget {
       onTap: onTap,
       child: Container(
         decoration: BoxDecoration(
-          color: const Color(0xFFFAF8F3), // Colore carta vintage
+          color: colorScheme.surfaceContainerLow,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: AppTheme.deepTeal.withAlpha((0.5 * 255).toInt()),
+            color: colorScheme.primary.withAlpha((0.5 * 255).toInt()),
             width: 3,
           ),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withAlpha((0.15 * 255).toInt()),
+              color: colorScheme.shadow.withAlpha((0.15 * 255).toInt()),
               blurRadius: 8,
               offset: const Offset(0, 3),
             ),
-            // Ombra interna per effetto timbro
             BoxShadow(
-              color: AppTheme.deepTeal.withAlpha((0.05 * 255).toInt()),
+              color: colorScheme.primary.withAlpha((0.05 * 255).toInt()),
               blurRadius: 4,
               offset: const Offset(0, -1),
             ),
@@ -351,7 +346,7 @@ class _PassaportoStampCard extends StatelessWidget {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
               decoration: BoxDecoration(
-                color: AppTheme.deepTeal.withAlpha((0.1 * 255).toInt()),
+                color: colorScheme.primaryContainer,
                 borderRadius: const BorderRadius.only(
                   topLeft: Radius.circular(10),
                   topRight: Radius.circular(10),
@@ -360,27 +355,30 @@ class _PassaportoStampCard extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 10,
-                      vertical: 6,
-                    ),
-                    decoration: BoxDecoration(
-                      color: AppTheme.deepTeal,
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Text(
-                      l10n.nVisits(visitCount),
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 12,
-                        fontWeight: FontWeight.bold,
+                  Flexible(
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 6,
+                      ),
+                      decoration: BoxDecoration(
+                        color: colorScheme.primary,
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Text(
+                        l10n.nVisits(visitCount),
+                        style: TextStyle(
+                          color: colorScheme.onPrimary,
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        overflow: TextOverflow.ellipsis,
                       ),
                     ),
                   ),
                   IconButton(
                     icon: const Icon(Icons.share, size: 18),
-                    color: AppTheme.deepTeal,
+                    color: colorScheme.onPrimaryContainer,
                     padding: EdgeInsets.zero,
                     constraints: const BoxConstraints(),
                     onPressed: () {
@@ -405,7 +403,7 @@ class _PassaportoStampCard extends StatelessWidget {
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
                           border: Border.all(
-                            color: AppTheme.deepTeal.withAlpha(
+                            color: colorScheme.primary.withAlpha(
                               (0.4 * 255).toInt(),
                             ),
                             width: 2.5,
@@ -416,7 +414,7 @@ class _PassaportoStampCard extends StatelessWidget {
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
                             border: Border.all(
-                              color: AppTheme.deepTeal.withAlpha(
+                              color: colorScheme.primary.withAlpha(
                                 (0.3 * 255).toInt(),
                               ),
                               width: 1.5,
@@ -428,7 +426,7 @@ class _PassaportoStampCard extends StatelessWidget {
                               // Icona montagna
                               Icon(
                                 Icons.landscape,
-                                color: AppTheme.deepTeal,
+                                color: colorScheme.primary,
                                 size: 28,
                               ),
                               const SizedBox(height: 4),
@@ -439,7 +437,7 @@ class _PassaportoStampCard extends StatelessWidget {
                                   fontSize: 9,
                                   fontWeight: FontWeight.bold,
                                   height: 1.1,
-                                  color: AppTheme.deepTeal,
+                                  color: colorScheme.primary,
                                 ),
                                 maxLines: 2,
                                 overflow: TextOverflow.ellipsis,
@@ -456,7 +454,7 @@ class _PassaportoStampCard extends StatelessWidget {
                           '${latestCheckIn.altitudine!.toInt()} m',
                           style: TextStyle(
                             fontSize: 9,
-                            color: Colors.grey[700],
+                            color: colorScheme.onSurfaceVariant,
                             fontWeight: FontWeight.w600,
                           ),
                           textAlign: TextAlign.center,
@@ -467,7 +465,9 @@ class _PassaportoStampCard extends StatelessWidget {
                         l10n.firstVisitLabel,
                         style: TextStyle(
                           fontSize: 8,
-                          color: Colors.grey[600],
+                          color: colorScheme.onSurfaceVariant.withAlpha(
+                            (0.7 * 255).toInt(),
+                          ),
                           fontWeight: FontWeight.w400,
                         ),
                       ),
@@ -475,7 +475,7 @@ class _PassaportoStampCard extends StatelessWidget {
                         dateFormat.format(oldestCheckIn.dataVisita),
                         style: TextStyle(
                           fontSize: 9,
-                          color: Colors.grey[700],
+                          color: colorScheme.onSurfaceVariant,
                           fontWeight: FontWeight.w600,
                         ),
                         textAlign: TextAlign.center,
@@ -487,7 +487,9 @@ class _PassaportoStampCard extends StatelessWidget {
                           l10n.lastVisitLabel,
                           style: TextStyle(
                             fontSize: 8,
-                            color: Colors.grey[600],
+                            color: colorScheme.onSurfaceVariant.withAlpha(
+                              (0.7 * 255).toInt(),
+                            ),
                             fontWeight: FontWeight.w400,
                           ),
                         ),
@@ -495,7 +497,7 @@ class _PassaportoStampCard extends StatelessWidget {
                           dateFormat.format(latestCheckIn.dataVisita),
                           style: TextStyle(
                             fontSize: 9,
-                            color: Colors.grey[700],
+                            color: colorScheme.onSurfaceVariant,
                             fontWeight: FontWeight.w600,
                           ),
                           textAlign: TextAlign.center,
@@ -510,7 +512,7 @@ class _PassaportoStampCard extends StatelessWidget {
             Container(
               padding: const EdgeInsets.symmetric(vertical: 8),
               decoration: BoxDecoration(
-                color: AppTheme.deepTeal.withAlpha((0.05 * 255).toInt()),
+                color: colorScheme.primary.withAlpha((0.05 * 255).toInt()),
                 borderRadius: const BorderRadius.only(
                   bottomLeft: Radius.circular(9),
                   bottomRight: Radius.circular(9),
@@ -526,7 +528,9 @@ class _PassaportoStampCard extends StatelessWidget {
                     ),
                     decoration: BoxDecoration(
                       border: Border.all(
-                        color: AppTheme.deepTeal.withAlpha((0.5 * 255).toInt()),
+                        color: colorScheme.primary.withAlpha(
+                          (0.5 * 255).toInt(),
+                        ),
                         width: 1.5,
                       ),
                       borderRadius: BorderRadius.circular(4),
@@ -534,7 +538,9 @@ class _PassaportoStampCard extends StatelessWidget {
                     child: Text(
                       l10n.visited,
                       style: TextStyle(
-                        color: AppTheme.deepTeal.withAlpha((0.7 * 255).toInt()),
+                        color: colorScheme.primary.withAlpha(
+                          (0.7 * 255).toInt(),
+                        ),
                         fontSize: 8,
                         fontWeight: FontWeight.w900,
                         letterSpacing: 2,
@@ -554,6 +560,7 @@ class _PassaportoStampCard extends StatelessWidget {
 // Widget per condividere l'intero passaporto con design accattivante
 class _SharePassaportoWidget extends StatelessWidget {
   final List<dynamic> checkIns;
+  final AppSeason season;
   final String myPassportTitle;
   final String ofSheltersTitle;
   final String visitLabel;
@@ -569,6 +576,7 @@ class _SharePassaportoWidget extends StatelessWidget {
 
   const _SharePassaportoWidget({
     required this.checkIns,
+    required this.season,
     required this.myPassportTitle,
     required this.ofSheltersTitle,
     required this.visitLabel,
@@ -585,6 +593,9 @@ class _SharePassaportoWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final brandColor = AppTheme.brandColorFor(season);
+    final brandLight = AppTheme.brandColorLightFor(season);
+
     // Calcola statistiche
     final totalRifugi = checkIns.length;
     final rifugiUnici = checkIns.map((c) => c.rifugioId).toSet().length;
@@ -604,7 +615,7 @@ class _SharePassaportoWidget extends StatelessWidget {
             gradient: LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
-              colors: [AppTheme.deepTeal, AppTheme.deepTeal.withGreen(120)],
+              colors: [brandColor, brandLight],
             ),
           ),
           child: Stack(
@@ -632,7 +643,7 @@ class _SharePassaportoWidget extends StatelessWidget {
                             shape: BoxShape.circle,
                             boxShadow: [
                               BoxShadow(
-                                color: Colors.black.withOpacity(0.3),
+                                color: Colors.black.withValues(alpha: 0.3),
                                 blurRadius: 20,
                                 spreadRadius: 5,
                               ),
@@ -640,7 +651,7 @@ class _SharePassaportoWidget extends StatelessWidget {
                           ),
                           child: Icon(
                             Icons.workspace_premium,
-                            color: AppTheme.deepTeal,
+                            color: brandColor,
                             size: 70,
                           ),
                         ),
@@ -678,6 +689,7 @@ class _SharePassaportoWidget extends StatelessWidget {
                                 label: totalRifugi == 1
                                     ? visitLabel
                                     : visitsLabel,
+                                accentColor: brandColor,
                               ),
                             ),
                             const SizedBox(width: 24),
@@ -688,6 +700,7 @@ class _SharePassaportoWidget extends StatelessWidget {
                                 label: rifugiUnici == 1
                                     ? shelterLabel
                                     : sheltersLabel,
+                                accentColor: brandColor,
                               ),
                             ),
                           ],
@@ -699,6 +712,7 @@ class _SharePassaportoWidget extends StatelessWidget {
                             value: '${altitudineMax.toInt()} m',
                             label: maxAltitudeLabel,
                             fullWidth: true,
+                            accentColor: brandColor,
                           ),
                         ],
                       ],
@@ -708,10 +722,10 @@ class _SharePassaportoWidget extends StatelessWidget {
                       Container(
                         padding: const EdgeInsets.all(24),
                         decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.15),
+                          color: Colors.white.withValues(alpha: 0.15),
                           borderRadius: BorderRadius.circular(24),
                           border: Border.all(
-                            color: Colors.white.withOpacity(0.3),
+                            color: Colors.white.withValues(alpha: 0.3),
                             width: 2,
                           ),
                         ),
@@ -763,10 +777,10 @@ class _SharePassaportoWidget extends StatelessWidget {
                           vertical: 20,
                         ),
                         decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.15),
+                          color: Colors.white.withValues(alpha: 0.15),
                           borderRadius: BorderRadius.circular(24),
                           border: Border.all(
-                            color: Colors.white.withOpacity(0.3),
+                            color: Colors.white.withValues(alpha: 0.3),
                             width: 2,
                           ),
                         ),
@@ -811,7 +825,7 @@ class _SharePassaportoWidget extends StatelessWidget {
                               ),
                               child: Icon(
                                 Icons.landscape,
-                                color: AppTheme.deepTeal,
+                                color: brandColor,
                                 size: 28,
                               ),
                             ),
@@ -854,12 +868,14 @@ class _StatCard extends StatelessWidget {
   final String value;
   final String label;
   final bool fullWidth;
+  final Color accentColor;
 
   const _StatCard({
     required this.icon,
     required this.value,
     required this.label,
     this.fullWidth = false,
+    required this.accentColor,
   });
 
   @override
@@ -871,7 +887,7 @@ class _StatCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.2),
+            color: Colors.black.withValues(alpha: 0.2),
             blurRadius: 15,
             offset: const Offset(0, 5),
           ),
@@ -879,12 +895,12 @@ class _StatCard extends StatelessWidget {
       ),
       child: Column(
         children: [
-          Icon(icon, color: AppTheme.deepTeal, size: fullWidth ? 48 : 40),
+          Icon(icon, color: accentColor, size: fullWidth ? 48 : 40),
           const SizedBox(height: 12),
           Text(
             value,
             style: TextStyle(
-              color: AppTheme.deepTeal,
+              color: accentColor,
               fontSize: fullWidth ? 44 : 40,
               fontWeight: FontWeight.bold,
             ),
@@ -893,7 +909,7 @@ class _StatCard extends StatelessWidget {
           Text(
             label,
             style: TextStyle(
-              color: AppTheme.deepTeal,
+              color: accentColor,
               fontSize: fullWidth ? 16 : 14,
               fontWeight: FontWeight.w600,
               letterSpacing: 1.5,

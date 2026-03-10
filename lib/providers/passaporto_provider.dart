@@ -105,7 +105,9 @@ class PassaportoProvider with ChangeNotifier {
 
       // Ottieni la posizione corrente
       Position position = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high,
+        locationSettings: const LocationSettings(
+          accuracy: LocationAccuracy.high,
+        ),
       );
 
       // Calcola la distanza

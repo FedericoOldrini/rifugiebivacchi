@@ -46,7 +46,7 @@ class AnalyticsService {
         parameters: {
           'rifugio_id': rifugioId,
           'rifugio_nome': rifugioNome,
-          if (tipo != null) 'tipo': tipo,
+          'tipo': ?tipo,
         },
       ) ??
       Future.value();

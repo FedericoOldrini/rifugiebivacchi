@@ -98,22 +98,23 @@ class MapSection extends StatelessWidget {
   /// Placeholder statico per la mappa in screenshot mode.
   Widget _buildPlaceholder(BuildContext context) {
     final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
     return Container(
-      color: const Color(0xFFE8F0E8),
+      color: colorScheme.surfaceContainerHighest,
       child: Stack(
         children: [
           // Griglia leggera per dare l'idea di una mappa
-          Positioned.fill(child: CustomPaint(painter: _MapGridPainter())),
+          Positioned.fill(
+            child: CustomPaint(
+              painter: _MapGridPainter(lineColor: colorScheme.outlineVariant),
+            ),
+          ),
           // Marker al centro
           Center(
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(
-                  Icons.location_on,
-                  color: theme.colorScheme.primary,
-                  size: 36,
-                ),
+                Icon(Icons.location_on, color: colorScheme.primary, size: 36),
                 const SizedBox(height: 4),
                 Container(
                   padding: const EdgeInsets.symmetric(
@@ -121,11 +122,11 @@ class MapSection extends StatelessWidget {
                     vertical: 4,
                   ),
                   decoration: BoxDecoration(
-                    color: theme.colorScheme.surface,
+                    color: colorScheme.surface,
                     borderRadius: BorderRadius.circular(4),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.15),
+                        color: colorScheme.shadow.withValues(alpha: 0.15),
                         blurRadius: 4,
                       ),
                     ],
@@ -148,10 +149,14 @@ class MapSection extends StatelessWidget {
 
 /// Simple grid painter that gives a map-like appearance.
 class _MapGridPainter extends CustomPainter {
+  final Color lineColor;
+
+  const _MapGridPainter({required this.lineColor});
+
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = const Color(0xFFD0DDD0)
+      ..color = lineColor
       ..strokeWidth = 0.5;
     // Draw subtle grid lines
     for (double x = 0; x < size.width; x += 40) {
@@ -163,5 +168,6 @@ class _MapGridPainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
+  bool shouldRepaint(covariant _MapGridPainter oldDelegate) =>
+      oldDelegate.lineColor != lineColor;
 }

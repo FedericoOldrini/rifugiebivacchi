@@ -7,9 +7,9 @@
 ///   flutter test --update-goldens --tags=screenshots test/screenshots/
 ///
 /// I golden file vengono salvati in:
-///   test/screenshots/goldens/screenshots/<screen_name>.<device_name>.png
+///   test/screenshots/goldens/screenshots/[screen_name].[device_name].png
 ///
-/// Esempio output (30 file = 5 schermate × 6 device):
+/// Esempio output (30 file = 5 schermate x 6 device):
 ///   01_lista_rifugi.iPhone_6_9.png
 ///   01_lista_rifugi.iPhone_6_7.png
 ///   01_lista_rifugi.iPhone_6_5.png
@@ -86,6 +86,10 @@ Widget _buildScreenWrapper({required Widget child}) {
   final preferitiProvider = PreferitiProvider(testMode: true);
   preferitiProvider.setPreferitiForTest(fakePreferiti());
 
+  // ThemeProvider forzato su estate per coerenza con il tema dei golden test
+  final themeProvider = ThemeProvider(testMode: true);
+  themeProvider.setSeason(AppSeason.summer);
+
   return MultiProvider(
     providers: [
       ChangeNotifierProvider<RifugiProvider>.value(value: rifugiProvider),
@@ -95,6 +99,7 @@ Widget _buildScreenWrapper({required Widget child}) {
       ),
       ChangeNotifierProvider<PreferitiProvider>.value(value: preferitiProvider),
       ChangeNotifierProvider<FiltroProvider>(create: (_) => FiltroProvider()),
+      ChangeNotifierProvider<ThemeProvider>.value(value: themeProvider),
     ],
     child: MaterialApp(
       debugShowCheckedModeBanner: false,

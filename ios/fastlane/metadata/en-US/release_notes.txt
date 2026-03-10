@@ -1,9 +1,6 @@
-What's new in version 1.1.1:
+What's new in version 1.1.2:
 
-- Expanded database to over 5,600 shelters and bivouacs with CAI, OpenStreetMap and Wikidata data
-- App Store now localized in 4 languages: Italian, English, German and French
-- Updated screenshots with localized overlays for each language
-- Fixed a display issue in the Shelter Passport screen
-- General stability and performance improvements
+• Improved onboarding experience for location access request
+• Minor stability and performance fixes
 
 Thanks for using Rifugi e Bivacchi! Leave a review if you enjoy the app.

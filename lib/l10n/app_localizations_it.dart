@@ -18,6 +18,12 @@ class AppLocalizationsIt extends AppLocalizations {
   String get tabMap => 'Mappa';
 
   @override
+  String get tabExplore => 'Esplora';
+
+  @override
+  String get tabPassaporto => 'Passaporto';
+
+  @override
   String get tabProfile => 'Profilo';
 
   @override
@@ -529,7 +535,7 @@ class AppLocalizationsIt extends AppLocalizations {
   String get next => 'Avanti';
 
   @override
-  String get allowLocation => 'Consenti Posizione';
+  String get allowLocation => 'Continua';
 
   @override
   String get permissionDenied => 'Permesso Negato';

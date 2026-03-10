@@ -29,37 +29,38 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
   List<OnboardingPage> _getPages(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final colorScheme = Theme.of(context).colorScheme;
     return [
       OnboardingPage(
         title: l10n.onboardingWelcomeTitle,
         description: l10n.onboardingWelcomeDesc,
         icon: Icons.hiking,
-        color: Color(0xFF2D5016),
+        color: colorScheme.primary,
       ),
       OnboardingPage(
         title: l10n.onboardingSearchTitle,
         description: l10n.onboardingSearchDesc,
         icon: Icons.search,
-        color: Color(0xFF4A7C3C),
+        color: colorScheme.secondary,
       ),
       OnboardingPage(
         title: l10n.onboardingMapTitle,
         description: l10n.onboardingMapDesc,
         icon: Icons.map,
-        color: Color(0xFF87CEEB),
+        color: colorScheme.tertiary,
       ),
       OnboardingPage(
         title: l10n.onboardingAccountTitle,
         description: l10n.onboardingAccountDesc,
         icon: Icons.person,
-        color: Color(0xFF6B4423),
+        color: colorScheme.onPrimaryContainer,
         isLoginPage: true,
       ),
       OnboardingPage(
         title: l10n.onboardingLocationTitle,
         description: l10n.onboardingLocationDesc,
         icon: Icons.location_on,
-        color: Color(0xFFFF8C42),
+        color: colorScheme.error,
         isPermissionPage: true,
       ),
     ];
@@ -458,12 +459,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                                 style: const TextStyle(fontSize: 16),
                               ),
                               const SizedBox(width: 8),
-                              Icon(
-                                _currentPage < pages.length - 1
-                                    ? Icons.arrow_forward
-                                    : Icons.check,
-                                size: 20,
-                              ),
+                              Icon(Icons.arrow_forward, size: 20),
                             ],
                           ),
                   ),

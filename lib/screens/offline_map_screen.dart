@@ -76,6 +76,8 @@ class _OfflineMapScreenState extends State<OfflineMapScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Consumer<RifugiProvider>(
       builder: (context, provider, child) {
         final userPos = provider.userPosition ?? _currentPosition;
@@ -127,12 +129,17 @@ class _OfflineMapScreenState extends State<OfflineMapScreen> {
                         height: 20,
                         child: Container(
                           decoration: BoxDecoration(
-                            color: const Color(0xFF3B82F6),
+                            color: MapMarkerStyle.rifugioColor,
                             shape: BoxShape.circle,
-                            border: Border.all(color: Colors.white, width: 2.5),
+                            border: Border.all(
+                              color: colorScheme.surface,
+                              width: 2.5,
+                            ),
                             boxShadow: [
                               BoxShadow(
-                                color: Colors.black.withValues(alpha: 0.25),
+                                color: colorScheme.shadow.withValues(
+                                  alpha: 0.25,
+                                ),
                                 blurRadius: 4,
                                 offset: const Offset(0, 1),
                               ),
@@ -160,10 +167,15 @@ class _OfflineMapScreenState extends State<OfflineMapScreen> {
                             decoration: BoxDecoration(
                               color: MapMarkerStyle.colorForTipo(rifugio.tipo),
                               shape: BoxShape.circle,
-                              border: Border.all(color: Colors.white, width: 2),
+                              border: Border.all(
+                                color: colorScheme.surface,
+                                width: 2,
+                              ),
                               boxShadow: [
                                 BoxShadow(
-                                  color: Colors.black.withValues(alpha: 0.2),
+                                  color: colorScheme.shadow.withValues(
+                                    alpha: 0.2,
+                                  ),
                                   blurRadius: 4,
                                   offset: const Offset(0, 1),
                                 ),
@@ -171,7 +183,7 @@ class _OfflineMapScreenState extends State<OfflineMapScreen> {
                             ),
                             child: Icon(
                               MapMarkerStyle.iconForTipo(rifugio.tipo),
-                              color: Colors.white,
+                              color: colorScheme.onPrimary,
                               size: 17,
                             ),
                           ),
@@ -186,9 +198,7 @@ class _OfflineMapScreenState extends State<OfflineMapScreen> {
             // Loading overlay
             if (_isLoading)
               Container(
-                color: Theme.of(
-                  context,
-                ).colorScheme.surface.withValues(alpha: 0.7),
+                color: colorScheme.surface.withValues(alpha: 0.7),
                 child: const Center(child: CircularProgressIndicator()),
               ),
 
